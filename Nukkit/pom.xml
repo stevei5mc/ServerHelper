@@ -8,7 +8,7 @@
         <artifactId>parent-project</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>Nukkit</artifactId>
+    <artifactId>ServerHelper-Nukkit</artifactId>
     
     <dependencies>
         <dependency>

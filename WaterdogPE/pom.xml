@@ -8,10 +8,10 @@
         <artifactId>parent-project</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>WaterdogPE</artifactId>
+    <artifactId>ServerHelper-WaterdogPE</artifactId>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>17</java.version>
     </properties>
 
     <repositories>

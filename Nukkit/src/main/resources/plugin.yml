@@ -1,5 +1,5 @@
-name: ServerVariables
-main: cn.stevei5mc.ServerVariables.Main
+name: ServerHelper
+main: cn.stevei5mc.serverhelper.nukkit.ServerHelperMain
 version: "1.0.0-SNAPSHOT"
 author: stevei5mc
 api: ["1.0.0"]
