@@ -123,6 +123,7 @@ jobs:
         with:
           node-version: 18
       - name: 构建
+        run: |
           cd Docusaurus
           npm ci
           npm run build
