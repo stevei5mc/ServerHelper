@@ -1,0 +1,4 @@
+name: "ServerHelper"
+author: "stevei5mc"
+version: "1.0.0-SNAPSHOT"
+main: "cn.stevei5mc.serverhelper.waterdogpe.ServerHelperMain"
