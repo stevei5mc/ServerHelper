@@ -1,4 +1,4 @@
-name: dispatch
+name: PR check
 
 on:
   workflow_dispatch:
@@ -53,7 +53,7 @@ jobs:
         echo "PR_Approve=${{ inputs.PR_Approve }}" >> $GITHUB_OUTPUT
         echo "PR_ID=${{ inputs.PR_ID }}" >> $GITHUB_OUTPUT
 
-  build-plugin:
+  build:
     if: ${{ inputs.build-plugin }}
     strategy:
       matrix:
@@ -97,7 +97,7 @@ jobs:
         mkdir staging
         cp target/*.jar staging
         cd ../
-    - name: Upload build artifact
+    - name: 收集构建文件
       uses: actions/upload-artifact@v4.3.3
       with:
         name: ${{ needs.initialize.outputs.artifact_name }}-for_${{ matrix.name }}_Edition
