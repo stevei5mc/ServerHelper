@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       repo_name: ${{ steps.get_info.outputs.repo_name }}
-      artifact_name: ${{ steps.get_info.outputs.repository_name }}-Dispatch-Build_${{ github.run_number }}
+      artifact_name: ${{ steps.get_info.outputs.repo_name }}-Dispatch-Build_${{ github.run_number }}
       Deploy_gitHub_pages: ${{ steps.get_info.outputs.Deploy_gitHub_pages }}
       PR_Approve: ${{ steps.get_info.outputs.PR_Approve }}
       PR_ID: ${{ steps.get_info.outputs.PR_ID }}
@@ -86,7 +86,7 @@ jobs:
       uses: actions/cache@v4.0.2
       with:
         path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ matrix.name }}_edition-${{ hashFiles('**/${{ matrix.path }}/pom.xml') }}
+        key: ${{ runner.os }}-maven-${{ matrix.name }}_edition-${{ hashFiles('./${{ matrix.path }}/pom.xml') }}
         restore-key: ${{ runner.os }}-maven-${{ matrix.name }}_edition-
     - name: 构建
       run: |
