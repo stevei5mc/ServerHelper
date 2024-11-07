@@ -111,10 +111,10 @@ jobs:
         touch ${{ matrix.name }}_edition-hash-sha256.txt
         touch ${{ matrix.name }}_edition-hash-md5.txt
         sha256sum *.jar | tee ${{ matrix.name }}_edition-hash-256.txt
-        sha256sum *.jar | tee ${{ matrix.name }}_edition-hash-md5.txt
+        md5sum *.jar | tee ${{ matrix.name }}_edition-hash-md5.txt
         mv ./${{ matrix.name }}_edition-hash-sha256.txt ./${{ matrix.name }}_edition-hash-sha256-$(sha256sum ${{ matrix.name }}_edition-hash-sha256.txt|awk '{print $1}').txt
         mv ./${{ matrix.name }}_edition-hash-md5.txt ./${{ matrix.name }}_edition-hash-md5-$(md5sum ${{ matrix.name }}_edition-hash-md5.txt|awk '{print $1}').txt
-        cd ../
+        cd ../../
     - name: Upload build artifact
       uses: actions/upload-artifact@v4.3.3
       with:
