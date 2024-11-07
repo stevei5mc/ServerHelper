@@ -98,14 +98,15 @@ jobs:
           ${{ runner.os }}-maven--${{ matrix.name }}_edition-
     - name: Build
       run: |
-        cd ${{ matrix.path }}
+        cd ./${{ matrix.path }}
         mvn -B package --file pom.xml
         mkdir staging
         cp target/*.jar staging
         cd ../
     - name: Get Build artifact hash
       run: |
-        cd ./staging
+        pwd
+        cd ./${{ matrix.path }}/staging
         pwd
         touch ${{ matrix.name }}_edition-hash-sha256.txt
         touch ${{ matrix.name }}_edition-hash-md5.txt
