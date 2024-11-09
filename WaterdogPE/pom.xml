@@ -67,5 +67,13 @@
                 </executions>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/../language_resources</directory>
+            </resource>
+        </resources>
     </build>
 </project>
