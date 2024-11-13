@@ -96,17 +96,15 @@ jobs:
         key: ${{ runner.os }}-maven-${{ matrix.name }}_edition-${{ steps.pom_hash.outputs.pom_hash }}
         restore-keys: |
           ${{ runner.os }}-maven--${{ matrix.name }}_edition-
-    - name: Build
+    - name: Build project and get artifact hash
       run: |
         cd ./${{ matrix.path }}
+        pwd
         mvn -B package --file pom.xml
         mkdir staging
         cp target/*.jar staging
-        cd ../
-    - name: Get Build artifact hash
-      run: |
-        pwd
-        cd ./${{ matrix.path }}/staging
+        ls -la
+        cd ./staging
         pwd
         touch ${{ matrix.name }}_edition-hash-sha256.txt
         touch ${{ matrix.name }}_edition-hash-md5.txt
@@ -114,6 +112,7 @@ jobs:
         md5sum *.jar | tee ${{ matrix.name }}_edition-hash-md5.txt
         mv ./${{ matrix.name }}_edition-hash-sha256.txt ./${{ matrix.name }}_edition-hash-sha256-$(sha256sum ${{ matrix.name }}_edition-hash-sha256.txt|awk '{print $1}').txt
         mv ./${{ matrix.name }}_edition-hash-md5.txt ./${{ matrix.name }}_edition-hash-md5-$(md5sum ${{ matrix.name }}_edition-hash-md5.txt|awk '{print $1}').txt
+        ls -la
         cd ../../
     - name: Upload build artifact
       uses: actions/upload-artifact@v4.3.3

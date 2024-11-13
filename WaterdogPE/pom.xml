@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>cn.stevei5mc.serverhelper</groupId>
-        <artifactId>parent-project</artifactId>
+        <artifactId>ServerHelper</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>ServerHelper-WaterdogPE</artifactId>
@@ -72,7 +72,7 @@
                 <directory>${project.basedir}/src/main/resources</directory>
             </resource>
             <resource>
-                <directory>${project.basedir}/../language_resources</directory>
+                <directory>../resources</directory>
             </resource>
         </resources>
     </build>
