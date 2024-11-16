@@ -7,18 +7,18 @@
     <artifactId>ServerHelper</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    
+    <!-- 这里定义子块，增加新的子模块就在这里加上 -->
     <modules>
        <module>Nukkit</module>
        <module>WaterdogPE</module>
     </modules>
-
     <properties>
         <java.version>1.8</java.version>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
     </properties>
-    
     <repositories>
+        <!-- Maven仓库配置
+        这里存放了公用的Maven仓库配置，专属的Maven仓库请在对应的pom.xml文件配置 -->
         <repository>
             <id>opencollab-repo-release</id>
             <url>https://repo.opencollab.dev/maven-releases/</url>
@@ -44,7 +44,10 @@
             <url>https://repo.lanink.cn/repository/maven-public/</url>
         </repository>
     </repositories>
-
+    <dependencies>
+        <!--项目依赖配置
+        这里存放了公用的项目依赖配置，专属的依赖请在对应的pom.xml文件配置 -->
+    </dependencies>
     <build>
         <plugins>
             <plugin>

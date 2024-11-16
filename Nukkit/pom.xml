@@ -9,7 +9,6 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>ServerHelper-Nukkit</artifactId>
-    
     <dependencies>
         <dependency>
             <groupId>cn.nukkit</groupId>
@@ -22,8 +21,20 @@
             <version>5.4</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>cn.stevei5mc</groupId>
+            <artifactId>AutoRestart</artifactId>
+            <version>1.0.0-beta5</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/AutoRestart-1.0.0-beta5.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>cn.lanink</groupId>
+            <artifactId>MemoriesOfTime-GameCore</artifactId>
+            <version>1.6.13</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
-    
     <build>
         <plugins>
             <plugin>
