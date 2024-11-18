@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cn.stevei5mc.serverhelper</groupId>
     <artifactId>ServerHelper</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
     <!-- 这里定义子块，增加新的子模块就在这里加上 -->
     <modules>
@@ -13,6 +13,7 @@
        <module>WaterdogPE</module>
     </modules>
     <properties>
+        <revision>1.0.0-SNAPSHOT</revision>
         <java.version>1.8</java.version>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
     </properties>
