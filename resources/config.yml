@@ -1,0 +1,12 @@
+# 配置文件版本
+version: 1
+# 数据保存类型
+data_type: sqlite
+
+sqlite:
+  #数据类型
+  # local 存储在对应的插件的文件夹中
+  # system 存储在一个指定的目录中
+  type: local
+  # 选择system类型该配置项才会生效
+  path: C:\data\

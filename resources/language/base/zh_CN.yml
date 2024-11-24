@@ -1,0 +1,11 @@
+command.tip.not.permission: §c你没有权限使用此命令！
+command.tip.in.game.run: §c请在游戏内使用此命令！
+command.tip.unknown: §c未知的命令或参数，请检查后再试！
+
+gui.main.title:
+
+gui.player.ban.title:
+
+gui.player.mute.title:
+
+gui.player.warn.title:
