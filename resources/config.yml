@@ -1,5 +1,6 @@
 # 配置文件版本
 version: 1
+message_prefix: "§b§ServerHelper §r§7>> "
 # 数据保存类型
 data_type: sqlite
 
