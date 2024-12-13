@@ -171,7 +171,7 @@
                     <commitIdGenerationMode>flat</commitIdGenerationMode>
                     <gitDescribe>
                         <skip>false</skip>
-                        <always>false</always>
+                        <always>true</always>
                         <abbrev>7</abbrev>
                         <dirty>-dirty</dirty>
                         <match>*</match>
