@@ -5,19 +5,25 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cn.stevei5mc.serverhelper</groupId>
     <artifactId>ServerHelper</artifactId>
-    <version>${revision}</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <!-- 这里定义子块，增加新的子模块就在这里加上 -->
     <modules>
-       <module>Nukkit</module>
-       <module>WaterdogPE</module>
+        <module>Nukkit</module>
+        <module>WaterdogPE</module>
     </modules>
 
+    <distributionManagement>
+        <repository>
+            <id>a1145142-plugins-test</id>
+            <name>test</name>
+            <url>https://a1145142-maven.pkg.coding.net/repository/plugins/test/</url>
+        </repository>
+    </distributionManagement>
+
     <properties>
-        <revision>1.0.0-SNAPSHOT</revision> <!-- 插件的版本号 -->
-        <default.java.version>1.8</default.java.version>
-        <wdpe.java.version>17</wdpe.java.version>
+        <java.version>1.8</java.version>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
     </properties>
 
@@ -48,6 +54,17 @@
             <id>repo-lanink-cn</id>
             <url>https://repo.lanink.cn/repository/maven-public/</url>
         </repository>
+        <repository>
+            <id>a1145142-plugins-test</id>
+            <name>test</name>
+            <url>https://a1145142-maven.pkg.coding.net/repository/plugins/test/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
     </repositories>
 
     <dependencyManagement>
@@ -58,6 +75,7 @@
                 <groupId>net.luckperms</groupId>
                 <artifactId>api</artifactId>
                 <version>5.4</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -68,14 +86,6 @@
     </dependencies>
 
     <build>
-        <pluginManagement>
-            <!-- 这里存放着一些统一配置的maven插件，放置在此是因为直接在plugins中配置会导致构建失败或者不是所以模块都会使用到的插件等原因 -->
-            <!-- 必需要再子模块中引用才能正常的使用，只需引用 groupId和artifactId然后对不同的模块填写不同的配置，不用引用version -->
-            <plugins>
-            </plugins>
-        </pluginManagement>
-
-        <!-- 这里存放着一些统一配置的maven插件 -->
         <plugins>
             <plugin>
                 <groupId>com.google.code.maven-replacer-plugin</groupId>
@@ -182,13 +192,5 @@
                 </configuration>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>${project.basedir}/src/main/resources</directory>
-            </resource>
-            <resource>
-                <directory>../resources</directory>
-            </resource>
-        </resources>
     </build>
 </project>

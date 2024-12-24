@@ -1,0 +1,173 @@
+name: tag push
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  initialize:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_info.outputs.version }}
+      repo_name: ${{ steps.get_info.outputs.repo_name }}
+      artifact_name: ${{ steps.get_info.outputs.repo_name }}-Release-${{ steps.get_info.outputs.version }}
+    steps:
+    - name: 获取信息
+      id: get_info
+      run: |
+        echo "version=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
+        echo "repo_name=${GITHUB_REPOSITORY/${{ github.repository_owner }}\//}" >> $GITHUB_OUTPUT
+
+  build-plugin:
+    if: ${{ inputs.build-plugin }}
+    strategy:
+      matrix:
+        include:
+          - name: "Nukkit"
+            path: "Nukkit"
+            java: '8'
+          - name: "WaterdogPE"
+            path: "WaterdogPE"
+            java: '17'
+    runs-on: ubuntu-latest
+    needs: initialize
+    name: Build ${{ matrix.name }} Edition
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v4
+    - name: Setup java ${{ matrix.java }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ matrix.java }}
+        distribution: 'temurin'
+    - name: Get pom.xml hash
+      id: pom_hash
+      run: echo "pom_hash=$(sha256sum ./${{ matrix.path }}/pom.xml|awk '{print $1}')" >> $GITHUB_OUTPUT
+    - name: Cache local Maven repository
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ matrix.name }}_edition-${{ steps.pom_hash.outputs.pom_hash }}
+        restore-keys: |
+          ${{ runner.os }}-maven--${{ matrix.name }}_edition-
+    - name: Build project and get artifact hash
+      run: |
+        cd ./${{ matrix.path }}
+        pwd
+        mvn -B package --file pom.xml
+        mkdir staging
+        cp target/*.jar staging
+        ls -la
+        cd ./staging
+        pwd
+        sha256sum *.jar | tee ${{ matrix.name }}_edition-hash-sha256.txt
+        md5sum *.jar | tee ${{ matrix.name }}_edition-hash-md5.txt
+        mv ./${{ matrix.name }}_edition-hash-sha256.txt ./${{ matrix.name }}_edition-hash-sha256-$(sha256sum ${{ matrix.name }}_edition-hash-sha256.txt|awk '{print $1}').txt
+        mv ./${{ matrix.name }}_edition-hash-md5.txt ./${{ matrix.name }}_edition-hash-md5-$(md5sum ${{ matrix.name }}_edition-hash-md5.txt|awk '{print $1}').txt
+        ls -la
+        cd ../../
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4.3.3
+      with:
+        name: ${{ needs.initialize.outputs.artifact_name }}-for_${{ matrix.name }}_Edition
+        path: ${{ matrix.path }}/staging
+
+  build-Docusaurus:
+    name: Build docusaurus
+    needs: initialize
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup nodejs 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: 构建
+        run: |
+          cd Docusaurus
+          yarn install --frozen-lockfile
+          yarn build
+          cd ../
+      - name: 上传构建
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: Docusaurus/build
+
+  release:
+    name: Release
+    needs:
+    - build-plugin-body
+    - build-Docusaurus
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v4
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        path: staging
+        merge-multiple: true
+        pattern: ${{ needs.initialize.outputs.repo_name }}-*
+    - name: Organize build resources
+      run: |
+        cd staging
+        cat *-edition-hash-sha256.txt | tee ${{ needs.initialize.outputs.repo_name }}-all-edition-hash-sha256.txt
+        cat *-edition-hash-md5.txt | tee ${{ needs.initialize.outputs.repo_name }}-all-edition-hash-md5.txt
+        mv ./${{ needs.initialize.outputs.repo_name }}-all-edition-hash-sha256.txt ./${{ needs.initialize.outputs.repo_name }}-all-edition-hash-sha256-$(sha256sum ${{ needs.initialize.outputs.repo_name }}-all-edition-hash-sha256.txt|awk '{print $1}').txt
+        mv ./${{ needs.initialize.outputs.repo_name }}-all-edition-hash-md5.txt ./${{ needs.initialize.outputs.repo_name }}-all-edition-hash-md5-$(md5sum ${{ needs.initialize.outputs.repo_name }}-all-edition-hash-md5.txt |awk '{print $1}').txt
+        ls -la
+        cd ../
+        mkdir -v github_releases
+        cp ./staging/*.* ./github_releases
+        ls -la ./github_releases
+        rm -rf ./staging/*-javadoc.jar
+        ls -la ./staging
+        mkdir -v releases
+        cd releases
+        mkdir -v Nukkit WaterdogPE
+        cd ../
+        cp ./staging/*-Nukkit-*.* ./releases/Nukkit
+        ls -la ./releases/Nukkit
+        cp ./staging/*-WaterdogPE-*.* ./releases/WaterdogPE
+        ls -la ./releases/WaterdogPE
+        ls -la
+    - name: Release to github
+      uses: ncipollo/release-action@v1.14.0
+      with:
+        tag: ${{ needs.initialize.outputs.version }}
+        name: ${{ needs.initialize.outputs.version }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        bodyFile: ./docs/changelogs/${{ needs.initialize.outputs.version }}.md
+        artifacts: ./github_releases/*.*
+    #这个暂时没有用
+    # - name: 发布至minebbs
+    #   uses: engsr6982/upload-minebbs@v1.2.0
+    #   with: 
+    #     minebbs_token: ${{ secrets.MINEBBS_TOKEN }}
+    #     resource_id: "12345"
+    #     upload_file: ./github_artifact/*.*
+    #     update_title: ${{ needs.initialize.outputs.version }}
+    #     update_version: ${{ needs.initialize.outputs.version }}
+
+  deploy-gitHub-pages:
+    name: Deploy gitHub pages
+    needs:
+    - build-plugin-body
+    - build-Docusaurus
+    # 给予 GITHUB_TOKEN 进行 Pages 部署所必须的权限
+    permissions:
+      pages: write # 以部署到 Pages
+      id-token: write # 以验证部署来自恰当的源
+    # 部署到 Github Pages 环境
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
