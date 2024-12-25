@@ -45,7 +45,7 @@ jobs:
         echo "repo_name=${GITHUB_REPOSITORY/${{ github.repository_owner }}\//}" >> $GITHUB_OUTPUT
         echo "additional-functions=${{ inputs.additional-functions }}" >> $GITHUB_OUTPUT
         echo "PR_ID=${{ inputs.PR_ID }}" >> $GITHUB_OUTPUT
-        echo "url=github.com/${{ github.repository }}/actions/runs/${{ github,run_id }}" >> $GITHUB_OUTPUT
+        echo "url=github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_OUTPUT
     - name: Settings info
       id: settings_info
       run: |
