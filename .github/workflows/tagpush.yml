@@ -60,12 +60,7 @@ jobs:
         cp target/*.jar staging
         ls -la
         cd ./staging
-        pwd
-        sha256sum *.jar | tee ${{ matrix.name }}_edition-hash-sha256.txt
-        md5sum *.jar | tee ${{ matrix.name }}_edition-hash-md5.txt
-        mv ./${{ matrix.name }}_edition-hash-sha256.txt ./${{ matrix.name }}_edition-hash-sha256-$(sha256sum ${{ matrix.name }}_edition-hash-sha256.txt|awk '{print $1}').txt
-        mv ./${{ matrix.name }}_edition-hash-md5.txt ./${{ matrix.name }}_edition-hash-md5-$(md5sum ${{ matrix.name }}_edition-hash-md5.txt|awk '{print $1}').txt
-        ls -la
+        bash ../../.github/workflows/get_build_files_hash.sh "${{ matrix.name }}"
         cd ../../
     - name: Upload build artifact
       uses: actions/upload-artifact@v4.3.3
@@ -113,28 +108,7 @@ jobs:
         merge-multiple: true
         pattern: ${{ needs.initialize.outputs.repo_name }}-*
     - name: Organize build resources
-      run: |
-        cd staging
-        cat *-edition-hash-sha256.txt | tee ${{ needs.initialize.outputs.repo_name }}-all-edition-hash-sha256.txt
-        cat *-edition-hash-md5.txt | tee ${{ needs.initialize.outputs.repo_name }}-all-edition-hash-md5.txt
-        mv ./${{ needs.initialize.outputs.repo_name }}-all-edition-hash-sha256.txt ./${{ needs.initialize.outputs.repo_name }}-all-edition-hash-sha256-$(sha256sum ${{ needs.initialize.outputs.repo_name }}-all-edition-hash-sha256.txt|awk '{print $1}').txt
-        mv ./${{ needs.initialize.outputs.repo_name }}-all-edition-hash-md5.txt ./${{ needs.initialize.outputs.repo_name }}-all-edition-hash-md5-$(md5sum ${{ needs.initialize.outputs.repo_name }}-all-edition-hash-md5.txt |awk '{print $1}').txt
-        ls -la
-        cd ../
-        mkdir -v github_releases
-        cp ./staging/*.* ./github_releases
-        ls -la ./github_releases
-        rm -rf ./staging/*-javadoc.jar
-        ls -la ./staging
-        mkdir -v releases
-        cd releases
-        mkdir -v Nukkit WaterdogPE
-        cd ../
-        cp ./staging/*-Nukkit-*.* ./releases/Nukkit
-        ls -la ./releases/Nukkit
-        cp ./staging/*-WaterdogPE-*.* ./releases/WaterdogPE
-        ls -la ./releases/WaterdogPE
-        ls -la
+      run: bash .github/workflows/organize_resources.sh "${{ needs.initialize.outputs.repo_name }}"
     - name: Release to github
       uses: ncipollo/release-action@v1.14.0
       with:
