@@ -1,14 +1,17 @@
 package cn.stevei5mc.serverhelper.waterdogpe;
 
+import cn.stevei5mc.serverhelper.waterdogpe.utils.GitVersionUtil;
 import dev.waterdog.waterdogpe.plugin.Plugin;
+import dev.waterdog.waterdogpe.utils.config.Configuration;
 import dev.waterdog.waterdogpe.utils.config.YamlConfig;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class ServerHelperMain extends Plugin {
-    
+
     private static ServerHelperMain instance;
+    private final String version = "";
     private final List<String> languages = Arrays.asList(
             "bg_BG", "cs_CZ","da_DK","de_DE","el_GR","en_GB","en_US","es_ES","es_MX","fi_FI","fr_CA","fr_FR","hu_HU","id_ID","it_IT",
             "ja_JP","ko_KR","nb_NO","nl_NL","pl_PL","pt_BR","pt_PT","ru_RU","sk_SK","sv_SE","tr_TR","uk_UA","zh_CN","zh_TW"
@@ -22,8 +25,12 @@ public class ServerHelperMain extends Plugin {
 
     @Override
     public void onEnable() {
+        instance = this;
         saveConfigResources();
         loadConfig();
+        this.getLogger().info(GitVersionUtil.getVersion());
+        this.getLogger().info(GitVersionUtil.getCommitId());
+        this.getLogger().info(GitVersionUtil.getBranch());
     }
 
     public void saveConfigResources() {
@@ -44,6 +51,15 @@ public class ServerHelperMain extends Plugin {
 
     @Override
     public void onDisable() {
-        this.getLogger().info("停止运行");
+        this.getLogger().info("已停止运行，感谢你的使用");
+    }
+
+    @Override
+    public Configuration getConfig() {
+        return config;
+    }
+
+    public String getMessagePrefix() {
+        return config.getString("message_prefix","§b§ServerHelper §r§7>> ");
     }
 }
