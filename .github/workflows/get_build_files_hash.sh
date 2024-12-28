@@ -1,5 +1,7 @@
 artifactName="$1"
 pwd
+ls -la
+echo "directory: $artifactName_edition"
 sha256sum *.jar | tee "$artifactName_edition"-hash-sha256.txt
 md5sum *.jar | tee "$artifactName_edition"-hash-md5.txt
 mv ./"$artifactName_edition"-hash-sha256.txt ./"$artifactName_edition"-hash-sha256-$(sha256sum "$artifactName_edition"-hash-sha256.txt|awk '{print $1}').txt
