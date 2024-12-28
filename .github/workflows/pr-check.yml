@@ -1,38 +1,14 @@
 name: PR check
 
 on:
-  workflow_dispatch:
-    inputs:
-      build-plugin:
-        description: 'Build plugin'
-        required: false
-        default: true
-        type: boolean
-      build-Docusaurus:
-        description: 'Build docusaurus'
-        required: false
-        default: false
-        type: boolean
-      deploy-gitHub-pages:
-        description: 'Deploy gitHub pages'
-        required: false
-        default: false
-        type: boolean
-      PR_Approve:
-        description: 'PR Approve'
-        required: false
-        default: false
-        type: boolean
-      PR_ID:
-        description: 'PR Approve ID'
-        required: false
+  pull_request:
 
 jobs:
   initialize:
     runs-on: ubuntu-latest
     outputs:
       repo_name: ${{ steps.get_info.outputs.repo_name }}
-      artifact_name: ${{ steps.get_info.outputs.repo_name }}-Dispatch-Build_${{ github.run_number }}
+      artifact_name: ${{ steps.get_info.outputs.repo_name }}-PR_check-Build_${{ github.run_number }}
     steps:
     - name: 获取信息
       id: get_info
@@ -55,14 +31,6 @@ jobs:
     steps:
     - name: 拉取代码
       uses: actions/checkout@v4.1.6
-    - name: 拉取代码(批准PR专用)
-      if: needs.initialize.outputs.PR_Approve == 'true' && needs.initialize.outputs.Deploy_gitHub_pages == 'false'
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        ls -la
-        gh pr checkout ${{ inputs.PR_ID }}
-        ls -la
     - name: Setup java ${{ matrix.java }}
       uses: actions/setup-java@v4
       with:
@@ -70,10 +38,7 @@ jobs:
         distribution: 'temurin'
     - name: Get pom.xml hash
       id: pom_hash
-      run: |
-        cd ./${{ matrix.path }}
-        echo "pom_hash=$(sha256sum pom.xml|awk '{print $1}" >> $GITHUB_OUTPUT
-        cd ../
+      run: echo "pom_hash=$(sha256sum ./${{ matrix.path }}/pom.xml|awk '{print $1}')" >> $GITHUB_OUTPUT
     - name: Cache local Maven repository
       uses: actions/cache@v4
       with:
@@ -90,14 +55,7 @@ jobs:
         cp target/*.jar staging
         ls -la
         cd ./staging
-        pwd
-        touch ${{ matrix.name }}_edition-hash-sha256.txt
-        touch ${{ matrix.name }}_edition-hash-md5.txt
-        sha256sum *.jar | tee ${{ matrix.name }}_edition-hash-sha256.txt
-        md5sum *.jar | tee ${{ matrix.name }}_edition-hash-md5.txt
-        mv ./${{ matrix.name }}_edition-hash-sha256.txt ./${{ matrix.name }}_edition-hash-sha256-$(sha256sum ${{ matrix.name }}_edition-hash-sha256.txt|awk '{print $1}').txt
-        mv ./${{ matrix.name }}_edition-hash-md5.txt ./${{ matrix.name }}_edition-hash-md5-$(md5sum ${{ matrix.name }}_edition-hash-md5.txt|awk '{print $1}').txt
-        ls -la
+        bash ../../.github/workflows/get_build_files_hash.sh "${{ matrix.name }}"
         cd ../../
     - name: Upload build artifact
       uses: actions/upload-artifact@v4.3.3
@@ -105,33 +63,33 @@ jobs:
         name: ${{ needs.initialize.outputs.artifact_name }}-for_${{ matrix.name }}_Edition
         path: ${{ matrix.path }}/staging
 
-  build-Docusaurus:
-    name: Build docusaurus
-    needs: initialize
-    runs-on: ubuntu-latest
-    steps:
-      - name: 拉取代码
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-      - name: 拉取代码(批准PR专用)
-        if: needs.initialize.outputs.PR_Approve == 'true' && needs.initialize.outputs.Deploy_gitHub_pages == 'false'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          ls -la
-          gh pr checkout ${{ inputs.PR_ID }}
-          ls -la
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - name: 构建
-        run: |
-          cd Docusaurus
-          yarn install --frozen-lockfile
-          yarn build
-          cd ../
-      - name: 上传构建
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: Docusaurus/build
+#  build-Docusaurus:
+#    name: Build docusaurus
+#    needs: initialize
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: 拉取代码
+#        uses: actions/checkout@v4
+#        with:
+#          submodules: true
+#      - name: 拉取代码(批准PR专用)
+#        if: needs.initialize.outputs.PR_Approve == 'true' && needs.initialize.outputs.Deploy_gitHub_pages == 'false'
+#        env:
+#          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: |
+#          ls -la
+#          gh pr checkout ${{ inputs.PR_ID }}
+#          ls -la
+#      - uses: actions/setup-node@v4
+#        with:
+#          node-version: 18
+#      - name: 构建
+#        run: |
+#          cd Docusaurus
+#          yarn install --frozen-lockfile
+#          yarn build
+#          cd ../
+#      - name: 上传构建
+#        uses: actions/upload-pages-artifact@v3
+#        with:
+#          path: Docusaurus/build
