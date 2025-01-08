@@ -20,6 +20,6 @@ public class ServerHelperMainCommand extends BaseCommand {
 
     @Override
     public void sendUI(Player player) {
-
     }
 }
+

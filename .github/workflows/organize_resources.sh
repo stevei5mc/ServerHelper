@@ -1,13 +1,11 @@
 projectName="$1"
 cd staging
-for hashType in sha256 md5; do
-  # 找到所有哈希文件并合并
-  hashFiles=$(find . -name "*-edition-hash-$hashType.txt")
-  cat $hashFiles | tee "${projectName}-all-edition-hash-$hashType.txt"
-  # 计算哈希值并重命名文件
-  mv "${projectName}-all-edition-hash-$hashType.txt" "${projectName}-all-edition-hash-$hashType-$($hashTypesum "${projectName}-all-edition-hash-$hashType.txt" | awk '{print $1}').txt"
-  echo "--------------------"
-done
+cat *-edition-hash-sha256.txt | tee "$projectName"-all-edition-hash-sha256.txt
+mv ./"$projectName"-all-edition-hash-sha256.txt ./"$projectName"-all-edition-hash-sha256-$(sha256sum "$projectName"-all-edition-hash-sha256.txt|awk '{print $1}').txt
+echo "-------------------"
+cat *-edition-hash-md5.txt | tee "$projectName"-all-edition-hash-md5.txt
+mv ./"$projectName"-all-edition-hash-md5.txt ./"$projectName"-all-edition-hash-md5-$(md5sum "$projectName"-all-edition-hash-md5.txt |awk '{print $1}').txt
+echo "-------------------"
 ls -la
 cd ../
 mkdir -v github_releases
