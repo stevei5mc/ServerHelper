@@ -58,10 +58,27 @@ public class PlayerPatrolSystemGui {
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("Patrol system");
         custom.addElement(new ElementLabel("随机巡查一名玩家\n\n"));
         custom.addElement(new ElementStepSlider("随机模式", Arrays.asList(
-                "全部世界","当前世界","指定世界"
+                "全部世界", "当前世界", "指定世界"
         )));
-        custom.addElement(new ElementDropdown("选择一个指定的世界",mapName));
+        custom.addElement(new ElementDropdown("选择一个世界", mapName));
         custom.onClosed(PlayerPatrolSystemGui::sendPatrolSystemMainUi);
+        custom.onResponded((formResponseCustom, player1) -> {
+            int modeId = formResponseCustom.getStepSliderResponse(1).getElementID();
+            List<Player> players = new ArrayList<>(Server.getInstance().getOnlinePlayers().values());
+            players.remove(player);  //跳过自己
+            if (modeId == 1) {
+                players.removeIf(player2 -> !player1.getLevel().getName().equals(player2.getLevel().getName()));
+            } else if (modeId == 2) {
+                String world = formResponseCustom.getDropdownResponse(2).getElementContent();
+                players.removeIf(player2 -> !world.equals(player2.getLevel().getName()));
+            }
+            if (!players.isEmpty()) {
+                Player target = players.get(new Random().nextInt(players.size()));
+                teleportToTarget(player1, target);
+            } else {
+                player1.sendMessage("没有符合条件的玩家");
+            }
+        });
         player.showFormWindow(custom);
     }
 
