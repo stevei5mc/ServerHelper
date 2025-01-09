@@ -34,22 +34,26 @@ public class PlayerPatrolSystemGui {
     }
 
     public static void sendDesignatedPatrolSystem(@NotNull Player player) {
-        ArrayList<String> players = new ArrayList<>();
-        for (Player p : Server.getInstance().getOnlinePlayers().values()) {
-            if (p == player) { //跳过自己
-                continue;
+        if (Server.getInstance().getOnlinePlayers().size() >= 2) {
+            ArrayList<String> players = new ArrayList<>();
+            for (Player p : Server.getInstance().getOnlinePlayers().values()) {
+                if (p == player) { //跳过自己
+                    continue;
+                }
+                players.add(p.getName());
             }
-            players.add(p.getName());
+            AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("Patrol system");
+            custom.addElement(new ElementLabel("选择一名玩家进行巡查\n\n"));
+            custom.addElement(new ElementDropdown("选择玩家",players));
+            custom.onClosed(PlayerPatrolSystemGui::sendPatrolSystemMainUi);
+            custom.onResponded((formResponseCustom, player1) -> {
+                Player target = Server.getInstance().getPlayer(formResponseCustom.getDropdownResponse(1).getElementContent());
+                teleportToTarget(player1,target);
+            });
+            player.showFormWindow(custom);
+        }else {
+            player.sendMessage("没有足够的在线玩家");
         }
-        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("Patrol system");
-        custom.addElement(new ElementLabel("选择一名玩家进行巡查\n\n"));
-        custom.addElement(new ElementDropdown("选择玩家",players));
-        custom.onClosed(PlayerPatrolSystemGui::sendPatrolSystemMainUi);
-        custom.onResponded((formResponseCustom, player1) -> {
-            Player target = Server.getInstance().getPlayer(formResponseCustom.getDropdownResponse(1).getElementContent());
-            teleportToTarget(player1,target);
-        });
-        player.showFormWindow(custom);
     }
 
     public static void sendRandomPatrolSystemUi(@NotNull Player player) {
@@ -85,9 +89,13 @@ public class PlayerPatrolSystemGui {
     }
 
     private static void teleportToTarget(@NotNull Player admin,Player target) {
-        admin.setGamemode(3);
-        admin.addEffect(Effect.getEffect(16).setDuration(12000).setAmplifier(5).setVisible(false));
-        admin.teleport(target);
-        admin.sendMessage("你已传送至："+target.getName());
+        if (target.isOnline()) {
+            admin.setGamemode(3);
+            admin.addEffect(Effect.getEffect(16).setDuration(12000).setAmplifier(5).setVisible(false));
+            admin.teleport(target);
+            admin.sendMessage("你已传送至："+target.getName());
+        }else {
+            admin.sendMessage("目标玩家不在线，请选择其他玩家");
+        }
     }
 }
