@@ -4,10 +4,12 @@ import cn.lanink.gamecore.form.element.ResponseElementButton;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowCustom;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.form.element.ElementDropdown;
 import cn.nukkit.form.element.ElementLabel;
 import cn.nukkit.form.element.ElementStepSlider;
 import cn.nukkit.level.Level;
+import cn.nukkit.potion.Effect;
 import cn.stevei5mc.serverhelper.nukkit.ServerHelperMain;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,9 +32,22 @@ public class PlayerPatrolSystemGui {
     }
 
     public static void sendDesignatedPatrolSystem(@NotNull Player player) {
-        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("Patrol system","巡查指定玩家的游玩情况");
-        simple.onClosed(PlayerPatrolSystemGui::sendPatrolSystemMainUi);
-        player.showFormWindow(simple);
+        ArrayList<String> players = new ArrayList<>();
+        for (Player p : Server.getInstance().getOnlinePlayers().values()) {
+            if (p == player) { //跳过自己
+                continue;
+            }
+            players.add(p.getName());
+        }
+        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("Patrol system");
+        custom.addElement(new ElementLabel("选择一名玩家进行巡查\n\n"));
+        custom.addElement(new ElementDropdown("选择玩家",players));
+        custom.onClosed(PlayerPatrolSystemGui::sendPatrolSystemMainUi);
+        custom.onResponded((formResponseCustom, player1) -> {
+            Player target = Server.getInstance().getPlayer(formResponseCustom.getDropdownResponse(1).getElementContent());
+            teleportToTarget(player1,target);
+        });
+        player.showFormWindow(custom);
     }
 
     public static void sendRandomPatrolSystemUi(@NotNull Player player) {
@@ -48,5 +63,12 @@ public class PlayerPatrolSystemGui {
         custom.addElement(new ElementDropdown("选择一个指定的世界",mapName));
         custom.onClosed(PlayerPatrolSystemGui::sendPatrolSystemMainUi);
         player.showFormWindow(custom);
+    }
+
+    private static void teleportToTarget(@NotNull Player admin,Player target) {
+        admin.setGamemode(3);
+        admin.addEffect(Effect.getEffect(16).setDuration(12000).setAmplifier(5).setVisible(false));
+        admin.teleport(target);
+        admin.sendMessage("你已传送至："+target.getName());
     }
 }

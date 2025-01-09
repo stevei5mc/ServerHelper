@@ -39,7 +39,7 @@ public class ServerHelperMain extends PluginBase {
 
     @Override
     public void onEnable() {
-        loadBaseLanguage();
+        //loadBaseLanguage();
         this.getLogger().info(GitVersionUtil.getVersion());
         this.getLogger().info(GitVersionUtil.getCommitId());
         this.getLogger().info(GitVersionUtil.getBranch());

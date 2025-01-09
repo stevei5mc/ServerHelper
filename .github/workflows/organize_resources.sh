@@ -17,8 +17,8 @@ mkdir -v releases
 cd releases
 mkdir -v Nukkit WaterdogPE
 cd ../
-cp ./staging/*-Nukkit-*.* ./releases/Nukkit
+cp ./staging/*-Nukkit*.* ./releases/Nukkit
 ls -la ./releases/Nukkit
-cp ./staging/*-WaterdogPE-*.* ./releases/WaterdogPE
+cp ./staging/*-WaterdogPE*.* ./releases/WaterdogPE
 ls -la ./releases/WaterdogPE
 ls -la

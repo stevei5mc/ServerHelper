@@ -112,7 +112,7 @@ jobs:
         cp target/*.jar staging
         ls -la
         cd ./staging
-        bash ../../.github/workflows/get_build_files_hash.sh "${{ matrix.name }}"
+        bash ../../.github/workflows/get_build_files_hash.sh "${{ steps.getPomInfo.outputs.artifact-id }}"
         cd ../../
     - name: Upload build artifact
       uses: actions/upload-artifact@v4.3.3
@@ -160,35 +160,35 @@ jobs:
     - build-plugin
     runs-on: ubuntu-latest
     steps:
-      - name: 拉取代码
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-       - name: 批准PR
-         if: needs.build-Docusaurus.result == 'success' && needs.build-plugin.result == 'success'
-         uses: hmarr/auto-approve-action@v4.0.0
-         with:
-           pull-request-number: ${{ inputs.PR_ID }}
-           review-message: |
-             构建成功，本PR获得批准合并。如果有新的提交则自动取消本次批准！
-             非常感谢您对本次作出的贡献。
+    - name: 拉取代码
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: 批准PR
+      if: needs.build-Docusaurus.result == 'success' && needs.build-plugin.result == 'success'
+      uses: hmarr/auto-approve-action@v4.0.0
+      with:
+        pull-request-number: ${{ inputs.PR_ID }}
+        review-message: |
+          构建成功，本PR获得批准合并。如果有新的提交则自动取消本次批准！
+          非常感谢您对本次作出的贡献。
 
-             The build was successful, and this PR was approved for merging.
-             If there is a new submission, this approval will be automatically canceled.
-             Thank you very much for your contribution to this event。
+          The build was successful, and this PR was approved for merging.
+          If there is a new submission, this approval will be automatically canceled.
+          Thank you very much for your contribution to this event。
 
-             ${{ needs.initialize.outputs.url }}
-      - name: PR review message
-        if: failure() || needs.build-Docusaurus.result != 'success' || needs.build-plugin.result != 'success'
-        uses: miry/prcomment@v0.1.3
-        with:
-          msg: |
-            构建失败，请查看构建获取失败原因：
-            Build failed, please check the build to obtain the reason for the failure:
+          ${{ needs.initialize.outputs.url }}
+    - name: PR review message
+      if: failure() || needs.build-Docusaurus.result != 'success' || needs.build-plugin.result != 'success'
+      uses: miry/prcomment@v0.1.3
+      with:
+        msg: |
+          构建失败，请查看构建获取失败原因：
+          Build failed, please check the build to obtain the reason for the failure:
 
-            ${{ steps.get_info.outputs.url }}
-          pr: ${{ inputs.PR_ID }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          ${{ steps.get_info.outputs.url }}
+        pr: ${{ inputs.PR_ID }}
+        token: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-gitHub-pages:
     if: needs.initialize.outputs.additional-functions == 'Deploy gitHub pages'
