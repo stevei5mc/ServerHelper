@@ -47,8 +47,12 @@ public class PlayerPatrolSystemGui {
             custom.addElement(new ElementDropdown("选择玩家",players));
             custom.onClosed(PlayerPatrolSystemGui::sendPatrolSystemMainUi);
             custom.onResponded((formResponseCustom, player1) -> {
-                Player target = Server.getInstance().getPlayer(formResponseCustom.getDropdownResponse(1).getElementContent());
-                teleportToTarget(player1,target);
+                try {
+                    Player target = Server.getInstance().getPlayer(formResponseCustom.getDropdownResponse(1).getElementContent());
+                    teleportToTarget(player1,target);
+                }catch (NullPointerException ignore) {
+                    player1.sendMessage("目标玩家不在线，请选择其他玩家");
+                }
             });
             player.showFormWindow(custom);
         }else {
