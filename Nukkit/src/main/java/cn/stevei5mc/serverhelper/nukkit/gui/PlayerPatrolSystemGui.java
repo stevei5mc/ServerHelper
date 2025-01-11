@@ -11,12 +11,11 @@ import cn.nukkit.form.element.ElementStepSlider;
 import cn.nukkit.level.Level;
 import cn.nukkit.potion.Effect;
 import cn.stevei5mc.serverhelper.nukkit.ServerHelperMain;
+import cn.stevei5mc.serverhelper.nukkit.utils.BaseUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
 
 public class PlayerPatrolSystemGui {
     private PlayerPatrolSystemGui() {
@@ -46,14 +45,7 @@ public class PlayerPatrolSystemGui {
             custom.addElement(new ElementLabel("选择一名玩家进行巡查\n\n"));
             custom.addElement(new ElementDropdown("选择玩家",players));
             custom.onClosed(PlayerPatrolSystemGui::sendPatrolSystemMainUi);
-            custom.onResponded((formResponseCustom, player1) -> {
-                try {
-                    Player target = Server.getInstance().getPlayer(formResponseCustom.getDropdownResponse(1).getElementContent());
-                    teleportToTarget(player1,target);
-                }catch (NullPointerException ignore) {
-                    player1.sendMessage("目标玩家不在线，请选择其他玩家");
-                }
-            });
+            custom.onResponded((formResponseCustom, player1) -> teleportToTarget(player1, BaseUtils.getPlayer(formResponseCustom.getDropdownResponse(1).getElementContent(),player1)));
             player.showFormWindow(custom);
         }else {
             player.sendMessage("没有足够的在线玩家");
@@ -73,21 +65,7 @@ public class PlayerPatrolSystemGui {
         custom.addElement(new ElementDropdown("选择一个世界", mapName));
         custom.onClosed(PlayerPatrolSystemGui::sendPatrolSystemMainUi);
         custom.onResponded((formResponseCustom, player1) -> {
-            int modeId = formResponseCustom.getStepSliderResponse(1).getElementID();
-            List<Player> players = new ArrayList<>(Server.getInstance().getOnlinePlayers().values());
-            players.remove(player);  //跳过自己
-            if (modeId == 1) {
-                players.removeIf(player2 -> !player1.getLevel().getName().equals(player2.getLevel().getName()));
-            } else if (modeId == 2) {
-                String world = formResponseCustom.getDropdownResponse(2).getElementContent();
-                players.removeIf(player2 -> !world.equals(player2.getLevel().getName()));
-            }
-            if (!players.isEmpty()) {
-                Player target = players.get(new Random().nextInt(players.size()));
-                teleportToTarget(player1, target);
-            } else {
-                player1.sendMessage("没有符合条件的玩家");
-            }
+            teleportToTarget(player1, BaseUtils.getRandomPlayer(formResponseCustom.getStepSliderResponse(1).getElementID(),player1,formResponseCustom.getDropdownResponse(2).getElementContent()));
         });
         player.showFormWindow(custom);
     }
