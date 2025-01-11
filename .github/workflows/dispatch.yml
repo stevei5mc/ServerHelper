@@ -19,7 +19,7 @@ on:
         default: 'warning'
         type: choice
         options:
-        - None
+        - Not used
         - PR Approve
         - Deploy gitHub pages
       PR_ID:
@@ -52,6 +52,21 @@ jobs:
         echo Additional functions info:
         echo Functions: ${{ steps.get_info.additional-functions }}
         echo PR Approve ID : ${{ inputs.PR_ID }}
+    - name: Summary Action
+      if: steps.get_info.additional-functions != 'Not used'
+      uses: johngeorgewright/summary-action@v1.0.0
+      with:
+        summary: |
+          # Build
+          |Plugins|Docusaurus|
+          |:-:|:-:|
+          |${{ inputs.build-plugin }}|${{ inputs.build-Docusaurus }}|
+          ---
+          # Additional functions
+          |Functions|PR ID|
+          |:-:|:-:|
+          |${{ inputs.additional-functions }}|${{ inputs.PR_ID }}|
+
 
   build-plugin:
     if: ${{ inputs.build-plugin }}
