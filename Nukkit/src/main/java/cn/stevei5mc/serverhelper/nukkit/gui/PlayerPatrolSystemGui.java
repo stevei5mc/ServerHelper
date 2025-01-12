@@ -44,8 +44,18 @@ public class PlayerPatrolSystemGui {
             AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("Patrol system");
             custom.addElement(new ElementLabel("选择一名玩家进行巡查\n\n"));
             custom.addElement(new ElementDropdown("选择玩家",players));
+            custom.addElement(new ElementInput("输入指定玩家名称"));
             custom.onClosed(PlayerPatrolSystemGui::sendPatrolSystemMainUi);
-            custom.onResponded((formResponseCustom, player1) -> teleportToTarget(player1, BaseUtils.getPlayer(formResponseCustom.getDropdownResponse(1).getElementContent(),player1)));
+            custom.onResponded((formResponseCustom, player1) -> {
+                String target;
+                String target2 = formResponseCustom.getInputResponse(2);
+                if (!target2.equals("")) {
+                    target = target2;
+                }else {
+                    target = formResponseCustom.getDropdownResponse(1).getElementContent();
+                }
+                teleportToTarget(player1, BaseUtils.getPlayer(target, player1));
+            });
             player.showFormWindow(custom);
         }else {
             player.sendMessage("没有足够的在线玩家");
