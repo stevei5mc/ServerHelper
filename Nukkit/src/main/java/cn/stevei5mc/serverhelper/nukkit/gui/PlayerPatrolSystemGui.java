@@ -47,14 +47,16 @@ public class PlayerPatrolSystemGui {
             custom.addElement(new ElementToggle("旁观者模式/隐身模式"));
             custom.onClosed(PlayerPatrolSystemGui::sendPatrolSystemMainUi);
             custom.onResponded((formResponseCustom, player1) -> {
-                String target;
-                String target2 = formResponseCustom.getInputResponse(2);
-                if (!target2.equals("")) {
-                    target = target2;
-                }else {
-                    target = formResponseCustom.getDropdownResponse(1).getElementContent();
-                }
-                teleportToTarget(player1, BaseUtils.getPlayer(target, player1),formResponseCustom.getToggleResponse(4));
+                try {
+                    String target;
+                    String target2 = formResponseCustom.getInputResponse(2);
+                    if (!target2.equals("")) {
+                        target = target2;
+                    }else {
+                        target = formResponseCustom.getDropdownResponse(1).getElementContent();
+                    }
+                    teleportToTarget(player1, BaseUtils.getPlayer(target, player1),formResponseCustom.getToggleResponse(4));
+                }catch (Exception ignore) {}
             });
             player.showFormWindow(custom);
         }else {
@@ -77,9 +79,11 @@ public class PlayerPatrolSystemGui {
         custom.addElement(new ElementToggle("旁观者模式/隐身模式"));
         custom.onClosed(PlayerPatrolSystemGui::sendPatrolSystemMainUi);
         custom.onResponded((formResponseCustom, player1) -> {
-            teleportToTarget(player1,
-                BaseUtils.getRandomPlayer(formResponseCustom.getStepSliderResponse(1).getElementID(),player1,formResponseCustom.getDropdownResponse(2).getElementContent()),
-                formResponseCustom.getToggleResponse(4));
+            try {
+                teleportToTarget(player1,
+                    BaseUtils.getRandomPlayer(formResponseCustom.getStepSliderResponse(1).getElementID(),player1,formResponseCustom.getDropdownResponse(2).getElementContent()),
+                    formResponseCustom.getToggleResponse(4));
+            }catch (Exception ignore) {}
         });
         player.showFormWindow(custom);
     }
