@@ -51,6 +51,9 @@ jobs:
         echo ${{ steps.getPomInfo.outputs.group-id }}
         echo ${{ steps.getPomInfo.outputs.artifact-id }}
         echo ${{ steps.getPomInfo.outputs.version }}
+    - name: 修复pom.xml错误的版本号
+      if: steps.getPomInfo.outputs.version != steps.get_info.outputs.version
+      run: mvn versions:set -f ./${{ matrix.path }}/pom.xml -DnewVersion=${{ steps.get_info.outputs.version }}
     - name: Get pom.xml hash
       id: pom_hash
       run: echo "pom_hash=$(sha256sum ./${{ matrix.path }}/pom.xml|awk '{print $1}')" >> $GITHUB_OUTPUT
@@ -70,7 +73,7 @@ jobs:
         cp target/*.jar staging
         ls -la
         cd ./staging
-        bash ../../.github/workflows/get_build_files_hash.sh "${{ matrix.name }}"
+        bash ../../.github/workflows/get_build_files_hash.sh "${{ steps.getPomInfo.outputs.artifact-id }}"
         cd ../../
     - name: Upload build artifact
       uses: actions/upload-artifact@v4.3.3
@@ -105,6 +108,7 @@ jobs:
   release:
     name: Release
     needs:
+    - initialize
     - build-plugin-body
     - build-Docusaurus
     runs-on: ubuntu-latest

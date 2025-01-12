@@ -19,10 +19,9 @@ on:
         default: 'warning'
         type: choice
         options:
-        - None
+        - Not used
         - PR Approve
         - Deploy gitHub pages
-        - PR Approve and Deploy gitHub pages
       PR_ID:
         description: 'PR Approve ID'
         required: false
@@ -36,8 +35,6 @@ jobs:
       additional-functions: ${{ steps.get_info.outputs.additional-functions }}
       PR_ID: ${{ steps.get_info.outputs.PR_ID }}
       url: ${{ steps.get_info.outputs.url }}
-      PR_Approve: ${{ steps.settings_info.outputs.PR_Approve }}
-      Deploy_github_pages: ${{ steps.settings_info.outputs.Deploy_github_pages }}
     steps:
     - name: 获取信息
       id: get_info
@@ -46,19 +43,6 @@ jobs:
         echo "additional-functions=${{ inputs.additional-functions }}" >> $GITHUB_OUTPUT
         echo "PR_ID=${{ inputs.PR_ID }}" >> $GITHUB_OUTPUT
         echo "url=github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_OUTPUT
-    - name: Settings info
-      id: settings_info
-      run: |
-        if [[ "${{ inputs.additional-functions }}" == "PR Approve" || "${{ inputs.additional-functions }}" == "PR Approve and Deploy gitHub pages" ]]; then
-          echo "PR_Approve=true" >> $GITHUB_OUTPUT
-        else
-          echo "PR_Approve=false" >> $GITHUB_OUTPUT
-        fi
-        if [[ "${{ inputs.additional-functions }}" == "Deploy gitHub pages" || "${{ inputs.additional-functions }}" == "PR Approve and Deploy gitHub pages" ]]; then
-          echo "Deploy_github_pages=true" >> $GITHUB_OUTPUT
-        else
-          echo "Deploy_github_pages=false" >> $GITHUB_OUTPUT
-        fi
     - name:  Output info list
       run: |
         echo Bases info:
@@ -66,9 +50,23 @@ jobs:
         echo Build docusaurus : ${{ inputs.build-Docusaurus }}
         echo Artifact name: ${{ steps.get_info.outputs.repo_name }}-Dispatch-Build_${{ github.run_number }}
         echo Additional functions info:
-        echo PR Approve: ${{ steps.settings_info.outputs.PR_Approve }}
+        echo Functions: ${{ steps.get_info.additional-functions }}
         echo PR Approve ID : ${{ inputs.PR_ID }}
-        echo Deploy github pages: ${{ steps.settings_info.outputs.Deploy_github_pages }}
+    - name: Summary Action
+      if: steps.get_info.outputs.additional-functions != 'Not used'
+      uses: johngeorgewright/summary-action@v1.0.0
+      with:
+        summary: |
+          # Build
+          |Plugins|Docusaurus|
+          |:-:|:-:|
+          |${{ inputs.build-plugin }}|${{ inputs.build-Docusaurus }}|
+          ---
+          # Additional functions
+          |Functions|PR ID|
+          |:-:|:-:|
+          |${{ inputs.additional-functions }}|${{ inputs.PR_ID }}|
+
 
   build-plugin:
     if: ${{ inputs.build-plugin }}
@@ -88,7 +86,7 @@ jobs:
     - name: 拉取代码
       uses: actions/checkout@v4.1.6
     - name: 拉取代码(批准PR专用)
-      if: needs.initialize.outputs.PR_Approve == 'true' || needs.initialize.outputs.additional-functions == 'PR Approve and Deploy gitHub pages'
+      if: needs.initialize.outputs.additional-functions == 'PR Approve'
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
@@ -107,9 +105,9 @@ jobs:
         pom-location: ./${{ matrix.path }}/pom.xml 
     - name: Show get pom.xml gav info
       run: |
-        echo ${{ steps.getPomInfo.outputs.group-id }}
-        echo ${{ steps.getPomInfo.outputs.artifact-id }}
-        echo ${{ steps.getPomInfo.outputs.version }}
+        echo Group id: ${{ steps.getPomInfo.outputs.group-id }}
+        echo Artifact id: ${{ steps.getPomInfo.outputs.artifact-id }}
+        echo Version: ${{ steps.getPomInfo.outputs.version }}
     - name: Get pom.xml hash
       id: pom_hash
       run: echo "pom_hash=$(sha256sum ./${{ matrix.path }}/pom.xml|awk '{print $1}')" >> $GITHUB_OUTPUT
@@ -129,7 +127,7 @@ jobs:
         cp target/*.jar staging
         ls -la
         cd ./staging
-        bash ../../.github/workflows/get_build_files_hash.sh "${{ matrix.name }}"
+        bash ../../.github/workflows/get_build_files_hash.sh "${{ steps.getPomInfo.outputs.artifact-id }}"
         cd ../../
     - name: Upload build artifact
       uses: actions/upload-artifact@v4.3.3
@@ -148,7 +146,7 @@ jobs:
         with:
           submodules: true
       - name: 拉取代码(批准PR专用)
-        if: needs.initialize.outputs.PR_Approve == 'true' || needs.initialize.outputs.additional-functions == 'PR Approve and Deploy gitHub pages'
+        if: needs.initialize.outputs.additional-functions == 'PR Approve'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -170,35 +168,51 @@ jobs:
           path: Docusaurus/build
 
   PR-Approve:
-    if: needs.initialize.outputs.PR_Approve == 'true' || needs.initialize.outputs.additional-functions == 'PR Approve and Deploy gitHub pages'
+    if: needs.initialize.outputs.additional-functions == 'PR Approve' && always()
     name: PR Approve
-    needs: 
+    needs:
     - build-Docusaurus
     - build-plugin
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
-      - name: 拉取代码
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-      # - name: 批准PR
-      #   uses: hmarr/auto-approve-action@v4.0.0
-      #   with:
-      #     pull-request-number: ${{ inputs.PR_ID }}
-      #     review-message: |
-      #       构建成功，本PR获得批准合并。如果有新的提交则自动取消本次批准！
-      #       非常感谢您对本次作出的贡献。
+    - name: 拉取代码
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: 批准PR
+      if: needs.build-plugin.result == 'success'
+      uses: hmarr/auto-approve-action@v4.0.0
+      with:
+        pull-request-number: ${{ inputs.PR_ID }}
+        review-message: |
+          构建成功，本PR获得批准合并。如果有新的提交则自动取消本次批准！
+          非常感谢您对本次作出的贡献。
 
-      #       The build was successful, and this PR was approved for merging. 
-      #       If there is a new submission, this approval will be automatically canceled.
-      #       Thank you very much for your contribution to this event。
+          The build was successful, and this PR was approved for merging.
+          If there is a new submission, this approval will be automatically canceled.
+          Thank you very much for your contribution to this event。
 
-      #       ${{ needs.initialize.outputs.url }}
+          ${{ needs.initialize.outputs.url }}
+    - name: PR review message
+      if: failure() || needs.build-plugin.result != 'success'
+      uses: miry/prcomment@v0.1.3
+      with:
+        msg: |
+          构建失败，请查看构建获取失败原因：
+          Build failed, please check the build to obtain the reason for the failure:
+
+          ${{ steps.get_info.outputs.url }}
+        pr: ${{ inputs.PR_ID }}
+        token: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-gitHub-pages:
-    if: needs.initialize.outputs.Deploy_github_pages == 'true' || needs.initialize.outputs.additional-functions == 'PR Approve and Deploy gitHub pages'
+    if: needs.initialize.outputs.additional-functions == 'Deploy gitHub pages'
     name: Deploy gitHub pages
-    needs: PR-Approve
+    needs: 
+    - build-Docusaurus
+    - build-plugin
     # 给予 GITHUB_TOKEN 进行 Pages 部署所必须的权限
     permissions:
       pages: write # 以部署到 Pages
@@ -209,32 +223,6 @@ jobs:
     #   url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      # - name: 部署到 GitHub Pages
-      #   id: deployment
-      #   uses: actions/deploy-pages@v4
-      - run: pwd
-
-  aftermath-of-failure:
-    if: ${{ failure() }}
-    name: Aftermath of failure
-    needs: deploy-gitHub-pages
-    runs-on: ubuntu-latest
-    steps:
-      # 如果不这么干会有奇怪的bug，就这样不用管
-      - name: 获取信息
-        id: get_info
-        run: |
-          echo "Deploy_gitHub_pages=${{ inputs.deploy-gitHub-pages }}" >> $GITHUB_OUTPUT
-          echo "PR_Approve=${{ inputs.PR_Approve }}" >> $GITHUB_OUTPUT
-          echo "url=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >> $GITHUB_OUTPUT
-      - name: PR review message
-        if: needs.initialize.outputs.PR_Approve == 'true' || needs.initialize.outputs.additional-functions == 'PR Approve and Deploy gitHub pages'
-        uses: miry/prcomment@v0.1.3
-        with:
-          msg: |
-            构建失败，请查看构建获取失败原因：
-            Build failed, please check the build to obtain the reason for the failure:
-
-            ${{ steps.get_info.outputs.url }}
-          pr: ${{ inputs.PR_ID }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+       - name: 部署到 GitHub Pages
+         id: deployment
+         uses: actions/deploy-pages@v4

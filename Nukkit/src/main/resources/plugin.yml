@@ -3,3 +3,8 @@ main: cn.stevei5mc.serverhelper.nukkit.ServerHelperMain
 version: "1.0.0-SNAPSHOT"
 author: stevei5mc
 api: ["1.0.0"]
+
+permissions:
+  serverhelper.admin:
+    default: op
+    description: "插件主权限"

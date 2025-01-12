@@ -6,6 +6,7 @@ import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
+import cn.stevei5mc.serverhelper.nukkit.command.admin.AdminCommand;
 import cn.stevei5mc.serverhelper.nukkit.command.maincommand.ServerHelperMainCommand;
 import cn.stevei5mc.serverhelper.nukkit.utils.GitVersionUtil;
 
@@ -32,17 +33,18 @@ public class ServerHelperMain extends PluginBase {
     @Override
     public void onLoad() {
         instance = this;
-        this.saveConfigResources();
-        this.loadConfig();
+//        this.saveConfigResources();
+//        this.loadConfig();
     }
 
     @Override
     public void onEnable() {
-        loadBaseLanguage();
+        //loadBaseLanguage();
         this.getLogger().info(GitVersionUtil.getVersion());
         this.getLogger().info(GitVersionUtil.getCommitId());
         this.getLogger().info(GitVersionUtil.getBranch());
         this.getServer().getCommandMap().register("",new ServerHelperMainCommand());
+        this.getServer().getCommandMap().register("admin",new AdminCommand("admin"));
         Server.getInstance().getScheduler().scheduleDelayedTask(this, () -> {
             this.getLogger().warning("§c警告! §c本插件为免费且开源的一款插件，如果你是付费获取到的那么你就被骗了");
             this.getLogger().info("§a开源链接和使用方法: §bhttps://github.com/stevei5mc/ServerHelper");
@@ -77,10 +79,10 @@ public class ServerHelperMain extends PluginBase {
         return instance;
     }
 
-    @Override
+    /*@Override
     public Config getConfig() {
         return config;
-    }
+    }*/
 
     /*public Config getBanSetting() {
         return banSetting;
