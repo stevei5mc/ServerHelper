@@ -5,9 +5,7 @@ import cn.lanink.gamecore.form.windows.AdvancedFormWindowCustom;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.form.element.ElementDropdown;
-import cn.nukkit.form.element.ElementLabel;
-import cn.nukkit.form.element.ElementStepSlider;
+import cn.nukkit.form.element.*;
 import cn.nukkit.level.Level;
 import cn.nukkit.potion.Effect;
 import cn.stevei5mc.serverhelper.nukkit.ServerHelperMain;
@@ -42,9 +40,11 @@ public class PlayerPatrolSystemGui {
                 players.add(p.getName());
             }
             AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("Patrol system");
-            custom.addElement(new ElementLabel("选择一名玩家进行巡查\n\n"));
+            custom.addElement(new ElementLabel("选择一名玩家进行巡查或在输入框中填写玩家名称，如果在输入框中输入玩家名称则选择框自动失效"));
             custom.addElement(new ElementDropdown("选择玩家",players));
             custom.addElement(new ElementInput("输入指定玩家名称"));
+            custom.addElement(new ElementLabel("如果选择隐身模式，则需要手动脱下身上的装备否则会被其他玩家发现"));
+            custom.addElement(new ElementToggle("旁观者模式/隐身模式"));
             custom.onClosed(PlayerPatrolSystemGui::sendPatrolSystemMainUi);
             custom.onResponded((formResponseCustom, player1) -> {
                 String target;
@@ -54,7 +54,7 @@ public class PlayerPatrolSystemGui {
                 }else {
                     target = formResponseCustom.getDropdownResponse(1).getElementContent();
                 }
-                teleportToTarget(player1, BaseUtils.getPlayer(target, player1));
+                teleportToTarget(player1, BaseUtils.getPlayer(target, player1),formResponseCustom.getToggleResponse(4));
             });
             player.showFormWindow(custom);
         }else {
@@ -73,16 +73,24 @@ public class PlayerPatrolSystemGui {
                 "全部世界", "当前世界", "指定世界"
         )));
         custom.addElement(new ElementDropdown("选择一个世界", mapName));
+        custom.addElement(new ElementLabel("如果选择隐身模式，则需要手动脱下身上的装备否则会被其他玩家发现"));
+        custom.addElement(new ElementToggle("旁观者模式/隐身模式"));
         custom.onClosed(PlayerPatrolSystemGui::sendPatrolSystemMainUi);
         custom.onResponded((formResponseCustom, player1) -> {
-            teleportToTarget(player1, BaseUtils.getRandomPlayer(formResponseCustom.getStepSliderResponse(1).getElementID(),player1,formResponseCustom.getDropdownResponse(2).getElementContent()));
+            teleportToTarget(player1,
+                BaseUtils.getRandomPlayer(formResponseCustom.getStepSliderResponse(1).getElementID(),player1,formResponseCustom.getDropdownResponse(2).getElementContent()),
+                formResponseCustom.getToggleResponse(4));
         });
         player.showFormWindow(custom);
     }
 
-    private static void teleportToTarget(@NotNull Player admin,Player target) {
+    private static void teleportToTarget(@NotNull Player admin,Player target,Boolean patrolMode) {
         if (target.isOnline()) {
-            admin.setGamemode(3);
+            if (patrolMode) {
+                admin.addEffect(Effect.getEffect(14).setDuration(12000).setAmplifier(5).setVisible(false));
+            }else {
+                admin.setGamemode(3);
+            }
             admin.addEffect(Effect.getEffect(16).setDuration(12000).setAmplifier(5).setVisible(false));
             admin.teleport(target);
             admin.sendMessage("你已传送至："+target.getName());
