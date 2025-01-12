@@ -168,7 +168,7 @@ jobs:
           path: Docusaurus/build
 
   PR-Approve:
-    if: needs.initialize.outputs.additional-functions == 'PR Approve'
+    if: needs.initialize.outputs.additional-functions == 'PR Approve' && always()
     name: PR Approve
     needs:
     - build-Docusaurus

@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       repo_name: ${{ steps.get_info.outputs.repo_name }}
-      artifact_name: ${{ steps.get_info.outputs.repo_name }}-PR_check-Build_${{ github.run_number }}
+      artifact_name: ${{ steps.get_info.outputs.repo_name }}-PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
     steps:
     - name: 获取信息
       id: get_info
