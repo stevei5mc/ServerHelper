@@ -18,6 +18,10 @@ jobs:
       run: |
         echo "version=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
         echo "repo_name=${GITHUB_REPOSITORY/${{ github.repository_owner }}\//}" >> $GITHUB_OUTPUT
+    - name:  Output info list
+      run: |
+        echo Release version: ${{ steps.get_info.outputs.version }}
+        echo Artifact name: ${{ steps.get_info.outputs.repo_name }}-Release-${{ steps.get_info.outputs.version }}
 
   build-plugin:
     if: ${{ inputs.build-plugin }}
@@ -86,31 +90,28 @@ jobs:
     needs: initialize
     runs-on: ubuntu-latest
     steps:
-      - name: Clone repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Setup nodejs 18
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - name: 构建
-        run: |
-          cd Docusaurus
-          yarn install --frozen-lockfile
-          yarn build
-          cd ../
-      - name: 上传构建
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: Docusaurus/build
+    - name: Clone repository
+      uses: actions/checkout@v4
+      with:
+         fetch-depth: 0
+    - name: Setup nodejs 18
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+    - name: 构建
+      run: |
+        cd Docusaurus
+        yarn install --frozen-lockfile
+        yarn build
+        cd ../
+    - name: 上传构建
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: Docusaurus/build
 
   release:
     name: Release
-    needs:
-    - initialize
-    - build-plugin-body
-    - build-Docusaurus
+    needs: [initialize,build-plugin,build-Docusaurus]
     runs-on: ubuntu-latest
     steps:
     - name: Clone repository
@@ -143,9 +144,7 @@ jobs:
 
   deploy-gitHub-pages:
     name: Deploy gitHub pages
-    needs:
-    - build-plugin-body
-    - build-Docusaurus
+    needs: [build-plugin,build-Docusaurus]
     # 给予 GITHUB_TOKEN 进行 Pages 部署所必须的权限
     permissions:
       pages: write # 以部署到 Pages
@@ -156,6 +155,6 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+    - name: Deploy GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4

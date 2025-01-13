@@ -12,12 +12,12 @@ sqlite:
   # 选择system类型该配置项才会生效
   path: C:\data\
 
-    # 命令名（配置对应功能的命令名）
-    commands:
-      admin: admin
-      ban: ban
-      unban: unban
-      kick: kick
-      mute: mute
-      unmute: unmute
-      warn: warn
+# 命令名（配置对应功能的命令名）
+commands:
+  admin: admin
+  ban: ban
+  unban: unban
+  kick: kick
+  mute: mute
+  unmute: unmute
+   warn: warn
