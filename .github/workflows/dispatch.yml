@@ -67,7 +67,6 @@ jobs:
           |:-:|:-:|
           |${{ inputs.additional-functions }}|${{ inputs.PR_ID }}|
 
-
   build-plugin:
     if: ${{ inputs.build-plugin }}
     strategy:
@@ -202,7 +201,7 @@ jobs:
           构建失败，请查看构建获取失败原因：
           Build failed, please check the build to obtain the reason for the failure:
 
-          ${{ steps.get_info.outputs.url }}
+          ${{ needs.initialize.outputs.url }}
         pr: ${{ inputs.PR_ID }}
         token: ${{ secrets.GITHUB_TOKEN }}
 

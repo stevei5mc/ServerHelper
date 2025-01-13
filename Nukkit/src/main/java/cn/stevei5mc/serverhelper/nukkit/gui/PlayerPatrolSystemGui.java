@@ -70,7 +70,7 @@ public class PlayerPatrolSystemGui {
             mapName.add(level.getName());
         }
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("Patrol system");
-        custom.addElement(new ElementLabel("随机巡查一名玩家\n\n"));
+        custom.addElement(new ElementLabel("设置随机模式，点击确认后将会被传送至随机到的玩家身边"));
         custom.addElement(new ElementStepSlider("随机模式", Arrays.asList(
                 "全部世界", "当前世界", "指定世界"
         )));
