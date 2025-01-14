@@ -18,13 +18,10 @@ jobs:
   build-plugin:
     strategy:
       matrix:
-        include:
-          - name: "Nukkit"
-            path: "Nukkit"
-            java: '8'
-          - name: "WaterdogPE"
-            path: "WaterdogPE"
-            java: '17'
+        include: [
+          {name: "Nukkit",path: "Nukkit",java: '8'},
+          {name: "WaterdogPE",path: "WaterdogPE",java: '17'}
+        ]
     runs-on: ubuntu-latest
     needs: initialize
     name: Build ${{ matrix.name }} Edition
@@ -57,16 +54,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven--${{ matrix.name }}_edition-
     - name: Build project and get artifact hash
-      run: |
-        cd ./${{ matrix.path }}
-        pwd
-        mvn -B package --file pom.xml
-        mkdir staging
-        cp target/*.jar staging
-        ls -la
-        cd ./staging
-        bash ../../.github/workflows/get_build_files_hash.sh "${{ steps.getPomInfo.outputs.artifact-id }}"
-        cd ../../
+      run: bash .github/workflows/get_build_files_hash.sh "${{ steps.getPomInfo.outputs.artifact-id }}" "${{ matrix.path }}"
     - name: Upload build artifact
       uses: actions/upload-artifact@v4.3.3
       with:
