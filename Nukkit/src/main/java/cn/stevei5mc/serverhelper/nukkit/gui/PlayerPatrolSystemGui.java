@@ -31,23 +31,26 @@ public class PlayerPatrolSystemGui {
     }
 
     public static void sendDesignatedPatrolSystem(@NotNull Player player) {
-        if (Server.getInstance().getOnlinePlayers().size() >= 2) {
-            ArrayList<String> players = new ArrayList<>();
-            for (Player p : Server.getInstance().getOnlinePlayers().values()) {
-                if (p == player) { //跳过自己
-                    continue;
-                }
-                players.add(p.getName());
+        ArrayList<String> players = new ArrayList<>();
+        for (Player p : Server.getInstance().getOnlinePlayers().values()) {
+            if (p == player) { //跳过自己
+                continue;
             }
-            AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("Patrol system");
-            custom.addElement(new ElementLabel("选择一名玩家进行巡查或在输入框中填写玩家名称，如果在输入框中输入玩家名称则选择框自动失效"));
-            custom.addElement(new ElementDropdown("选择玩家",players));
-            custom.addElement(new ElementInput("输入指定玩家名称"));
-            custom.addElement(new ElementLabel("如果选择隐身模式，则需要手动脱下身上的装备否则会被其他玩家发现"));
-            custom.addElement(new ElementToggle("旁观者模式/隐身模式"));
-            custom.onClosed(PlayerPatrolSystemGui::sendPatrolSystemMainUi);
-            custom.onResponded((formResponseCustom, player1) -> {
-                try {
+            players.add(p.getName());
+        }
+        if (players.isEmpty()) {
+            players.add("§c§lPlayer not found");
+        }
+        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("Patrol system");
+        custom.addElement(new ElementLabel("选择一名玩家进行巡查或在输入框中填写玩家名称，如果在输入框中输入玩家名称则选择框自动失效"));
+        custom.addElement(new ElementDropdown("选择玩家",players));
+        custom.addElement(new ElementInput("输入指定玩家名称"));
+        custom.addElement(new ElementLabel("如果选择隐身模式，则需要手动脱下身上的装备否则会被其他玩家发现"));
+        custom.addElement(new ElementToggle("旁观者模式/隐身模式"));
+        custom.onClosed(PlayerPatrolSystemGui::sendPatrolSystemMainUi);
+        custom.onResponded((formResponseCustom, player1) -> {
+            try {
+                if (Server.getInstance().getOnlinePlayers().size() >= 2) {
                     String target;
                     String target2 = formResponseCustom.getInputResponse(2);
                     if (!target2.equals("")) {
@@ -55,13 +58,13 @@ public class PlayerPatrolSystemGui {
                     }else {
                         target = formResponseCustom.getDropdownResponse(1).getElementContent();
                     }
-                    teleportToTarget(player1, BaseUtils.getPlayer(target, player1),formResponseCustom.getToggleResponse(4));
-                }catch (Exception ignore) {}
-            });
-            player.showFormWindow(custom);
-        }else {
-            player.sendMessage("没有足够的在线玩家");
-        }
+                        teleportToTarget(player1, BaseUtils.getPlayer(target, player1),formResponseCustom.getToggleResponse(4));
+                }else {
+                    player1.sendMessage("没有足够的在线玩家");
+                }
+            }catch (Exception ignore) {}
+        });
+        player.showFormWindow(custom);
     }
 
     public static void sendRandomPatrolSystemUi(@NotNull Player player) {
@@ -80,9 +83,13 @@ public class PlayerPatrolSystemGui {
         custom.onClosed(PlayerPatrolSystemGui::sendPatrolSystemMainUi);
         custom.onResponded((formResponseCustom, player1) -> {
             try {
-                teleportToTarget(player1,
-                    BaseUtils.getRandomPlayer(formResponseCustom.getStepSliderResponse(1).getElementID(),player1,formResponseCustom.getDropdownResponse(2).getElementContent()),
-                    formResponseCustom.getToggleResponse(4));
+                if (Server.getInstance().getOnlinePlayers().size() >= 2) {
+                    teleportToTarget(player1,
+                            BaseUtils.getRandomPlayer(formResponseCustom.getStepSliderResponse(1).getElementID(),player1,formResponseCustom.getDropdownResponse(2).getElementContent()),
+                            formResponseCustom.getToggleResponse(4));
+                }else {
+                    player1.sendMessage("没有足够的在线玩家");
+                }
             }catch (Exception ignore) {}
         });
         player.showFormWindow(custom);
