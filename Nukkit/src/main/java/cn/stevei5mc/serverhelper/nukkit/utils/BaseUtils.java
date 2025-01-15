@@ -2,6 +2,8 @@ package cn.stevei5mc.serverhelper.nukkit.utils;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.potion.Effect;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,5 +63,26 @@ public class BaseUtils {
             admin.sendMessage("没有符合条件的玩家");
         }
         return players.get(new Random().nextInt(players.size()));
+    }
+
+    /**
+     * 传送至巡查目标
+     * @param admin 传送者
+     * @param target 传送目标
+     * @param patrolMode 巡查模式（true = 隐身模式，false = 旁观者模式）
+     */
+    public static void teleportToPatrolTarget(@NotNull Player admin, Player target, Boolean patrolMode) {
+        if (target.isOnline()) {
+            if (patrolMode) {
+                admin.addEffect(Effect.getEffect(14).setDuration(12000).setAmplifier(5).setVisible(false));
+            } else {
+                admin.setGamemode(3);
+            }
+            admin.addEffect(Effect.getEffect(16).setDuration(12000).setAmplifier(5).setVisible(false));
+            admin.teleport(target);
+            admin.sendMessage("你已传送至：" + target.getName());
+        } else {
+            admin.sendMessage("目标玩家不在线，请选择其他玩家");
+        }
     }
 }

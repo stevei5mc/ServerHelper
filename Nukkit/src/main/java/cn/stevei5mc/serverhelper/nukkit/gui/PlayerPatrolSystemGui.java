@@ -7,7 +7,6 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.form.element.*;
 import cn.nukkit.level.Level;
-import cn.nukkit.potion.Effect;
 import cn.stevei5mc.serverhelper.nukkit.ServerHelperMain;
 import cn.stevei5mc.serverhelper.nukkit.utils.BaseUtils;
 import org.jetbrains.annotations.NotNull;
@@ -58,7 +57,7 @@ public class PlayerPatrolSystemGui {
                     }else {
                         target = formResponseCustom.getDropdownResponse(1).getElementContent();
                     }
-                        teleportToTarget(player1, BaseUtils.getPlayer(target, player1),formResponseCustom.getToggleResponse(4));
+                        BaseUtils.teleportToPatrolTarget(player1, BaseUtils.getPlayer(target, player1),formResponseCustom.getToggleResponse(4));
                 }else {
                     player1.sendMessage("没有足够的在线玩家");
                 }
@@ -84,7 +83,7 @@ public class PlayerPatrolSystemGui {
         custom.onResponded((formResponseCustom, player1) -> {
             try {
                 if (Server.getInstance().getOnlinePlayers().size() >= 2) {
-                    teleportToTarget(player1,
+                    BaseUtils.teleportToPatrolTarget(player1,
                             BaseUtils.getRandomPlayer(formResponseCustom.getStepSliderResponse(1).getElementID(),player1,formResponseCustom.getDropdownResponse(2).getElementContent()),
                             formResponseCustom.getToggleResponse(4));
                 }else {
@@ -93,20 +92,5 @@ public class PlayerPatrolSystemGui {
             }catch (Exception ignore) {}
         });
         player.showFormWindow(custom);
-    }
-
-    private static void teleportToTarget(@NotNull Player admin,Player target,Boolean patrolMode) {
-        if (target.isOnline()) {
-            if (patrolMode) {
-                admin.addEffect(Effect.getEffect(14).setDuration(12000).setAmplifier(5).setVisible(false));
-            }else {
-                admin.setGamemode(3);
-            }
-            admin.addEffect(Effect.getEffect(16).setDuration(12000).setAmplifier(5).setVisible(false));
-            admin.teleport(target);
-            admin.sendMessage("你已传送至："+target.getName());
-        }else {
-            admin.sendMessage("目标玩家不在线，请选择其他玩家");
-        }
     }
 }
