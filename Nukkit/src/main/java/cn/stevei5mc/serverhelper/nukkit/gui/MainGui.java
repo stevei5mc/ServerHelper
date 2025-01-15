@@ -12,7 +12,7 @@ public class MainGui {
 
     public static void sendMain(@NotNull Player player) {
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("ServerHelper","ServerHelper");
-        simple.addButton(new ResponseElementButton("巡查系统").onClicked(PlayerPatrolSystemGui::sendPatrolSystemMainUi));
+        simple.addButton(new ResponseElementButton("管理在线玩家").onClicked(ManagePlayersGui::sendManagePlayersSystemUi));
         player.showFormWindow(simple);
     }
 }

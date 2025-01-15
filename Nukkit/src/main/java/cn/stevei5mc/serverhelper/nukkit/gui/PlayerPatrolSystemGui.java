@@ -25,7 +25,7 @@ public class PlayerPatrolSystemGui {
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("Patrol system","巡查玩家的游玩情况");
         simple.addButton(new ResponseElementButton("指定巡查").onClicked(PlayerPatrolSystemGui::sendDesignatedPatrolSystem));
         simple.addButton(new ResponseElementButton("随机巡查").onClicked(PlayerPatrolSystemGui::sendRandomPatrolSystemUi));
-        simple.addButton(new ResponseElementButton("返回").onClicked(MainGui::sendMain));
+        simple.addButton(new ResponseElementButton("返回").onClicked(ManagePlayersGui::sendManagePlayersSystemUi));
         player.showFormWindow(simple);
     }
 
