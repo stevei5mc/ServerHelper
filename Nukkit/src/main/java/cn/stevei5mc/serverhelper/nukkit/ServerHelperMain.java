@@ -39,16 +39,24 @@ public class ServerHelperMain extends PluginBase {
 
     @Override
     public void onEnable() {
-        //loadBaseLanguage();
-        this.getLogger().info(GitVersionUtil.getVersion());
-        this.getLogger().info(GitVersionUtil.getCommitId());
-        this.getLogger().info(GitVersionUtil.getBranch());
-        this.getServer().getCommandMap().register("",new ServerHelperMainCommand());
-        this.getServer().getCommandMap().register("admin",new AdminCommand("admin"));
-        Server.getInstance().getScheduler().scheduleDelayedTask(this, () -> {
-            this.getLogger().warning("§c警告! §c本插件为免费且开源的一款插件，如果你是付费获取到的那么你就被骗了");
-            this.getLogger().info("§a开源链接和使用方法: §bhttps://github.com/stevei5mc/ServerHelper");
-        },20);
+        if (this.getServer().getPluginManager().getPlugin("MemoriesOfTime-GameCore") != null) {
+            //loadBaseLanguage();
+            this.getLogger().info(GitVersionUtil.getVersion());
+            this.getLogger().info(GitVersionUtil.getCommitId());
+            this.getLogger().info(GitVersionUtil.getBranch());
+            this.getServer().getCommandMap().register("",new ServerHelperMainCommand());
+            this.getServer().getCommandMap().register("admin",new AdminCommand("admin"));
+            Server.getInstance().getScheduler().scheduleDelayedTask(this, () -> {
+                this.getLogger().warning("§c警告! §c本插件为免费且开源的一款插件，如果你是付费获取到的那么你就被骗了");
+                this.getLogger().info("§a开源链接和使用方法: §bhttps://github.com/stevei5mc/ServerHelper");
+            },20);
+        }else {
+            //不存在则停止加载插件
+            this.getLogger().warning("§c未检测到前置插件§aMemoriesOfTime-GameCore§c，请安装后再试!!!");
+            this.getLogger().warning("§b下载地址: §ehttps://motci.cn/job/GameCore/");
+            this.onDisable();
+        }
+
     }
 
     @Override
