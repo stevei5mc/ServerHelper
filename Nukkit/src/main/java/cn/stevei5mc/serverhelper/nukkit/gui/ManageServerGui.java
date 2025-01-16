@@ -16,6 +16,7 @@ public class ManageServerGui {
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理服务器");
         if (Server.getInstance().getPluginManager().getPlugin("AutoRestart") != null) {
             simple.addButton(new ResponseElementButton("重启管理").onClicked(Admin::sendMain));
+            simple.addButton(new ResponseElementButton("返回").onClicked(MainGui::sendMain));
         }
         player.showFormWindow(simple);
     }

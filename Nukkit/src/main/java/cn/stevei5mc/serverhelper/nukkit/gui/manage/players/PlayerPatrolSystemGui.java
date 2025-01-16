@@ -1,4 +1,4 @@
-package cn.stevei5mc.serverhelper.nukkit.gui;
+package cn.stevei5mc.serverhelper.nukkit.gui.manage.players;
 
 import cn.lanink.gamecore.form.element.ResponseElementButton;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowCustom;
@@ -8,6 +8,7 @@ import cn.nukkit.Server;
 import cn.nukkit.form.element.*;
 import cn.nukkit.level.Level;
 import cn.stevei5mc.serverhelper.nukkit.ServerHelperMain;
+import cn.stevei5mc.serverhelper.nukkit.gui.ManagePlayersGui;
 import cn.stevei5mc.serverhelper.nukkit.utils.BaseUtils;
 import org.jetbrains.annotations.NotNull;
 
