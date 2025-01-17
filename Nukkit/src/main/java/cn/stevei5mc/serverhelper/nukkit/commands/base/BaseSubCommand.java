@@ -1,4 +1,4 @@
-package cn.stevei5mc.serverhelper.nukkit.command.base;
+package cn.stevei5mc.serverhelper.nukkit.commands.base;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;

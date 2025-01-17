@@ -6,8 +6,8 @@ import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
-import cn.stevei5mc.serverhelper.nukkit.command.admin.AdminCommand;
-import cn.stevei5mc.serverhelper.nukkit.command.maincommand.ServerHelperMainCommand;
+import cn.stevei5mc.serverhelper.nukkit.commands.admin.AdminCommand;
+import cn.stevei5mc.serverhelper.nukkit.commands.maincommand.ServerHelperMainCommand;
 import cn.stevei5mc.serverhelper.nukkit.utils.GitVersionUtil;
 
 import java.util.Arrays;

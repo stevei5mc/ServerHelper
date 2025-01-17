@@ -1,9 +1,9 @@
-package cn.stevei5mc.serverhelper.nukkit.command.maincommand.sub;
+package cn.stevei5mc.serverhelper.nukkit.commands.maincommand.sub;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
 import cn.stevei5mc.serverhelper.nukkit.utils.GitVersionUtil;
-import cn.stevei5mc.serverhelper.nukkit.command.base.BaseSubCommand;
+import cn.stevei5mc.serverhelper.nukkit.commands.base.BaseSubCommand;
 
 public class PluginVersionCmd extends BaseSubCommand {
     public PluginVersionCmd(String name){

@@ -1,4 +1,4 @@
-package cn.stevei5mc.serverhelper.nukkit.command.base;
+package cn.stevei5mc.serverhelper.nukkit.commands.base;
 
 import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.Player;
