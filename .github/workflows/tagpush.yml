@@ -28,16 +28,16 @@ jobs:
     strategy:
       matrix:
         include: [
-          {name: "Nukkit",path: "Nukkit",java: '8'},
-          {name: "WaterdogPE",path: "WaterdogPE",java: '17'}
+          {name: "Nukkit",path: "Nukkit",java-version: '8'},
+          {name: "WaterdogPE",path: "WaterdogPE",java-version: '17'}
         ]
     runs-on: ubuntu-latest
     needs: initialize
-    name: Build ${{ matrix.name }} Edition
+    name: Build ${{ matrix.java-version }} Edition
     steps:
     - name: Clone repository
       uses: actions/checkout@v4
-    - name: Setup java ${{ matrix.java }}
+    - name: Setup java ${{ matrix.java-version }}
       uses: actions/setup-java@v4
       with:
         java-version: ${{ matrix.java }}

@@ -42,7 +42,7 @@ public class PlayerPatrolSystemGui {
             players.add("§c§lPlayer not found");
         }
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("Patrol system");
-        custom.addElement(new ElementLabel("选择一名玩家进行巡查或在输入框中填写玩家名称，如果在输入框中输入玩家名称则选择框自动失效"));
+        custom.addElement(new ElementLabel("选择一名玩家进行巡查或在输入框中填写玩家名，如果在输入框中输入玩家名称则选择框自动失效"));
         custom.addElement(new ElementDropdown("选择玩家",players));
         custom.addElement(new ElementInput("输入指定玩家名称"));
         custom.addElement(new ElementLabel("如果选择隐身模式，则需要手动脱下身上的装备否则会被其他玩家发现"));
@@ -58,7 +58,7 @@ public class PlayerPatrolSystemGui {
                     }else {
                         target = formResponseCustom.getDropdownResponse(1).getElementContent();
                     }
-                        BaseUtils.teleportToPatrolTarget(player1, BaseUtils.getPlayer(target, player1),formResponseCustom.getToggleResponse(4));
+                    BaseUtils.teleportToPatrolTarget(player1, BaseUtils.getPlayer(target, player1),formResponseCustom.getToggleResponse(4));
                 }else {
                     player1.sendMessage("没有足够的在线玩家");
                 }
