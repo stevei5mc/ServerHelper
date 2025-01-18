@@ -38,6 +38,10 @@
             <id>repo-lanink-cn</id>
             <url>https://repo.lanink.cn/repository/maven-public/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -48,11 +52,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>cn.stevei5mc</groupId>
+            <groupId>com.github.stevei5mc</groupId>
             <artifactId>AutoRestart</artifactId>
             <version>1.0.0-beta5</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/AutoRestart-1.0.0-beta5.jar</systemPath>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>cn.lanink</groupId>
