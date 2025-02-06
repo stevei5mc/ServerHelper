@@ -3,36 +3,38 @@ name: dispatch
 on:
   workflow_dispatch:
     inputs:
-      build-plugin:
-        description: 'Build plugin'
-        required: true
-        default: true
-        type: boolean
-      build-Docusaurus:
-        description: 'Build docusaurus'
-        required: true
-        default: false
-        type: boolean
-      additional-functions:
-        description: "Additional functions"
+      buildMode:
+        description: 'Build mode'
         required: false
-        default: 'warning'
+        default: 'Build plugin'
         type: choice
         options:
-        - Not used
-        - PR Approve
-        - Deploy gitHub pages
+          - 'Build plugin'
+          - 'Build docusaurus'
+          - 'Build plugin and docusaurus'
+      additionalFunctions:
+        description: "Additional functions"
+        required: false
+        default: 'Not used'
+        type: choice
+        options:
+        - 'Not used'
+        - 'PR Approve'
+        - 'Deploy gitHub pages'
       PR_ID:
         description: 'PR Approve ID'
         required: false
 
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
-  initialize:
+  Initialize:
     runs-on: ubuntu-latest
     outputs:
-      repo_name: ${{ steps.get_info.outputs.repo_name }}
       artifact_name: ${{ steps.get_info.outputs.repo_name }}-Dispatch-Build_${{ github.run_number }}
-      additional-functions: ${{ steps.get_info.outputs.additional-functions }}
+      buildMode: ${{ steps.get_info.outputs.buildMode }}
+      additional-functions: ${{ steps.get_info.outputs.additionalFunctions }}
       PR_ID: ${{ steps.get_info.outputs.PR_ID }}
       url: ${{ steps.get_info.outputs.url }}
     steps:
@@ -40,35 +42,29 @@ jobs:
       id: get_info
       run: |
         echo "repo_name=${GITHUB_REPOSITORY/${{ github.repository_owner }}\//}" >> $GITHUB_OUTPUT
-        echo "additional-functions=${{ inputs.additional-functions }}" >> $GITHUB_OUTPUT
+        echo "buildMode=${{ inputs.buildMode }}" >> $GITHUB_OUTPUT
+        echo "additional-functions=${{ inputs.additionalFunctions }}" >> $GITHUB_OUTPUT
         echo "PR_ID=${{ inputs.PR_ID }}" >> $GITHUB_OUTPUT
         echo "url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_OUTPUT
     - name:  Output info list
       run: |
         echo Bases info:
-        echo Build plugin : ${{ inputs.build-plugin }}
-        echo Build docusaurus : ${{ inputs.build-Docusaurus }}
+        echo Build mode: ${{ steps.get_info.outputs.buildMode }}
         echo Artifact name: ${{ steps.get_info.outputs.repo_name }}-Dispatch-Build_${{ github.run_number }}
         echo Additional functions info:
-        echo Functions: ${{ steps.get_info.additional-functions }}
-        echo PR Approve ID : ${{ inputs.PR_ID }}
-    - name: Summary Action
-      if: steps.get_info.outputs.additional-functions != 'Not used'
+        echo Functions: ${{ steps.get_info.outputs.additionalFunctions }}
+        echo PR Approve ID: ${{ inputs.PR_ID }}
+    - name: Summary base info
       uses: johngeorgewright/summary-action@v1.0.0
       with:
         summary: |
-          # Build
-          |Plugins|Docusaurus|
+          # Base info
+          |Build mode|Additional functions|
           |:-:|:-:|
-          |${{ inputs.build-plugin }}|${{ inputs.build-Docusaurus }}|
-          ---
-          # Additional functions
-          |Functions|PR ID|
-          |:-:|:-:|
-          |${{ inputs.additional-functions }}|${{ inputs.PR_ID }}|
+          |${{ inputs.buildMode }}|${{ inputs.additionalFunctions }}|
 
   build-plugin:
-    if: ${{ inputs.build-plugin }}
+    if: needs.initialize.outputs.buildMode == 'Build plugin' || needs.initialize.outputs.buildMode == 'Build plugin and docusaurus'
     strategy:
       matrix:
         include: [
@@ -76,15 +72,13 @@ jobs:
           {name: "WaterdogPE",path: "WaterdogPE",java-version: '17'}
         ]
     runs-on: ubuntu-latest
-    needs: initialize
+    needs: Initialize
     name: Build ${{ matrix.name }} Edition
     steps:
     - name: 拉取代码
       uses: actions/checkout@v4.1.6
     - name: 拉取代码(批准PR专用)
       if: needs.initialize.outputs.additional-functions == 'PR Approve'
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         ls -la
         gh pr checkout ${{ inputs.PR_ID }}
@@ -123,9 +117,9 @@ jobs:
         path: ${{ matrix.path }}/staging
 
   build-Docusaurus:
-    if: ${{ inputs.build-Docusaurus }}
+    if: needs.initialize.outputs.buildMode == 'Build docusaurus' || needs.initialize.outputs.buildMode == 'Build plugin and docusaurus'
     name: Build docusaurus
-    needs: initialize
+    needs: Initialize
     runs-on: ubuntu-latest
     steps:
     - name: 拉取代码
@@ -134,8 +128,6 @@ jobs:
         submodules: true
     - name: 拉取代码(批准PR专用)
       if: needs.initialize.outputs.additional-functions == 'PR Approve'
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         ls -la
         gh pr checkout ${{ inputs.PR_ID }}
@@ -157,7 +149,7 @@ jobs:
   PR-Approve:
     if: needs.initialize.outputs.additional-functions == 'PR Approve' && always()
     name: PR Approve
-    needs: [build-plugin,build-Docusaurus]
+    needs: [Initialize,build-plugin,build-Docusaurus]
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -214,6 +206,6 @@ jobs:
     #   url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-       - name: 部署到 GitHub Pages
-         id: deployment
-         uses: actions/deploy-pages@v4
+    - name: 部署到 GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4

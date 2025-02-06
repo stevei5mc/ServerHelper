@@ -47,7 +47,7 @@ public class ServerHelperMain extends PluginBase {
             this.getServer().getCommandMap().register("",new ServerHelperMainCommand());
             this.getServer().getCommandMap().register("admin",new AdminCommand("admin"));
             Server.getInstance().getScheduler().scheduleDelayedTask(this, () -> {
-                this.getLogger().warning("§c警告! §c本插件为免费且开源的一款插件，如果你是付费获取到的那么你就被骗了");
+                this.getLogger().warning("§c警告! §c本插件为免费且开源的，如果您付费获取获取的，则有可能被误导了");
                 this.getLogger().info("§a开源链接和使用方法: §bhttps://github.com/stevei5mc/ServerHelper");
             },20);
         }else {

@@ -26,6 +26,8 @@ public class ServerHelperMain extends Plugin {
     @Override
     public void onEnable() {
         instance = this;
+        this.getLogger().warn("§c警告! §c本插件为免费且开源的，如果您付费获取获取的，则有可能被误导了");
+        this.getLogger().info("§a开源链接和使用方法: §bhttps://github.com/stevei5mc/ServerHelper");
         saveConfigResources();
         loadConfig();
         this.getLogger().info(GitVersionUtil.getVersion());
