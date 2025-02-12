@@ -73,33 +73,25 @@ jobs:
         name: ${{ needs.initialize.outputs.artifact_name }}-for_${{ matrix.name }}_Edition
         path: ${{ matrix.path }}/staging
 
-#  build-Docusaurus:
-#    name: Build docusaurus
-#    needs: initialize
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: 拉取代码
-#        uses: actions/checkout@v4
-#        with:
-#          submodules: true
-#      - name: 拉取代码(批准PR专用)
-#        if: needs.initialize.outputs.PR_Approve == 'true' && needs.initialize.outputs.Deploy_gitHub_pages == 'false'
-#        env:
-#          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        run: |
-#          ls -la
-#          gh pr checkout ${{ inputs.PR_ID }}
-#          ls -la
-#      - uses: actions/setup-node@v4
-#        with:
-#          node-version: 18
-#      - name: 构建
-#        run: |
-#          cd Docusaurus
-#          yarn install --frozen-lockfile
-#          yarn build
-#          cd ../
-#      - name: 上传构建
-#        uses: actions/upload-pages-artifact@v3
-#        with:
-#          path: Docusaurus/build
+  build-Docusaurus:
+    name: Build docusaurus
+    needs: initialize
+    runs-on: ubuntu-latest
+    steps:
+    - name: 拉取代码
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 18
+    - name: 构建
+      run: |
+        cd Docusaurus
+        yarn install --frozen-lockfile
+        yarn build
+        cd ../
+    - name: 上传构建
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: Docusaurus/build
