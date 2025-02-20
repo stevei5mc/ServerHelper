@@ -1,6 +1,5 @@
 package cn.stevei5mc.serverhelper.waterdogpe;
 
-import cn.stevei5mc.serverhelper.waterdogpe.utils.GitVersionUtil;
 import dev.waterdog.waterdogpe.plugin.Plugin;
 import dev.waterdog.waterdogpe.utils.config.Configuration;
 import dev.waterdog.waterdogpe.utils.config.YamlConfig;
@@ -30,9 +29,9 @@ public class ServerHelperMain extends Plugin {
         this.getLogger().info("§a开源链接和使用方法: §bhttps://github.com/stevei5mc/ServerHelper");
         saveConfigResources();
         loadConfig();
-        this.getLogger().info(GitVersionUtil.getVersion());
-        this.getLogger().info(GitVersionUtil.getCommitId());
-        this.getLogger().info(GitVersionUtil.getBranch());
+        this.getLogger().info(getVersion());
+        this.getLogger().info(getCommitId());
+        this.getLogger().info(getBranch());
     }
 
     public void saveConfigResources() {
@@ -63,5 +62,17 @@ public class ServerHelperMain extends Plugin {
 
     public String getMessagePrefix() {
         return config.getString("message_prefix","§b§ServerHelper §r§7>> ");
+    }
+
+    public String getCommitId() {
+        return "§bCommit id§7:§a ${git.commit.id.abbrev}";
+    }
+
+    public String getVersion() {
+        return "§bVersion§7:§a "+this.getDescription().getVersion();
+    }
+
+    public String getBranch() {
+        return "§bBranch§7:§a ${git.branch}";
     }
 }

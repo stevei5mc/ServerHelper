@@ -9,11 +9,21 @@ jobs:
     outputs:
       repo_name: ${{ steps.get_info.outputs.repo_name }}
       artifact_name: ${{ steps.get_info.outputs.repo_name }}-PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
+      targetSha: ${{ steps.get_info.outputs.targetSha }}
+      targetRef: ${{ steps.get_info.outputs.targetRef }}
     steps:
     - name: 获取信息
       id: get_info
       run: |
         echo "repo_name=${GITHUB_REPOSITORY/${{ github.repository_owner }}\//}" >> $GITHUB_OUTPUT
+        echo "targetSha=$(echo ${{ github.event.pull_request.head.sha }} | cut -c 1-7)" >> $GITHUB_OUTPUT
+        echo "targetRef=$(echo ${{ github.event.pull_request.head.ref }} | sed 's/refs\///g' | sed 's/\//\\\//g')" >> $GITHUB_OUTPUT
+    - name:  Print info
+      run: |
+        echo Release version: ${{ steps.get_info.outputs.version }}
+        echo Artifact name: ${{ steps.get_info.outputs.repo_name }}-Release-${{ steps.get_info.outputs.version }}
+        echo Target sha: ${{ steps.get_info.outputs.targetSha }}
+        echo Tatget ref: ${{ steps.get_info.outputs.targetRef }}
 
   build-plugin:
     strategy:
@@ -43,16 +53,23 @@ jobs:
         echo ${{ steps.getPomInfo.outputs.group-id }}
         echo ${{ steps.getPomInfo.outputs.artifact-id }}
         echo ${{ steps.getPomInfo.outputs.version }}
-    - name: Get pom.xml hash
-      id: pom_hash
-      run: echo "pom_hash=$(sha256sum ./${{ matrix.path }}/pom.xml|awk '{print $1}')" >> $GITHUB_OUTPUT
+    - name: Get project info
+      id: getProjectInfo
+      run: |
+        echo "pom_hash=$(sha256sum ./${{ matrix.path }}/pom.xml|awk '{print $1}')" >> $GITHUB_OUTPUT
+        echo "path=$(grep "main:" ./${{ matrix.path }}/src/main/resources/plugin.yml | awk '{print $2}' | sed 's/\./\//g' | sed 's/"//g')" >> $GITHUB_OUTPUT
+    - name: Replace info
+      env:
+        path: ./${{ matrix.path }}/src/main/java/${{ steps.getProjectInfo.outputs.pom_hash }}
+      run: |
+        sed -i 's/${git.commit.id.abbrev}/${{ needs.initialize.outputs.targetSha }}/g' ${{ env.path }}/ServerHelperMain.java
+        sed -i 's/${git.branch}/${{ needs.initialize.outputs.targetRef }}/g' ${{ env.path }}/ServerHelperMain.java
     - name: Cache local Maven repository
       uses: actions/cache@v4
       with:
         path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ matrix.name }}_edition-${{ steps.pom_hash.outputs.pom_hash }}
-        restore-keys: |
-          ${{ runner.os }}-maven--${{ matrix.name }}_edition-
+        key: ${{ runner.os }}-maven-${{ matrix.name }}_edition-${{ steps.getProjectInfo.outputs.pom_hash }}
+        restore-keys: ${{ runner.os }}-maven--${{ matrix.name }}_edition-
     - name: Build project and get artifact hash
       run: bash .github/workflows/buildMavenProjectAndGetHash.sh "${{ steps.getPomInfo.outputs.artifact-id }}" "${{ matrix.path }}"
     - name: Upload build artifact

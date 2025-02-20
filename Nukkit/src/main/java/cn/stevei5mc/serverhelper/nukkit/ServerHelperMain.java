@@ -8,7 +8,6 @@ import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.stevei5mc.serverhelper.nukkit.commands.admin.AdminCommand;
 import cn.stevei5mc.serverhelper.nukkit.commands.maincommand.ServerHelperMainCommand;
-import cn.stevei5mc.serverhelper.nukkit.utils.GitVersionUtil;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -41,9 +40,9 @@ public class ServerHelperMain extends PluginBase {
     public void onEnable() {
         if (this.getServer().getPluginManager().getPlugin("MemoriesOfTime-GameCore") != null) {
             //loadBaseLanguage();
-            this.getLogger().info(GitVersionUtil.getVersion());
-            this.getLogger().info(GitVersionUtil.getCommitId());
-            this.getLogger().info(GitVersionUtil.getBranch());
+            this.getLogger().info(getVersion());
+            this.getLogger().info(getCommitId());
+            this.getLogger().info(getBranch());
             this.getServer().getCommandMap().register("",new ServerHelperMainCommand());
             this.getServer().getCommandMap().register("admin",new AdminCommand("admin"));
             Server.getInstance().getScheduler().scheduleDelayedTask(this, () -> {
@@ -141,5 +140,17 @@ public class ServerHelperMain extends PluginBase {
 
     public String getMessagePrefix() {
         return config.getString("message_prefix","§b§ServerHelper §r§7>> ");
+    }
+
+    public String getCommitId() {
+        return "§bCommit id§7:§a ${git.commit.id.abbrev}";
+    }
+
+    public String getVersion() {
+        return "§bVersion§7:§a "+getDescription().getVersion();
+    }
+
+    public String getBranch() {
+        return "§bBranch§7:§a ${git.branch}";
     }
 }
