@@ -37,6 +37,8 @@ jobs:
       additional-functions: ${{ steps.get_info.outputs.additionalFunctions }}
       PR_ID: ${{ steps.get_info.outputs.PR_ID }}
       url: ${{ steps.get_info.outputs.url }}
+      targetSha: ${{ steps.get_info.outputs.targetSha }}
+      targetRef: ${{ steps.get_info.outputs.targetRef }}
     steps:
     - name: 获取信息
       id: get_info
@@ -47,7 +49,7 @@ jobs:
         echo "PR_ID=${{ inputs.PR_ID }}" >> $GITHUB_OUTPUT
         echo "url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_OUTPUT
         echo "targetSha=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_OUTPUT
-        echo "targetRef=$(echo ${{ github.ref }} | sed 's/refs\///g' | sed 's/\//\\\//g')" >> $GITHUB_OUTPUT
+        echo "targetRef=$(echo ${{ github.ref }} | sed 's/refs\///g' | sed 's/heads\///g' | sed 's/\//\\\//g')" >> $GITHUB_OUTPUT
     - name:  Print info
       run: |
         echo Bases info:
@@ -109,7 +111,7 @@ jobs:
         echo "path=$(grep "main:" ./${{ matrix.path }}/src/main/resources/plugin.yml | awk '{print $2}' | sed 's/\./\//g' | sed 's/"//g')" >> $GITHUB_OUTPUT
     - name: Replace info
       env:
-        path: ./${{ matrix.path }}/src/main/java/${{ steps.getProjectInfo.outputs.pom_hash }}
+        path: ./${{ matrix.path }}/src/main/java/${{ steps.getProjectInfo.outputs.path }}
       run: |
         sed -i 's/${git.commit.id.abbrev}/${{ needs.initialize.outputs.tagSha }}/g' ${{ env.path }}/ServerHelperMain.java
         sed -i 's/${git.branch}/${{ needs.initialize.outputs.tagRef }}/g' ${{ env.path }}/ServerHelperMain.java
