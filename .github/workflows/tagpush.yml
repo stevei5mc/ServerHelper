@@ -70,8 +70,8 @@ jobs:
       env:
         path: ./${{ matrix.path }}/src/main/java/${{ steps.getProjectInfo.outputs.path }}
       run: |
-        sed -i 's/${git.commit.id.abbrev}/${{ needs.initialize.outputs.tagSha }}/g' ${{ env.path }}/ServerHelperMain.java
-        sed -i 's/${git.branch}/${{ needs.initialize.outputs.tagRef }}/g' ${{ env.path }}/ServerHelperMain.java
+        sed -i 's/${git.commit.id.abbrev}/${{ needs.initialize.outputs.targetSha }}/g' ${{ env.path }}/ServerHelperMain.java
+        sed -i 's/${git.branch}/${{ needs.initialize.outputs.targetRef }}/g' ${{ env.path }}/ServerHelperMain.java
     - name: Cache local Maven repository
       uses: actions/cache@v4
       with:
