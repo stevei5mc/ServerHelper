@@ -26,7 +26,7 @@ on:
         required: false
 
 env:
-  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GH_TOKEN: ${{ github.token }}
 
 jobs:
   Initialize:
@@ -70,8 +70,9 @@ jobs:
           |${{ inputs.buildMode }}|${{ inputs.additionalFunctions }}|
 
   build-plugin:
-    if: needs.initialize.outputs.buildMode == 'Build plugin' || needs.initialize.outputs.buildMode == 'Build plugin and docusaurus'
+    if: needs.Initialize.outputs.buildMode == 'Build plugin' || needs.Initialize.outputs.buildMode == 'Build plugin and docusaurus'
     strategy:
+      fail-fast: false
       matrix:
         include: [
           {name: "Nukkit",path: "Nukkit",java-version: '8'},
@@ -82,9 +83,9 @@ jobs:
     name: Build ${{ matrix.name }} Edition
     steps:
     - name: 拉取代码
-      uses: actions/checkout@v4.1.6
+      uses: actions/checkout@v4
     - name: 拉取代码(批准PR专用)
-      if: needs.initialize.outputs.additional-functions == 'PR Approve'
+      if: needs.Initialize.outputs.additional-functions == 'PR Approve'
       run: |
         ls -la
         gh pr checkout ${{ inputs.PR_ID }}
@@ -113,8 +114,8 @@ jobs:
       env:
         path: ./${{ matrix.path }}/src/main/java/${{ steps.getProjectInfo.outputs.path }}
       run: |
-        sed -i 's/${git.commit.id.abbrev}/${{ needs.initialize.outputs.targetSha }}/g' ${{ env.path }}/ServerHelperMain.java
-        sed -i 's/${git.branch}/${{ needs.initialize.outputs.targetRef }}/g' ${{ env.path }}/ServerHelperMain.java
+        sed -i 's/${git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' ${{ env.path }}/ServerHelperMain.java
+        sed -i 's/${git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' ${{ env.path }}/ServerHelperMain.java
     - name: Cache local Maven repository
       uses: actions/cache@v4
       with:
@@ -124,13 +125,13 @@ jobs:
     - name: Build project and get artifact hash
       run: bash .github/workflows/buildMavenProjectAndGetHash.sh "${{ steps.getPomInfo.outputs.artifact-id }}" "${{ matrix.path }}"
     - name: Upload build artifact
-      uses: actions/upload-artifact@v4.3.3
+      uses: actions/upload-artifact@v4
       with:
-        name: ${{ needs.initialize.outputs.artifact_name }}-for_${{ matrix.name }}_Edition
+        name: ${{ needs.Initialize.outputs.artifact_name }}-for_${{ matrix.name }}_Edition
         path: ${{ matrix.path }}/staging
 
   build-Docusaurus:
-    if: needs.initialize.outputs.buildMode == 'Build docusaurus' || needs.initialize.outputs.buildMode == 'Build plugin and docusaurus'
+    if: needs.Initialize.outputs.buildMode == 'Build docusaurus' || needs.Initialize.outputs.buildMode == 'Build plugin and docusaurus'
     name: Build docusaurus
     needs: Initialize
     runs-on: ubuntu-latest
@@ -140,7 +141,7 @@ jobs:
       with:
         submodules: true
     - name: 拉取代码(批准PR专用)
-      if: needs.initialize.outputs.additional-functions == 'PR Approve'
+      if: needs.Initialize.outputs.additional-functions == 'PR Approve'
       run: |
         ls -la
         gh pr checkout ${{ inputs.PR_ID }}
@@ -160,7 +161,7 @@ jobs:
         path: Docusaurus/build
 
   PR-Approve:
-    if: needs.initialize.outputs.additional-functions == 'PR Approve' && always()
+    if: needs.Initialize.outputs.additional-functions == 'PR Approve' && always()
     name: PR Approve
     needs: [Initialize,build-plugin,build-Docusaurus]
     runs-on: ubuntu-latest
@@ -206,17 +207,15 @@ jobs:
           ./temp/url.txt
 
   deploy-gitHub-pages:
-    if: needs.initialize.outputs.additional-functions == 'Deploy gitHub pages'
+    if: needs.Initialize.outputs.additional-functions == 'Deploy gitHub pages'
     name: Deploy gitHub pages
     needs: [build-plugin,build-Docusaurus]
-    # 给予 GITHUB_TOKEN 进行 Pages 部署所必须的权限
     permissions:
-      pages: write # 以部署到 Pages
-      id-token: write # 以验证部署来自恰当的源
-    # 部署到 Github Pages 环境
-    # environment:
-    #   name: github-pages
-    #   url: ${{ steps.deployment.outputs.page_url }}
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
     - name: 部署到 GitHub Pages

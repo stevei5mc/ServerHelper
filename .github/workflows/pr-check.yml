@@ -4,7 +4,7 @@ on:
   pull_request:
 
 jobs:
-  initialize:
+  Initialize:
     runs-on: ubuntu-latest
     outputs:
       repo_name: ${{ steps.get_info.outputs.repo_name }}
@@ -17,7 +17,7 @@ jobs:
       run: |
         echo "repo_name=${GITHUB_REPOSITORY/${{ github.repository_owner }}\//}" >> $GITHUB_OUTPUT
         echo "targetSha=$(echo ${{ github.event.pull_request.head.sha }} | cut -c 1-7)" >> $GITHUB_OUTPUT
-        echo "targetRef=$(echo ${{ github.ref }} | sed 's/refs\///g' | sed 's/heads\///g' | sed 's/\//\\\//g')" >> $GITHUB_OUTPUT
+        echo "targetRef=$(echo ${{ github.ref }} | sed 's/refs\///g' | sed 's/\//\\\//g')" >> $GITHUB_OUTPUT
     - name:  Print info
       run: |
         echo Release version: ${{ steps.get_info.outputs.version }}
@@ -27,17 +27,18 @@ jobs:
 
   build-plugin:
     strategy:
+      fail-fast: false
       matrix:
         include: [
           {name: "Nukkit",path: "Nukkit",java-version: '8'},
           {name: "WaterdogPE",path: "WaterdogPE",java-version: '17'}
         ]
     runs-on: ubuntu-latest
-    needs: initialize
+    needs: Initialize
     name: Build ${{ matrix.name }} Edition
     steps:
     - name: 拉取代码
-      uses: actions/checkout@v4.1.6
+      uses: actions/checkout@v4
     - name: Setup java ${{ matrix.java-version }}
       uses: actions/setup-java@v4
       with:
@@ -62,8 +63,8 @@ jobs:
       env:
         path: ./${{ matrix.path }}/src/main/java/${{ steps.getProjectInfo.outputs.path }}
       run: |
-        sed -i 's/${git.commit.id.abbrev}/${{ needs.initialize.outputs.targetSha }}/g' ${{ env.path }}/ServerHelperMain.java
-        sed -i 's/${git.branch}/${{ needs.initialize.outputs.targetRef }}/g' ${{ env.path }}/ServerHelperMain.java
+        sed -i 's/${git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' ${{ env.path }}/ServerHelperMain.java
+        sed -i 's/${git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' ${{ env.path }}/ServerHelperMain.java
     - name: Cache local Maven repository
       uses: actions/cache@v4
       with:
@@ -73,14 +74,14 @@ jobs:
     - name: Build project and get artifact hash
       run: bash .github/workflows/buildMavenProjectAndGetHash.sh "${{ steps.getPomInfo.outputs.artifact-id }}" "${{ matrix.path }}"
     - name: Upload build artifact
-      uses: actions/upload-artifact@v4.3.3
+      uses: actions/upload-artifact@v4
       with:
-        name: ${{ needs.initialize.outputs.artifact_name }}-for_${{ matrix.name }}_Edition
+        name: ${{ needs.Initialize.outputs.artifact_name }}-for_${{ matrix.name }}_Edition
         path: ${{ matrix.path }}/staging
 
 #  build-Docusaurus:
 #    name: Build docusaurus
-#    needs: initialize
+#    needs: Initialize
 #    runs-on: ubuntu-latest
 #    steps:
 #    - name: 拉取代码
