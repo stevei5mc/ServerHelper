@@ -33,30 +33,39 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       artifact_name: ${{ steps.get_info.outputs.repo_name }}-Dispatch-Build_${{ github.run_number }}
-      buildMode: ${{ steps.get_info.outputs.buildMode }}
-      additional-functions: ${{ steps.get_info.outputs.additionalFunctions }}
       PR_ID: ${{ steps.get_info.outputs.PR_ID }}
       url: ${{ steps.get_info.outputs.url }}
-      targetSha: ${{ steps.get_info.outputs.targetSha }}
-      targetRef: ${{ steps.get_info.outputs.targetRef }}
+      targetSha: ${{ env.targetSha }}
+      targetRef: ${{ env.targetRef }}
     steps:
+    - name: 拉取代码
+      uses: actions/checkout@v4
     - name: 获取信息
       id: get_info
       run: |
         echo "repo_name=${GITHUB_REPOSITORY/${{ github.repository_owner }}\//}" >> $GITHUB_OUTPUT
-        echo "buildMode=${{ inputs.buildMode }}" >> $GITHUB_OUTPUT
-        echo "additional-functions=${{ inputs.additionalFunctions }}" >> $GITHUB_OUTPUT
         echo "PR_ID=${{ inputs.PR_ID }}" >> $GITHUB_OUTPUT
         echo "url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_OUTPUT
-        echo "targetSha=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_OUTPUT
-        echo "targetRef=$(echo ${{ github.ref }} | sed 's/refs\///g' | sed 's/heads\///g' | sed 's/\//\\\//g')" >> $GITHUB_OUTPUT
+        echo "targetSha=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_ENV
+        echo "targetRef=$(echo ${{ github.ref }} | sed 's/refs\///g' | sed 's/heads\///g' | sed 's/\//\\\//g')" >> $GITHUB_ENV
+    - name: Get pr info
+      if: inputs.additionalFunctions == 'PR Approve'
+      uses: stevei5mc/Get-PR-info-action@main
+      id: getPrInfo
+      with:
+        prId: '${{ inputs.PR_ID }}'
+    - name: Settings env info
+      if: inputs.additionalFunctions == 'PR Approve'
+      run: |
+        echo "targetSha=$(echo ${{ steps.getPrInfo.outputs.headSha }} | cut -c 1-7)" >> $GITHUB_ENV
+        echo "targetRef=$(echo pull\/${{ inputs.PR_ID }}\/merge)" >> $GITHUB_ENV
     - name:  Print info
       run: |
         echo Bases info:
         echo Build mode: ${{ steps.get_info.outputs.buildMode }}
         echo Artifact name: ${{ steps.get_info.outputs.repo_name }}-Dispatch-Build_${{ github.run_number }}
-        echo Target sha: ${{ steps.get_info.outputs.targetSha }}
-        echo Tatget ref: ${{ steps.get_info.outputs.targetRef }}
+        echo Target sha: ${{ env.targetSha }}
+        echo Tatget ref: ${{ env.targetRef }}
         echo Additional functions info:
         echo Functions: ${{ steps.get_info.outputs.additionalFunctions }}
         echo PR Approve ID: ${{ inputs.PR_ID }}
@@ -68,9 +77,21 @@ jobs:
           |Build mode|Additional functions|
           |:-:|:-:|
           |${{ inputs.buildMode }}|${{ inputs.additionalFunctions }}|
+    - name: Pull request summary
+      if: inputs.additionalFunctions == 'PR Approve'
+      env:
+        summaryFilePath: .github/template/pr-summary.md
+      run: |
+        ls -la
+        gh pr checkout ${{ inputs.PR_ID }}
+        ls -la
+        sed -i 's/PRID/${{ inputs.PR_ID }}/g;s/PRURL/${{ steps.getPrInfo.outputs.htmlUrl }}/g;s/CommitCounts/${{ steps.getPrInfo.outputs.commits }}/g' ${{ env.summaryFilePath }}
+        sed -i 's/AdditionsLineCounts/${{ steps.getPrInfo.outputs.additions }}/g;s/DeletionsLineCounts/${{ steps.getPrInfo.outputs.deletions }}/g' ${{ env.summaryFilePath }}
+        sed -i 's/ChangedFilesCounts/${{ steps.getPrInfo.outputs.changedFiles }}/g' ${{ env.summaryFilePath }}
+        cat ${{ env.summaryFilePath }} >> $GITHUB_STEP_SUMMARY
 
   build-plugin:
-    if: needs.Initialize.outputs.buildMode == 'Build plugin' || needs.Initialize.outputs.buildMode == 'Build plugin and docusaurus'
+    if: inputs.buildMode == 'Build plugin' || inputs.buildMode == 'Build plugin and docusaurus'
     strategy:
       fail-fast: false
       matrix:
@@ -80,12 +101,12 @@ jobs:
         ]
     runs-on: ubuntu-latest
     needs: Initialize
-    name: Build ${{ matrix.name }} Edition
+    name: Build plugin
     steps:
     - name: 拉取代码
       uses: actions/checkout@v4
     - name: 拉取代码(批准PR专用)
-      if: needs.Initialize.outputs.additional-functions == 'PR Approve'
+      if: inputs.additionalFunctions == 'PR Approve'
       run: |
         ls -la
         gh pr checkout ${{ inputs.PR_ID }}
@@ -95,27 +116,27 @@ jobs:
       with:
         java-version: ${{ matrix.java-version }}
         distribution: 'temurin'
-    - name: Extractor pom.xml gav info 
-      uses: andreacomo/maven-gav-extractor@v2.0.1
-      id: getPomInfo
-      with:
-        pom-location: ./${{ matrix.path }}/pom.xml 
-    - name: Show get pom.xml gav info
-      run: |
-        echo Group id: ${{ steps.getPomInfo.outputs.group-id }}
-        echo Artifact id: ${{ steps.getPomInfo.outputs.artifact-id }}
-        echo Version: ${{ steps.getPomInfo.outputs.version }}
     - name: Get project info
       id: getProjectInfo
+      env:
+        basePath: ./${{ matrix.path }}/src/main
       run: |
         echo "pom_hash=$(sha256sum ./${{ matrix.path }}/pom.xml|awk '{print $1}')" >> $GITHUB_OUTPUT
-        echo "path=$(dirname $(grep "main:" ./${{ matrix.path }}/src/main/resources/plugin.yml | awk '{print $2}' | sed 's/\./\//g' | sed 's/"//g'))" >> $GITHUB_OUTPUT
+        echo "srcPath=${{ env.basePath }}/java/$(dirname $(grep "main:" ${{ env.basePath }}/resources/plugin.yml | awk '{print $2}' | sed 's/\./\//g' | sed 's/"//g'))" >> $GITHUB_OUTPUT
+        echo "groupId=$(mvn help:evaluate -Dexpression=project.groupId  -q -DforceStdout)" >> $GITHUB_OUTPUT
+        echo "artifactId=$(mvn help:evaluate -Dexpression=project.artifactId  -q -DforceStdout)" >> $GITHUB_OUTPUT
+        echo "version=$(mvn help:evaluate -Dexpression=project.version  -q -DforceStdout)" >> $GITHUB_OUTPUT
+    - name: Show get pom.xml gav info
+      run: |
+        echo Group id: ${{ steps.getProjectInfo.outputs.groupId }}
+        echo Artifact id: ${{ steps.getProjectInfo.outputs.artifactId }}
+        echo Version: ${{ steps.getProjectInfo.outputs.version }}
     - name: Replace info
       env:
-        path: ./${{ matrix.path }}/src/main/java/${{ steps.getProjectInfo.outputs.path }}
+        srcPath: ${{ steps.getProjectInfo.outputs.srcPath }}
       run: |
-        sed -i 's/${git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' ${{ env.path }}/ServerHelperMain.java
-        sed -i 's/${git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' ${{ env.path }}/ServerHelperMain.java
+        sed -i 's/${git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' ${{ env.srcPath }}/ServerHelperMain.java
+        sed -i 's/${git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' ${{ env.srcPath }}/ServerHelperMain.java
     - name: Cache local Maven repository
       uses: actions/cache@v4
       with:
@@ -131,7 +152,7 @@ jobs:
         path: ${{ matrix.path }}/staging
 
   build-Docusaurus:
-    if: needs.Initialize.outputs.buildMode == 'Build docusaurus' || needs.Initialize.outputs.buildMode == 'Build plugin and docusaurus'
+    if: inputs.buildMode == 'Build docusaurus' || inputs.buildMode == 'Build plugin and docusaurus'
     name: Build docusaurus
     needs: Initialize
     runs-on: ubuntu-latest
@@ -141,7 +162,7 @@ jobs:
       with:
         submodules: true
     - name: 拉取代码(批准PR专用)
-      if: needs.Initialize.outputs.additional-functions == 'PR Approve'
+      if: inputs.additionalFunctions == 'PR Approve'
       run: |
         ls -la
         gh pr checkout ${{ inputs.PR_ID }}
@@ -161,7 +182,7 @@ jobs:
         path: Docusaurus/build
 
   PR-Approve:
-    if: needs.Initialize.outputs.additional-functions == 'PR Approve' && always()
+    if: inputs.additionalFunctions == 'PR Approve' && always()
     name: PR Approve
     needs: [Initialize,build-plugin,build-Docusaurus]
     runs-on: ubuntu-latest
@@ -207,7 +228,7 @@ jobs:
           ./temp/url.txt
 
   deploy-gitHub-pages:
-    if: needs.Initialize.outputs.additional-functions == 'Deploy gitHub pages'
+    if: inputs.additionalFunctions == 'Deploy gitHub pages'
     name: Deploy gitHub pages
     needs: [build-plugin,build-Docusaurus]
     permissions:
