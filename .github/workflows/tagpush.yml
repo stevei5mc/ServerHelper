@@ -5,13 +5,15 @@ on:
     tags:
       - '*'
 
+env:
+  GH_TOKEN: ${{ github.token }}
+
 jobs:
   Initialize:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.get_info.outputs.version }}
       repo_name: ${{ steps.get_info.outputs.repo_name }}
-      artifact_name: ${{ steps.get_info.outputs.repo_name }}-Release-${{ steps.get_info.outputs.version }}
       targetSha: ${{ steps.get_info.outputs.targetSha }}
       targetRef: ${{ steps.get_info.outputs.targetRef }}
     steps:
@@ -25,7 +27,6 @@ jobs:
     - name:  Print info
       run: |
         echo Release version: ${{ steps.get_info.outputs.version }}
-        echo Artifact name: ${{ steps.get_info.outputs.repo_name }}-Release-${{ steps.get_info.outputs.version }}
         echo Target sha: ${{ steps.get_info.outputs.targetSha }}
         echo Tatget ref: ${{ steps.get_info.outputs.targetRef }}
 
@@ -34,12 +35,12 @@ jobs:
       fail-fast: false
       matrix:
         include: [
-          {name: "Nukkit",path: "Nukkit",java-version: '8'},
-          {name: "WaterdogPE",path: "WaterdogPE",java-version: '17'}
+          {path: "Nukkit",java-version: '8'},
+          {path: "WaterdogPE",java-version: '17'}
         ]
     runs-on: ubuntu-latest
     needs: Initialize
-    name: Build ${{ matrix.java-version }} Edition
+    name: Build plugin
     steps:
     - name: Clone repository
       uses: actions/checkout@v4
@@ -48,30 +49,30 @@ jobs:
       with:
         java-version: ${{ matrix.java }}
         distribution: 'temurin'
-    - name: Extractor pom.xml gav info 
-      uses: andreacomo/maven-gav-extractor@v2.0.1
-      id: getPomInfo
-      with:
-        pom-location: ./${{ matrix.path }}/pom.xml 
-    - name: Show get pom.xml gav info
-      run: |
-        echo ${{ steps.getPomInfo.outputs.group-id }}
-        echo ${{ steps.getPomInfo.outputs.artifact-id }}
-        echo ${{ steps.getPomInfo.outputs.version }}
-    - name: 修复pom.xml错误的版本号
-      if: steps.getPomInfo.outputs.version != needs.Initialize.outputs.version
-      run: mvn versions:set -f ./${{ matrix.path }}/pom.xml -DnewVersion=${{ needs.Initialize.outputs.version }}
     - name: Get project info
       id: getProjectInfo
+      env:
+        basePath: ./${{ matrix.path }}/src/main
       run: |
         echo "pom_hash=$(sha256sum ./${{ matrix.path }}/pom.xml|awk '{print $1}')" >> $GITHUB_OUTPUT
-        echo "path=$(dirname $(grep "main:" ./${{ matrix.path }}/src/main/resources/plugin.yml | awk '{print $2}' | sed 's/\./\//g' | sed 's/\"//g'))" >> $GITHUB_OUTPUT
+        echo "srcPath=${{ env.basePath }}/java/$(dirname $(grep "main:" ${{ env.basePath }}/resources/plugin.yml | awk '{print $2}' | sed 's/\./\//g' | sed 's/"//g'))" >> $GITHUB_OUTPUT
+        echo "groupId=$(mvn help:evaluate -f ./${{ matrix.path }}/pom.xml -Dexpression=project.groupId -q -DforceStdout)" >> $GITHUB_OUTPUT
+        echo "artifactId=$(mvn help:evaluate -f ./${{ matrix.path }}/pom.xml -Dexpression=project.artifactId -q -DforceStdout)" >> $GITHUB_OUTPUT
+        echo "version=$(mvn help:evaluate -f ./${{ matrix.path }}/pom.xml -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
+    - name: Print get pom.xml gav info
+      run: |
+        echo Group id: ${{ steps.getProjectInfo.outputs.groupId }}
+        echo Artifact id: ${{ steps.getProjectInfo.outputs.artifactId }}
+        echo Version: ${{ steps.getProjectInfo.outputs.version }}
     - name: Replace info
       env:
-        path: ./${{ matrix.path }}/src/main/java/${{ steps.getProjectInfo.outputs.path }}
+        mainClassPath: ${{ steps.getProjectInfo.outputs.srcPath }}/ServerHelperMain.java
       run: |
-        sed -i 's/${git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' ${{ env.path }}/ServerHelperMain.java
-        sed -i 's/${git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' ${{ env.path }}/ServerHelperMain.java
+        sed -i 's/{git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' ${{ env.mainClassPath }}
+        sed -i 's/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' ${{ env.mainClassPath }}
+    - name: 修复pom.xml错误的版本号
+      if: steps.getProjectInfo.outputs.version != needs.Initialize.outputs.version
+      run: mvn versions:set -f ./${{ matrix.path }}/pom.xml -DnewVersion=${{ needs.Initialize.outputs.version }}
     - name: Cache local Maven repository
       uses: actions/cache@v4
       with:
@@ -83,7 +84,7 @@ jobs:
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ needs.Initialize.outputs.artifact_name }}-for_${{ matrix.name }}_Edition
+        name: ${{ steps.getProjectInfo.outputs.artifactId }}-Release-${{ needs.Initialize.outputs.version }}
         path: ${{ matrix.path }}/staging
 
   build-Docusaurus:
