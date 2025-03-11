@@ -37,6 +37,14 @@ jobs:
       targetSha: ${{ env.targetSha }}
       targetRef: ${{ env.targetRef }}
     steps:
+    - name: Summary base info
+        uses: johngeorgewright/summary-action@v1.0.0
+        with:
+          summary: |
+            # Base info
+            |Build mode|Additional functions|
+            |:-:|:-:|
+            |${{ inputs.buildMode }}|${{ inputs.additionalFunctions }}|
     - name: 拉取代码
       uses: actions/checkout@v4
     - name: 获取信息
@@ -53,11 +61,23 @@ jobs:
       id: getPrInfo
       with:
         prId: '${{ inputs.PR_ID }}'
+    - name: Pull request status check
+      if: inputs.additionalFunctions == 'PR Approve'
+      run: |
+        if [ '${{ steps.getPrInfo.outputs.prState }}' = 'closed' ];then
+          echo "::set-failure:: The pull request state is closed state"
+        fi
+        if [ '${{ steps.getPrInfo.outputs.prLockedState }}' = 'true' ];then
+          echo "::set-failure:: The pull request state is locked state"
+        fi
+        if [ '${{ steps.getPrInfo.outputs.prDraftState }}' = 'true' ];then
+          echo "::set-failure:: The pull request state is draft state"
+        fi
     - name: Settings env info
       if: inputs.additionalFunctions == 'PR Approve'
       run: |
-        echo "targetSha=$(echo ${{ steps.getPrInfo.outputs.headSha }} | cut -c 1-7)" >> $GITHUB_ENV
         echo "targetRef=$(echo pull\/${{ inputs.PR_ID }}\/merge)" >> $GITHUB_ENV
+        echo "targetSha=$(echo ${{ steps.getPrInfo.outputs.headSha }} | cut -c 1-7)" >> $GITHUB_ENV
     - name:  Print info
       run: |
         echo Bases info:
@@ -67,26 +87,6 @@ jobs:
         echo Additional functions info:
         echo Functions: ${{ steps.get_info.outputs.additionalFunctions }}
         echo PR Approve ID: ${{ inputs.PR_ID }}
-    - name: Summary base info
-      uses: johngeorgewright/summary-action@v1.0.0
-      with:
-        summary: |
-          # Base info
-          |Build mode|Additional functions|
-          |:-:|:-:|
-          |${{ inputs.buildMode }}|${{ inputs.additionalFunctions }}|
-    - name: Pull request status check
-      if: inputs.additionalFunctions == 'PR Approve'
-      run: |
-        if [ steps.getPrInfo.outputs.prState = 'closed' ];then
-          echo "::set-failure:: The pull request state is closed"
-        fi
-        if [ steps.getPrInfo.outputs.prLockedState];then
-          echo "::set-failure:: The pull request state is locked"
-        fi
-        if [ steps.getPrInfo.outputs.prDraftState];then
-          echo "::set-failure:: The pull request state is draft"
-        fi
     - name: Pull request summary
       if: inputs.additionalFunctions == 'PR Approve'
       env:
@@ -193,7 +193,7 @@ jobs:
         path: Docusaurus/build
 
   PR-Approve:
-    if: inputs.additionalFunctions == 'PR Approve' && always()
+    if: inputs.additionalFunctions == 'PR Approve' &&  && always()
     name: PR Approve
     needs: [Initialize,build-plugin,build-Docusaurus]
     runs-on: ubuntu-latest
