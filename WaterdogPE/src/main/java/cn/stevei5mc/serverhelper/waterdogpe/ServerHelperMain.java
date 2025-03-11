@@ -65,7 +65,7 @@ public class ServerHelperMain extends Plugin {
     }
 
     public String getCommitId() {
-        return "§bCommit id§7:§a ${git.commit.id.abbrev}";
+        return "§bCommit id§7:§a {git.commit.id.abbrev}";
     }
 
     public String getVersion() {
@@ -73,6 +73,6 @@ public class ServerHelperMain extends Plugin {
     }
 
     public String getBranch() {
-        return "§bBranch§7:§a ${git.branch}";
+        return "§bBranch§7:§a {git.branch}";
     }
 }
