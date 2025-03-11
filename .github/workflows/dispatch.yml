@@ -75,6 +75,18 @@ jobs:
           |Build mode|Additional functions|
           |:-:|:-:|
           |${{ inputs.buildMode }}|${{ inputs.additionalFunctions }}|
+    - name: Pull request status check
+      if: inputs.additionalFunctions == 'PR Approve'
+      run: |
+        if [ steps.getPrInfo.outputs.prState = 'closed' ];then
+          echo "::set-failure:: The pull request state is closed"
+        fi
+        if [ steps.getPrInfo.outputs.prLockedState];then
+          echo "::set-failure:: The pull request state is locked"
+        fi
+        if [ steps.getPrInfo.outputs.prDraftState];then
+          echo "::set-failure:: The pull request state is draft"
+        fi
     - name: Pull request summary
       if: inputs.additionalFunctions == 'PR Approve'
       env:
@@ -118,12 +130,13 @@ jobs:
       id: getProjectInfo
       env:
         basePath: ./${{ matrix.path }}/src/main
+        pomPath: ./${{ matrix.path }}/pom.xml
       run: |
         echo "pom_hash=$(sha256sum ./${{ matrix.path }}/pom.xml|awk '{print $1}')" >> $GITHUB_OUTPUT
         echo "srcPath=${{ env.basePath }}/java/$(dirname $(grep "main:" ${{ env.basePath }}/resources/plugin.yml | awk '{print $2}' | sed 's/\./\//g' | sed 's/"//g'))" >> $GITHUB_OUTPUT
-        echo "groupId=$(mvn help:evaluate -f ./${{ matrix.path }}/pom.xml -Dexpression=project.groupId -q -DforceStdout)" >> $GITHUB_OUTPUT
-        echo "artifactId=$(mvn help:evaluate -f ./${{ matrix.path }}/pom.xml -Dexpression=project.artifactId -q -DforceStdout)" >> $GITHUB_OUTPUT
-        echo "version=$(mvn help:evaluate -f ./${{ matrix.path }}/pom.xml -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
+        echo "groupId=$(mvn help:evaluate -f ${{ env.pomPath }} -Dexpression=project.groupId -q -DforceStdout)" >> $GITHUB_OUTPUT
+        echo "artifactId=$(mvn help:evaluate -f ${{ env.pomPath }} -Dexpression=project.artifactId -q -DforceStdout)" >> $GITHUB_OUTPUT
+        echo "version=$(mvn help:evaluate -f ${{ env.pomPath }} -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
     - name: Print get pom.xml gav info
       run: |
         echo Group id: ${{ steps.getProjectInfo.outputs.groupId }}
@@ -131,10 +144,10 @@ jobs:
         echo Version: ${{ steps.getProjectInfo.outputs.version }}
     - name: Replace info
       env:
-        mainClassPath: ${{ steps.getProjectInfo.outputs.srcPath }}/ServerHelperMain.java
+        srcPath: ${{ steps.getProjectInfo.outputs.srcPath }}
       run: |
-        sed -i 's/{git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' ${{ env.mainClassPath }}
-        sed -i 's/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' ${{ env.mainClassPath }}
+        sed -i 's/{git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' ${{ env.srcPath }}/ServerHelperMain.java
+        sed -i 's/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' ${{ env.srcPath }}/ServerHelperMain.java
     - name: Cache local Maven repository
       uses: actions/cache@v4
       with:
