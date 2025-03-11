@@ -36,6 +36,7 @@ jobs:
       url: ${{ steps.get_info.outputs.url }}
       targetSha: ${{ env.targetSha }}
       targetRef: ${{ env.targetRef }}
+      prState: ${{ steps.getPrInfo.outputs.prState }}
     steps:
     - name: Summary base info
         uses: johngeorgewright/summary-action@v1.0.0
@@ -193,7 +194,7 @@ jobs:
         path: Docusaurus/build
 
   PR-Approve:
-    if: inputs.additionalFunctions == 'PR Approve' &&  && always()
+    if: inputs.additionalFunctions == 'PR Approve' && needs.Initialize.outputs.prState != 'closed' && always()
     name: PR Approve
     needs: [Initialize,build-plugin,build-Docusaurus]
     runs-on: ubuntu-latest
