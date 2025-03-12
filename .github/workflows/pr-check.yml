@@ -65,8 +65,11 @@ jobs:
       env:
         srcPath: ${{ steps.getProjectInfo.outputs.srcPath }}
       run: |
-        sed -i 's/{git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' ${{ env.srcPath }}/ServerHelperMain.java
-        sed -i 's/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' ${{ env.srcPath }}/ServerHelperMain.java
+        mainClassPath=${{ env.srcPath }}/ServerHelperMain.java
+        echo "$mainClassPath"
+        sed -i 's/{git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' $mainClassPath
+        sed -i 's/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' $mainClassPath
+        #sed -i 's/{plugin.version}/${{ steps.getProjectInfo.outputs.version }}/g' $mainClassPath
     - name: Cache local Maven repository
       uses: actions/cache@v4
       with:

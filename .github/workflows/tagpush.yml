@@ -69,8 +69,11 @@ jobs:
       env:
         srcPath: ${{ steps.getProjectInfo.outputs.srcPath }}
       run: |
-        sed -i 's/{git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' ${{ env.srcPath }}/ServerHelperMain.java
-        sed -i 's/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' ${{ env.srcPath }}/ServerHelperMain.java
+        mainClassPath=${{ env.srcPath }}/ServerHelperMain.java
+        echo "$mainClassPath"
+        sed -i 's/{git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' $mainClassPath
+        sed -i 's/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' $mainClassPath
+        #sed -i 's/{plugin.version}/${{ needs.Initialize.outputs.version }}/g' $mainClassPath
     - name: 修复pom.xml错误的版本号
       if: steps.getProjectInfo.outputs.version != needs.Initialize.outputs.version
       run: mvn versions:set -f ./${{ matrix.path }}/pom.xml -DnewVersion=${{ needs.Initialize.outputs.version }}

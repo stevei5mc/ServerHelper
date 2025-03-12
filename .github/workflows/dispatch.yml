@@ -36,12 +36,12 @@ jobs:
       url: ${{ steps.get_info.outputs.url }}
       targetSha: ${{ env.targetSha }}
       targetRef: ${{ env.targetRef }}
-      prState: ${{ steps.getPrInfo.outputs.prState }}
+      prState: ${{ env.prState }}
     steps:
     - name: Summary base info
-        uses: johngeorgewright/summary-action@v1.0.0
-        with:
-          summary: |
+      uses: johngeorgewright/summary-action@v1.0.0
+      with:
+        summary: |
             # Base info
             |Build mode|Additional functions|
             |:-:|:-:|
@@ -65,14 +65,17 @@ jobs:
     - name: Pull request status check
       if: inputs.additionalFunctions == 'PR Approve'
       run: |
-        if [ '${{ steps.getPrInfo.outputs.prState }}' = 'closed' ];then
+        if [ '${{ steps.getPrInfo.outputs.prState }}' = 'closed' ]; then
+          echo "prState=closed" >> $GITHUB_ENV
           echo "::set-failure:: The pull request state is closed state"
-        fi
-        if [ '${{ steps.getPrInfo.outputs.prLockedState }}' = 'true' ];then
+        elif [ '${{ steps.getPrInfo.outputs.prLockedState }}' = 'true' ]; then
+          echo "prState=locked" >> $GITHUB_ENV
           echo "::set-failure:: The pull request state is locked state"
-        fi
-        if [ '${{ steps.getPrInfo.outputs.prDraftState }}' = 'true' ];then
+        elif [ '${{ steps.getPrInfo.outputs.prDraftState }}' = 'true' ]; then
+          echo "prState=draft" >> $GITHUB_ENV
           echo "::set-failure:: The pull request state is draft state"
+        else
+          echo "prState=open" >> $GITHUB_ENV
         fi
     - name: Settings env info
       if: inputs.additionalFunctions == 'PR Approve'
@@ -147,8 +150,11 @@ jobs:
       env:
         srcPath: ${{ steps.getProjectInfo.outputs.srcPath }}
       run: |
-        sed -i 's/{git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' ${{ env.srcPath }}/ServerHelperMain.java
-        sed -i 's/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' ${{ env.srcPath }}/ServerHelperMain.java
+        mainClassPath=${{ env.srcPath }}/ServerHelperMain.java
+        echo "$mainClassPath"
+        sed -i 's/{git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' $mainClassPath
+        sed -i 's/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' $mainClassPath
+        #sed -i 's/{plugin.version}/${{ steps.getProjectInfo.outputs.version }}/g' $mainClassPath
     - name: Cache local Maven repository
       uses: actions/cache@v4
       with:
@@ -194,7 +200,7 @@ jobs:
         path: Docusaurus/build
 
   PR-Approve:
-    if: inputs.additionalFunctions == 'PR Approve' && needs.Initialize.outputs.prState != 'closed' && always()
+    if: inputs.additionalFunctions == 'PR Approve' && needs.Initialize.outputs.prState == 'open' && always()
     name: PR Approve
     needs: [Initialize,build-plugin,build-Docusaurus]
     runs-on: ubuntu-latest
