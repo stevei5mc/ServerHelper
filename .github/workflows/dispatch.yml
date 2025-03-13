@@ -42,12 +42,10 @@ jobs:
       uses: johngeorgewright/summary-action@v1.0.0
       with:
         summary: |
-            # Base info
-            |Build mode|Additional functions|
-            |:-:|:-:|
-            |${{ inputs.buildMode }}|${{ inputs.additionalFunctions }}|
-    - name: 拉取代码
-      uses: actions/checkout@v4
+          # Base info
+          |Build mode|Additional functions|
+          |:-:|:-:|
+          |${{ inputs.buildMode }}|${{ inputs.additionalFunctions }}|
     - name: 获取信息
       id: get_info
       run: |
@@ -62,21 +60,6 @@ jobs:
       id: getPrInfo
       with:
         prId: '${{ inputs.PR_ID }}'
-    - name: Pull request status check
-      if: inputs.additionalFunctions == 'PR Approve'
-      run: |
-        if [ '${{ steps.getPrInfo.outputs.prState }}' = 'closed' ]; then
-          echo "prState=closed" >> $GITHUB_ENV
-          echo "::set-failure:: The pull request state is closed state"
-        elif [ '${{ steps.getPrInfo.outputs.prLockedState }}' = 'true' ]; then
-          echo "prState=locked" >> $GITHUB_ENV
-          echo "::set-failure:: The pull request state is locked state"
-        elif [ '${{ steps.getPrInfo.outputs.prDraftState }}' = 'true' ]; then
-          echo "prState=draft" >> $GITHUB_ENV
-          echo "::set-failure:: The pull request state is draft state"
-        else
-          echo "prState=open" >> $GITHUB_ENV
-        fi
     - name: Settings env info
       if: inputs.additionalFunctions == 'PR Approve'
       run: |
@@ -93,16 +76,37 @@ jobs:
         echo PR Approve ID: ${{ inputs.PR_ID }}
     - name: Pull request summary
       if: inputs.additionalFunctions == 'PR Approve'
-      env:
-        summaryFilePath: .github/template/pr-summary.md
+      uses: johngeorgewright/summary-action@v1.0.0
+      with:
+        summary: |
+          # **Pull request summary**
+
+          |PR ID|提交数<br>Commit counts|PR state|
+          |:-:|:-:|:-:|
+          |[${{ inputs.PR_ID }}](${{ steps.getPrInfo.outputs.htmlUrl }})|{${{ steps.getPrInfo.outputs.commits }}}|${{ env.prState }}|
+
+          |增加行数<br>Additions lines counts|删除行数<br>Deletions lines counts|文件修改数<br>Changed files counts|
+          |:-:|:-:|:-:|
+          |${{ steps.getPrInfo.outputs.additions }}|${{ steps.getPrInfo.outputs.deletions }}|${{ steps.getPrInfo.outputs.changedFiles }}|
+
+          |Pull request 发起用户<br>Pull request initiate user|源分支<br>From branch|目标分支<br>Target branch|
+          |:-:|:-:|:-:|
+          |${{ steps.getPrInfo.outputs.requestUser }}|[${{ steps.getPrInfo.outputs.headLabel }}](${{ steps.getPrInfo.outputs.headRepoUrl }})|[${{ steps.getPrInfo.outputs.baseLabel }}](${{ steps.getPrInfo.outputs.baseRepoUrl }})|
+    - name: Pull request status check
+      if: inputs.additionalFunctions == 'PR Approve'
       run: |
-        ls -la
-        gh pr checkout ${{ inputs.PR_ID }}
-        ls -la
-        sed -i 's/PRID/${{ inputs.PR_ID }}/g;s/PRURL/${{ steps.getPrInfo.outputs.htmlUrl }}/g;s/CommitCounts/${{ steps.getPrInfo.outputs.commits }}/g' ${{ env.summaryFilePath }}
-        sed -i 's/AdditionsLineCounts/${{ steps.getPrInfo.outputs.additions }}/g;s/DeletionsLineCounts/${{ steps.getPrInfo.outputs.deletions }}/g' ${{ env.summaryFilePath }}
-        sed -i 's/ChangedFilesCounts/${{ steps.getPrInfo.outputs.changedFiles }}/g' ${{ env.summaryFilePath }}
-        cat ${{ env.summaryFilePath }} >> $GITHUB_STEP_SUMMARY
+        if [ '${{ steps.getPrInfo.outputs.prState }}' = 'closed' ]; then
+          echo "prState=closed" >> $GITHUB_ENV
+          echo "::set-failure:: The pull request state is closed state"
+        elif [ '${{ steps.getPrInfo.outputs.prLockedState }}' = 'true' ]; then
+          echo "prState=locked" >> $GITHUB_ENV
+          echo "::set-failure:: The pull request state is locked state"
+        elif [ '${{ steps.getPrInfo.outputs.prDraftState }}' = 'true' ]; then
+          echo "prState=draft" >> $GITHUB_ENV
+          echo "::set-failure:: The pull request state is draft state"
+        else
+          echo "prState=open" >> $GITHUB_ENV
+        fi
 
   build-plugin:
     if: inputs.buildMode == 'Build plugin' || inputs.buildMode == 'Build plugin and docusaurus'
@@ -151,7 +155,7 @@ jobs:
         srcPath: ${{ steps.getProjectInfo.outputs.srcPath }}
       run: |
         mainClassPath=${{ env.srcPath }}/ServerHelperMain.java
-        echo "$mainClassPath"
+        echo "Main class path: $mainClassPath"
         sed -i 's/{git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' $mainClassPath
         sed -i 's/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' $mainClassPath
         #sed -i 's/{plugin.version}/${{ steps.getProjectInfo.outputs.version }}/g' $mainClassPath

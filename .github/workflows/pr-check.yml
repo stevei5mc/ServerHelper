@@ -66,7 +66,7 @@ jobs:
         srcPath: ${{ steps.getProjectInfo.outputs.srcPath }}
       run: |
         mainClassPath=${{ env.srcPath }}/ServerHelperMain.java
-        echo "$mainClassPath"
+        echo "Main class path: $mainClassPath"
         sed -i 's/{git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' $mainClassPath
         sed -i 's/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' $mainClassPath
         #sed -i 's/{plugin.version}/${{ steps.getProjectInfo.outputs.version }}/g' $mainClassPath
