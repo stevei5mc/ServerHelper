@@ -66,6 +66,7 @@ jobs:
         echo "baselabel=$(echo ${{ steps.getPrInfo.outputs.baseLabel }} | sed 's/\//\\\//g')" >> $GITHUB_ENV
         echo "headUrl=$(echo ${{ steps.getPrInfo.outputs.headRepoUrl }} | sed 's/\//\\\//g')" >> $GITHUB_ENV
         echo "headabel=$(echo ${{ steps.getPrInfo.outputs.headLabel }} | sed 's/\//\\\//g')" >> $GITHUB_ENV
+        echo "prUrl=$(echo ${{ steps.getPrInfo.outputs.htmlUrl }} | sed 's/\//\\\//g')" >> $GITHUB_ENV
     - name:  Print info
       run: |
         echo Bases info:
@@ -80,7 +81,7 @@ jobs:
       env:
         summaryTemplateFilePath: .github/template/pr-summary.md
       run: |
-        sed -i 's/{1-1}/${{ inputs.PR_ID }}/g;s/{1-2}/${{ steps.getPrInfo.outputs.htmlUrl }}/g' ${{ env.summaryTemplateFilePath }}
+        sed -i 's/{1-1}/${{ inputs.PR_ID }}/g;s/{1-2}/${{ env.prUrl }}/g' ${{ env.summaryTemplateFilePath }}
         sed -i 's/{2}/${{ steps.getPrInfo.outputs.commits }}/g;s/{3}/${{ steps.getPrInfo.outputs.prState }}/g' ${{ env.summaryTemplateFilePath }}
         sed -i 's/{4}/${{ steps.getPrInfo.outputs.additions }};s/{5}/${{ steps.getPrInfo.outputs.deletions }}/g;s/{6}/${{ steps.getPrInfo.outputs.changedFiles }}/g' ${{ env.summaryTemplateFilePath }}
         sed -i 's/{7}/${{ steps.getPrInfo.outputs.requestUser }}/g' ${{ env.summaryTemplateFilePath }}
