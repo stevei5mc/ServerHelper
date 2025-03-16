@@ -81,12 +81,12 @@ jobs:
       env:
         summaryTemplateFilePath: .github/template/pr-summary.md
       run: |
-        sed -i 's|{1A}|${{ inputs.PR_ID }}|g;s|{1B}|${{ env.prUrl }}/g' ${{ env.summaryTemplateFilePath }}
-        sed -i 's|{2}|${{ steps.getPrInfo.outputs.commits }}|g;s|{3}|${{ steps.getPrInfo.outputs.prState }}/g' ${{ env.summaryTemplateFilePath }}
-        sed -i 's|{4}|${{ steps.getPrInfo.outputs.additions }};s/{5}|${{ steps.getPrInfo.outputs.deletions }}|g;s|{6}|${{ steps.getPrInfo.outputs.changedFiles }}/g' ${{ env.summaryTemplateFilePath }}
-        sed -i 's|{7}|${{ steps.getPrInfo.outputs.requestUser }}/g' ${{ env.summaryTemplateFilePath }}
-        sed -i 's|{8A}|${{ env.headlabel }}|g;s|{8B}|${{ env.headUrl }}|g;s|{8C}|${{ env.targetSha }}/g' ${{ env.summaryTemplateFilePath }}
-        sed -i 's|{9A}|${{ env.baselabel }}|g;s|{9B}|${{ env.baseUrl }}|g;s|{9C}|${{ env.baseSha }}/g' ${{ env.summaryTemplateFilePath }}
+        sed -i 's|{1A}|${{ inputs.PR_ID }}|g;s|{1B}|${{ env.prUrl }}|g' ${{ env.summaryTemplateFilePath }}
+        sed -i 's|{2}|${{ steps.getPrInfo.outputs.commits }}|g;s|{3}|${{ steps.getPrInfo.outputs.prState }}|g' ${{ env.summaryTemplateFilePath }}
+        sed -i 's|{4}|${{ steps.getPrInfo.outputs.additions }};s|{5}|${{ steps.getPrInfo.outputs.deletions }}|g;s|{6}|${{ steps.getPrInfo.outputs.changedFiles }}|g' ${{ env.summaryTemplateFilePath }}
+        sed -i 's|{7}|${{ steps.getPrInfo.outputs.requestUser }}|g' ${{ env.summaryTemplateFilePath }}
+        sed -i 's|{8A}|${{ env.headlabel }}|g;s|{8B}|${{ env.headUrl }}|g;s|{8C}|${{ env.targetSha }}|g' ${{ env.summaryTemplateFilePath }}
+        sed -i 's|{9A}|${{ env.baselabel }}|g;s|{9B}|${{ env.baseUrl }}|g;s|{9C}|${{ env.baseSha }}|g' ${{ env.summaryTemplateFilePath }}
     - name: Pull request status check
       if: inputs.additionalFunctions == 'PR Approve'
       run: |
