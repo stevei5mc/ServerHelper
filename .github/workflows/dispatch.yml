@@ -235,7 +235,7 @@ jobs:
       if: needs.build-plugin.result == 'success'
       uses: hmarr/auto-approve-action@v4.0.0
       with:
-        github-token: ${{ var.GH_TOKEN }}
+        github-token: ${{ env.GH_TOKEN }}
         pull-request-number: ${{ inputs.PR_ID }}
     - name: 成功时回复的消息
       if: needs.build-plugin.result == 'success'
