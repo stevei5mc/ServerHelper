@@ -18,6 +18,12 @@ on:
       PR_ID:
         description: 'PR Approve ID'
         required: false
+      artifactRetentionDays:
+        description: "Artifact retention days"
+        required: false
+        default: '90'
+        type: choice
+        options: ['1','7','14','30','60','90']    
 
 env:
   GH_TOKEN: ${{ github.token }}
@@ -39,9 +45,9 @@ jobs:
       with:
         summary: |
           # Base info
-          |Build mode|Additional functions|
-          |:-:|:-:|
-          |${{ inputs.buildMode }}|${{ inputs.additionalFunctions }}|
+          |Build mode|Additional functions|Artifact retention days|
+          |:-:|:-:|:-:|
+          |${{ inputs.buildMode }}|${{ inputs.additionalFunctions }}|${{ inputs.artifactRetentionDays }}|
     - name: 获取信息
       id: get_info
       run: |
@@ -87,24 +93,28 @@ jobs:
         sed -i 's|{7}|${{ steps.getPrInfo.outputs.requestUser }}|g' ${{ env.summaryTemplateFilePath }}
         sed -i 's|{8A}|${{ env.headlabel }}|g; s|{8B}|${{ env.headUrl }}|g; s|{8C}|${{ env.targetSha }}|g' ${{ env.summaryTemplateFilePath }}
         sed -i 's|{9A}|${{ env.baselabel }}|g; s|{9B}|${{ env.baseUrl }}|g; s|{9C}|${{ env.baseSha }}|g' ${{ env.summaryTemplateFilePath }}
+        cat ${{ env.summaryTemplateFilePath }} >> $GITHUB_STEP_SUMMARY
     - name: Pull request status check
       if: inputs.additionalFunctions == 'PR Approve'
       run: |
         if [ '${{ steps.getPrInfo.outputs.prState }}' = 'closed' ]; then
           echo "prState=closed" >> $GITHUB_ENV
           echo "::error::The pull request state is closed state"
+          exit 1
         elif [ '${{ steps.getPrInfo.outputs.prLockedState }}' = 'true' ]; then
           echo "prState=locked" >> $GITHUB_ENV
           echo "::error::The pull request state is locked state"
+          exit 1
         elif [ '${{ steps.getPrInfo.outputs.prDraftState }}' = 'true' ]; then
           echo "prState=draft" >> $GITHUB_ENV
           echo "::error::The pull request state is draft state"
+          exit 1
         else
           echo "prState=open" >> $GITHUB_ENV
         fi
 
   build-plugin:
-    if: inputs.buildMode == 'Build plugin' || inputs.buildMode == 'Build plugin and docusaurus'
+    if: (inputs.buildMode == 'Build plugin' || inputs.buildMode == 'Build plugin and docusaurus') || inputs.additionalFunctions == 'PR Approve'
     strategy:
       fail-fast: false
       matrix:
@@ -167,6 +177,7 @@ jobs:
       with:
         name: ${{ steps.getProjectInfo.outputs.artifactId }}-Dispatch-Build_${{ github.run_number }}
         path: ${{ matrix.path }}/staging
+        retention-days: ${{ inputs.artifactRetentionDays }}
 
   build-Docusaurus:
     if: inputs.buildMode == 'Build docusaurus' || inputs.buildMode == 'Build plugin and docusaurus'
@@ -197,6 +208,7 @@ jobs:
       uses: actions/upload-pages-artifact@v3
       with:
         path: Docusaurus/build
+        retention-days: ${{ inputs.artifactRetentionDays }}
 
   PR-Approve:
     if: inputs.additionalFunctions == 'PR Approve' && needs.Initialize.outputs.prState == 'open' && always()
@@ -223,7 +235,7 @@ jobs:
       if: needs.build-plugin.result == 'success'
       uses: hmarr/auto-approve-action@v4.0.0
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+        github-token: ${{ var.GH_TOKEN }}
         pull-request-number: ${{ inputs.PR_ID }}
     - name: 成功时回复的消息
       if: needs.build-plugin.result == 'success'
