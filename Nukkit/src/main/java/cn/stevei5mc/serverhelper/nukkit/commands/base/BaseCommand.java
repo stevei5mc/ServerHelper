@@ -36,7 +36,7 @@ public abstract class BaseCommand extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String s, String[] args) {
-        Language lang = main.getBaseLang(sender);
+//        Language lang = main.getBaseLang(sender);
         if(hasPermission(sender)) {
             if(args.length > 0) {
                 String subCommand = args[0].toLowerCase();

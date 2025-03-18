@@ -20,9 +20,9 @@ public class ManagePlayersGui {
     }
 
     public static void sendManagePlayersSystemUi(@NotNull Player player){
-        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理在线玩家");
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理玩家");
         simple.addButton(new ResponseElementButton("选择玩家").onClicked(ManagePlayersGui::sendSelectPlayerUi));
-        simple.addButton(new ResponseElementButton("巡查系统").onClicked(PlayerPatrolSystemGui::sendPatrolSystemMainUi));
+        simple.addButton(new ResponseElementButton("功能快捷通道").onClicked(ManagePlayersGui::sendManageFeatureList));
         simple.addButton(new ResponseElementButton("返回").onClicked(MainGui::sendMain));
         player.showFormWindow(simple);
     }
@@ -52,22 +52,34 @@ public class ManagePlayersGui {
                         target = BaseUtils.getPlayer(formResponseCustom.getDropdownResponse(1).getElementContent(),player1);
                     }
                     if (target != null) {
-                        sendManagePlayerSystem(player1,target);
+                        sendManageTargetPlayerSystem(player1,target);
                     }
                 }else {
                     player1.sendMessage("没有足够的在线玩家");
                 }
             }catch (Exception ignore) {}
         });
+        custom.onClosed(ManagePlayersGui::sendManagePlayersSystemUi);
         player.showFormWindow(custom);
     }
 
-    public static void sendManagePlayerSystem(@NotNull Player player,Player target) {
+    public static void sendManageFeatureList(@NotNull Player player) {
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理功能");
+        simple.addButton(new ResponseElementButton("巡查系统").onClicked(PlayerPatrolSystemGui::sendPatrolSystemMainUi));
+        simple.addButton(new ResponseElementButton("返回").onClicked(MainGui::sendMain));
+        player.showFormWindow(simple);
+    }
+
+    public static void sendManageTargetPlayerSystem(@NotNull Player player,Player target) {
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理目标玩家","目标玩家： "+target);
         simple.addButton(new ResponseElementButton("封禁"));
         simple.addButton(new ResponseElementButton("禁言"));
-        simple.addButton(new ResponseElementButton("踢出"));
-        simple.addButton(new ResponseElementButton("警告"));
+        if (target.isOnline()) {
+            simple.addButton(new ResponseElementButton("踢出"));
+            simple.addButton(new ResponseElementButton("警告"));
+            simple.addButton(new ResponseElementButton("巡查"));
+        }
+        simple.addButton(new ResponseElementButton("返回").onClicked(MainGui::sendMain));
         player.showFormWindow(simple);
     }
 }

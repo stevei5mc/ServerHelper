@@ -14,20 +14,20 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ServerHelperMain extends PluginBase {
-
+//这里被注释掉的代码都是暂时用不上的
     private static ServerHelperMain instance;
     private final List<String> languages = Arrays.asList(
-            "bg_BG", "cs_CZ","da_DK","de_DE","el_GR","en_GB","en_US","es_ES","es_MX","fi_FI","fr_CA","fr_FR","hu_HU","id_ID","it_IT",
-            "ja_JP","ko_KR","nb_NO","nl_NL","pl_PL","pt_BR","pt_PT","ru_RU","sk_SK","sv_SE","tr_TR","uk_UA","zh_CN","zh_TW"
+            /*"bg_BG", "cs_CZ","da_DK","de_DE","el_GR","en_GB","en_US","es_ES","es_MX","fi_FI","fr_CA","fr_FR","hu_HU","id_ID","it_IT",
+            "ja_JP","ko_KR","nb_NO","nl_NL","pl_PL","pt_BR","pt_PT","ru_RU","sk_SK","sv_SE","tr_TR","uk_UA","zh_CN","zh_TW"*/
     );
     private String defaultLanguage;
     private final HashMap<String, Language> languageBaseMap = new HashMap<>();
-    private final List<String> settings = Arrays.asList("ban","kick","warn","mute");
-    private Config config;
-    /*private Config banSetting;
-    private Config kickSetting;
-    private Config warnSetting;
-    private Config muteSetting;*/
+    private final List<String> settings = Arrays.asList(/*"ban","kick","warn","mute"*/);
+//    private Config config;
+//    private Config banSetting;
+//    private Config kickSetting;
+//    private Config warnSetting;
+//    private Config muteSetting;
 
     @Override
     public void onLoad() {
@@ -65,21 +65,21 @@ public class ServerHelperMain extends PluginBase {
 
     public void saveConfigResources() {
         saveDefaultConfig();
-/*        for (String language : languages) {
+        for (String language : languages) {
             saveResource("language/base/"+language+".yml");
             saveResource("language/custom/"+language+".yml");
         }
         for (String setting : settings) {
             saveResource("Setting/"+setting+".yml");
-        }*/
+        }
     }
 
     public void loadConfig() {
-        this.config = new Config(this.getDataFolder()+"/config.yml",Config.YAML);
-        /*this.banSetting = new Config(this.getDataFolder()+"/Setting/ban.yml",Config.YAML);
-        this.kickSetting = new Config(this.getDataFolder()+"/Setting/kick.yml",Config.YAML);
-        this.warnSetting = new Config(this.getDataFolder()+"/Setting/warn.yml",Config.YAML);
-        this.muteSetting = new Config(this.getDataFolder()+"/Setting/mute.yml",Config.YAML);*/
+//        this.config = new Config(this.getDataFolder()+"/config.yml",Config.YAML);
+//        this.banSetting = new Config(this.getDataFolder()+"/Setting/ban.yml",Config.YAML);
+//        this.kickSetting = new Config(this.getDataFolder()+"/Setting/kick.yml",Config.YAML);
+//        this.warnSetting = new Config(this.getDataFolder()+"/Setting/warn.yml",Config.YAML);
+//        this.muteSetting = new Config(this.getDataFolder()+"/Setting/mute.yml",Config.YAML);
     }
 
     public static ServerHelperMain getInstance() {
@@ -93,22 +93,22 @@ public class ServerHelperMain extends PluginBase {
 
     /*public Config getBanSetting() {
         return banSetting;
-    }
+    }*/
 
-    public Config getKickSetting() {
+    /*public Config getKickSetting() {
         return kickSetting;
-    }
+    }*/
 
-    public Config getWarnSetting() {
+    /*public Config getWarnSetting() {
         return warnSetting;
-    }
+    }*/
 
-    public Config getMuteSetting() {
+    /*public Config getMuteSetting() {
         return muteSetting;
     }*/
 
     //使用(有改动)https://github.com/MemoriesOfTime/CrystalWars/blob/master/src/main/java/cn/lanink/crystalwars/CrystalWars.java
-    private void loadBaseLanguage() {
+   /* private void loadBaseLanguage() {
         this.defaultLanguage = this.config.getString("default_language", "zh_CN");
         if (!languages.contains(this.defaultLanguage)) {
             this.getLogger().error("Language" + this.defaultLanguage + "Not supported, will load Chinese!");
@@ -136,11 +136,11 @@ public class ServerHelperMain extends PluginBase {
             return this.languageBaseMap.get(playerLanguage);
         }
         return this.languageBaseMap.get(this.defaultLanguage);
-    }
+    }*/
 
-    public String getMessagePrefix() {
+    /*public String getMessagePrefix() {
         return config.getString("message_prefix","§b§ServerHelper §r§7>> ");
-    }
+    }*/
 
     public String getCommitId() {
         return "§bCommit id§7:§a {git.commit.id.abbrev}";
