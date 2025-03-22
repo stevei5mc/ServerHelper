@@ -47,23 +47,27 @@ public class PlayerPatrolSystemGui {
         custom.addElement(new ElementLabel("如果选择隐身模式，则需要手动脱下身上的装备否则会被其他玩家发现"));
         custom.addElement(new ElementToggle("旁观者模式 / 隐身模式",true));
         custom.onResponded((formResponseCustom, player1) -> {
-            Player targetPlayer;
-            switch (formResponseCustom.getStepSliderResponse(0).getElementID()) {
-                case 0:
-                    if (!formResponseCustom.getInputResponse(3).equals("")) {
-                        targetPlayer = PlayerUtils.getPlayer(formResponseCustom.getInputResponse(3));
-                    }else {
-                        targetPlayer = PlayerUtils.getPlayer(formResponseCustom.getDropdownResponse(2).getElementContent());
-                    }
-                    break;
-                default:
-                    targetPlayer = PlayerUtils.getRandomPlayer(formResponseCustom.getStepSliderResponse(4).getElementID(),player1,formResponseCustom.getDropdownResponse(5).getElementContent());
-                    break;
-            }
-            if (targetPlayer != null && Server.getInstance().getOnlinePlayers().size() >= 2) {
-                PlayerUtils.teleportToPatrolTarget(player1,targetPlayer,formResponseCustom.getToggleResponse(7));
-            }else {
-                player1.sendMessage("无法找到目标玩家，请确保目标玩家在线或确保至少有两名玩家在线");
+            if (Server.getInstance().getOnlinePlayers().size() >= 2) {
+                Player targetPlayer;
+                switch (formResponseCustom.getStepSliderResponse(0).getElementID()) {
+                    case 0:
+                        if (!formResponseCustom.getInputResponse(3).equals("")) {
+                            targetPlayer = PlayerUtils.getPlayer(formResponseCustom.getInputResponse(3));
+                        }else {
+                            targetPlayer = PlayerUtils.getPlayer(formResponseCustom.getDropdownResponse(2).getElementContent());
+                        }
+                        break;
+                    default:
+                        targetPlayer = PlayerUtils.getRandomPlayer(formResponseCustom.getStepSliderResponse(4).getElementID(),player1,formResponseCustom.getDropdownResponse(5).getElementContent());
+                        break;
+                }
+                if (targetPlayer != null) {
+                    PlayerUtils.teleportToPatrolTarget(player1,targetPlayer,formResponseCustom.getToggleResponse(7));
+                }else {
+                    player1.sendMessage("无法找到目标玩家，请确保目标玩家在线并重新尝试");
+                }
+            }else{
+                player1.sendMessage("没有足够的在线玩家，至少需要两名玩家在线");
             }
         });
         player.showFormWindow(custom);

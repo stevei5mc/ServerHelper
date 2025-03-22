@@ -43,21 +43,21 @@ public class ManagePlayersGui {
         custom.addElement(new ElementDropdown("选择玩家",players));
         custom.addElement(new ElementInput("输入指定玩家名称"));
         custom.onResponded((formResponseCustom, player1) -> {
-            try {
-                if (Server.getInstance().getOnlinePlayers().size() >= 2) {
-                    Player target;
-                    if (!formResponseCustom.getInputResponse(2).equals("")) {
-                        target = PlayerUtils.getPlayer(formResponseCustom.getInputResponse(2));
-                    }else {
-                        target = PlayerUtils.getPlayer(formResponseCustom.getDropdownResponse(1).getElementContent());
-                    }
-                    if (target != null) {
-                        sendManageTargetPlayerSystem(player1,target);
-                    }
+            if (Server.getInstance().getOnlinePlayers().size() >= 2) {
+                Player target;
+                if (!formResponseCustom.getInputResponse(2).equals("")) {
+                    target = PlayerUtils.getPlayer(formResponseCustom.getInputResponse(2));
                 }else {
-                    player1.sendMessage("没有足够的在线玩家，至少需要两名玩家在线");
+                    target = PlayerUtils.getPlayer(formResponseCustom.getDropdownResponse(1).getElementContent());
                 }
-            }catch (Exception ignore) {}
+                if (target != null) {
+                    sendManageTargetPlayerSystem(player1,target);
+                }else {
+                    player1.sendMessage("无法找到目标玩家，请确保目标玩家在线并重新尝试");
+                }
+            }else {
+                player1.sendMessage("没有足够的在线玩家，至少需要两名玩家在线");
+            }
         });
         custom.onClosed(ManagePlayersGui::sendManagePlayersSystemUi);
         player.showFormWindow(custom);
