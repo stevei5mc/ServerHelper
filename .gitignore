@@ -1,6 +1,7 @@
 .mvn/
 .idea/
 target/
+.run/
 
 pom.xml.tag
 pom.xml.releaseBackup

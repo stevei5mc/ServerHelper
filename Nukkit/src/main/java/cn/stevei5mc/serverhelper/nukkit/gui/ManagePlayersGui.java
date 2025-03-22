@@ -9,7 +9,7 @@ import cn.nukkit.form.element.ElementDropdown;
 import cn.nukkit.form.element.ElementInput;
 import cn.nukkit.form.element.ElementLabel;
 import cn.stevei5mc.serverhelper.nukkit.gui.manage.players.PlayerPatrolSystemGui;
-import cn.stevei5mc.serverhelper.nukkit.utils.BaseUtils;
+import cn.stevei5mc.serverhelper.nukkit.utils.PlayerUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -47,15 +47,15 @@ public class ManagePlayersGui {
                 if (Server.getInstance().getOnlinePlayers().size() >= 2) {
                     Player target;
                     if (!formResponseCustom.getInputResponse(2).equals("")) {
-                        target = BaseUtils.getPlayer(formResponseCustom.getInputResponse(2),player1);
+                        target = PlayerUtils.getPlayer(formResponseCustom.getInputResponse(2));
                     }else {
-                        target = BaseUtils.getPlayer(formResponseCustom.getDropdownResponse(1).getElementContent(),player1);
+                        target = PlayerUtils.getPlayer(formResponseCustom.getDropdownResponse(1).getElementContent());
                     }
                     if (target != null) {
                         sendManageTargetPlayerSystem(player1,target);
                     }
                 }else {
-                    player1.sendMessage("没有足够的在线玩家");
+                    player1.sendMessage("没有足够的在线玩家，至少需要两名玩家在线");
                 }
             }catch (Exception ignore) {}
         });
@@ -65,7 +65,7 @@ public class ManagePlayersGui {
 
     public static void sendManageFeatureList(@NotNull Player player) {
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理功能");
-        simple.addButton(new ResponseElementButton("巡查系统").onClicked(PlayerPatrolSystemGui::sendPatrolSystemMainUi));
+        simple.addButton(new ResponseElementButton("巡查系统").onClicked(PlayerPatrolSystemGui::sendSelectPatrolPlayerUi));
         simple.addButton(new ResponseElementButton("返回").onClicked(MainGui::sendMain));
         player.showFormWindow(simple);
     }
