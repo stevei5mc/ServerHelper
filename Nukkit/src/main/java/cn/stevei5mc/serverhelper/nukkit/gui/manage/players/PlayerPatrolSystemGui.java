@@ -45,7 +45,7 @@ public class PlayerPatrolSystemGui {
         custom.addElement(new ElementStepSlider("随机模式", Arrays.asList("全部世界", "当前世界", "指定世界")));
         custom.addElement(new ElementDropdown("选择世界",mapName));
         custom.addElement(new ElementLabel("如果选择隐身模式，则需要手动脱下身上的装备否则会被其他玩家发现"));
-        custom.addElement(new ElementToggle("旁观者模式 / 隐身模式",true));
+        custom.addElement(new ElementToggle("旁观者模式 / 隐身模式"));
         custom.onResponded((formResponseCustom, player1) -> {
             if (Server.getInstance().getOnlinePlayers().size() >= 2) {
                 Player targetPlayer;
@@ -73,7 +73,13 @@ public class PlayerPatrolSystemGui {
         player.showFormWindow(custom);
     }
 
-    public static void sendConfirmWindow(@NotNull Player player) {
-
+    public static void sendConfirmWindow(@NotNull Player player,Player target) {
+        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("巡查系统");
+        custom.addElement(new ElementLabel("目标玩家: "+target.getName()));
+        custom.addElement(new ElementToggle("旁观者模式 / 隐身模式"));
+        custom.onResponded((formResponseCustom, player1) -> {
+            PlayerUtils.teleportToPatrolTarget(player,target,formResponseCustom.getToggleResponse(1));
+        });
+        player.showFormWindow(custom);
     }
 }
