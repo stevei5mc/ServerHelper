@@ -171,7 +171,7 @@ jobs:
         key: ${{ runner.os }}-maven-${{ matrix.name }}_edition-${{ steps.getProjectInfo.outputs.pom_hash }}
         restore-keys: ${{ runner.os }}-maven--${{ matrix.name }}_edition-
     - name: Build project and get artifact hash
-      run: bash .github/workflows/buildMavenProjectAndGetHash.sh "${{ steps.getPomInfo.outputs.artifact-id }}" "${{ matrix.path }}"
+      run: bash .github/workflows/buildMavenProjectAndGetHash.sh "${{ steps.getPomInfo.outputs.artifactId }}" "${{ matrix.path }}"
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
@@ -224,37 +224,7 @@ jobs:
         submodules: true
     - name: 准备信息模板
       run: |
-        pwd
-        mkdir temp
-        cat << EOF >> ./temp/url.txt
-        ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        EOF
-        ls -la ./temp
-        ls -la
-    - name: 批准PR
-      if: needs.build-plugin.result == 'success'
-      uses: hmarr/auto-approve-action@v4.0.0
-      with:
-        github-token: ${{ env.GH_TOKEN }}
-        pull-request-number: ${{ inputs.PR_ID }}
-    - name: 成功时回复的消息
-      if: needs.build-plugin.result == 'success'
-      uses: mshick/add-pr-comment@v2.8.2
-      with:
-        issue: ${{ inputs.PR_ID }}
-        allow-repeats: true
-        message-path: |
-          ./.github/message_template/success_messgae.txt
-          ./temp/url.txt
-    - name: 失败时回复的消息
-      if: failure() || needs.build-plugin.result != 'success'
-      uses: mshick/add-pr-comment@v2.8.2
-      with:
-        issue: ${{ inputs.PR_ID }}
-        allow-repeats: true
-        message-path: |
-          ./.github/message_template/failure_messgae.txt
-          ./temp/url.txt
+        sed -i 's/action_url/${{ needs.Initialize.outputs.url }}/g' .github/template/*.md
 
   deploy-gitHub-pages:
     if: inputs.additionalFunctions == 'Deploy gitHub pages'

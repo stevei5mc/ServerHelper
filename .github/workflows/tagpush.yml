@@ -84,7 +84,7 @@ jobs:
         key: ${{ runner.os }}-maven-${{ matrix.name }}_edition-${{ steps.getProjectInfo.outputs.pom_hash }}
         restore-keys: ${{ runner.os }}-maven--${{ matrix.name }}_edition-
     - name: Build project and get artifact hash
-      run: bash .github/workflows/buildMavenProjectAndGetHash.sh "${{ steps.getPomInfo.outputs.artifact-id }}" "${{ matrix.path }}"
+      run: bash .github/workflows/buildMavenProjectAndGetHash.sh "${{ steps.getPomInfo.outputs.artifactId }}" "${{ matrix.path }}"
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
