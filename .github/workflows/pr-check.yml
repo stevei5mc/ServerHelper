@@ -80,7 +80,7 @@ jobs:
     - name: Build project and get artifact hash
       run: |
         bash ${{ env.scriptPath }}/buildMavenProject.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "${{ matrix.path }}"
-        bash ${{ env.scriptPath }}/getArtifactIdHash.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "jar" "${{ matrix.path }}"
+        bash ${{ env.scriptPath }}/getArtifactHash.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "jar" "${{ matrix.path }}"
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
