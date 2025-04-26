@@ -27,6 +27,7 @@ on:
 
 env:
   GH_TOKEN: ${{ github.token }}
+  scriptPath: ".github/workflows/scripts"
 
 jobs:
   Initialize:
@@ -128,7 +129,7 @@ jobs:
     steps:
     - name: 拉取代码
       uses: actions/checkout@v4
-    - name: 拉取代码(批准PR专用)
+    - name: 拉取 PR 代码
       if: inputs.additionalFunctions == 'PR Approve'
       run: |
         ls -la
@@ -171,7 +172,9 @@ jobs:
         key: ${{ runner.os }}-maven-${{ matrix.name }}_edition-${{ steps.getProjectInfo.outputs.pom_hash }}
         restore-keys: ${{ runner.os }}-maven--${{ matrix.name }}_edition-
     - name: Build project and get artifact hash
-      run: bash .github/workflows/buildMavenProjectAndGetHash.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "${{ matrix.path }}"
+      run: |
+        bash ${{ env.scriptPath }}/buildMavenProject.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "${{ matrix.path }}"
+        bash ${{ env.scriptPath }}/getArtifactIdHash.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "jar" "${{ matrix.path }}"
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
@@ -187,9 +190,7 @@ jobs:
     steps:
     - name: 拉取代码
       uses: actions/checkout@v4
-      with:
-        submodules: true
-    - name: 拉取代码(批准PR专用)
+    - name: 拉取 PR 代码
       if: inputs.additionalFunctions == 'PR Approve'
       run: |
         ls -la
@@ -220,8 +221,6 @@ jobs:
     steps:
     - name: 拉取代码
       uses: actions/checkout@v4
-      with:
-        submodules: true
     - name: 准备信息模板
       run: |
         sed -i 's/action_url/${{ needs.Initialize.outputs.url }}/g' .github/template/*.md

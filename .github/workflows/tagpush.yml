@@ -7,6 +7,7 @@ on:
 
 env:
   GH_TOKEN: ${{ github.token }}
+  scriptPath: ".github/workflows/scripts"
 
 jobs:
   Initialize:
@@ -84,7 +85,9 @@ jobs:
         key: ${{ runner.os }}-maven-${{ matrix.name }}_edition-${{ steps.getProjectInfo.outputs.pom_hash }}
         restore-keys: ${{ runner.os }}-maven--${{ matrix.name }}_edition-
     - name: Build project and get artifact hash
-      run: bash .github/workflows/buildMavenProjectAndGetHash.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "${{ matrix.path }}"
+      run: |
+        bash ${{ env.scriptPath }}/buildMavenProject.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "${{ matrix.path }}"
+        bash ${{ env.scriptPath }}/getArtifactIdHash.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "jar" "${{ matrix.path }}"
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
@@ -98,8 +101,6 @@ jobs:
     steps:
     - name: Clone repository
       uses: actions/checkout@v4
-      with:
-         fetch-depth: 0
     - name: Setup nodejs 18
       uses: actions/setup-node@v4
       with:
@@ -129,7 +130,7 @@ jobs:
         merge-multiple: true
         pattern: ${{ needs.Initialize.outputs.repo_name }}-*
     - name: Organize build resources
-      run: bash .github/workflows/organize_resources.sh "${{ needs.Initialize.outputs.repo_name }}"
+      run: bash ${{ env.scriptPath }/organize_resources.sh "${{ needs.Initialize.outputs.repo_name }}"
     - name: Release to github
       uses: ncipollo/release-action@v1.14.0
       with:

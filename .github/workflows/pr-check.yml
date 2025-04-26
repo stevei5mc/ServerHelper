@@ -5,6 +5,7 @@ on:
 
 env:
   GH_TOKEN: ${{ github.token }}
+  scriptPath: ".github/workflows/scripts"
 
 jobs:
   Initialize:
@@ -77,7 +78,9 @@ jobs:
         key: ${{ runner.os }}-maven-${{ matrix.name }}_edition-${{ steps.getProjectInfo.outputs.pom_hash }}
         restore-keys: ${{ runner.os }}-maven--${{ matrix.name }}_edition-
     - name: Build project and get artifact hash
-      run: bash .github/workflows/buildMavenProjectAndGetHash.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "${{ matrix.path }}"
+      run: |
+        bash ${{ env.scriptPath }}/buildMavenProject.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "${{ matrix.path }}"
+        bash ${{ env.scriptPath }}/getArtifactIdHash.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "jar" "${{ matrix.path }}"
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
@@ -91,8 +94,6 @@ jobs:
 #    steps:
 #    - name: 拉取代码
 #      uses: actions/checkout@v4
-#      with:
-#        submodules: true
 #    - uses: actions/setup-node@v4
 #      with:
 #        node-version: 18
