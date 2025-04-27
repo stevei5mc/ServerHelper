@@ -171,10 +171,10 @@ jobs:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ matrix.name }}_edition-${{ steps.getProjectInfo.outputs.pom_hash }}
         restore-keys: ${{ runner.os }}-maven--${{ matrix.name }}_edition-
-    - name: Build project and get artifact hash
-      run: |
-        bash ${{ env.scriptPath }}/buildMavenProject.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "${{ matrix.path }}"
-        bash ${{ env.scriptPath }}/getArtifactHash.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "jar" "${{ matrix.path }}"
+    - name: Build project
+      run: bash ${{ env.scriptPath }}/buildMavenProject.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "${{ matrix.path }}"
+    - name: Get artifact hash
+      run: bash ${{ env.scriptPath }}/getArtifactHash.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "jar" "${{ matrix.path }}/staging"
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
