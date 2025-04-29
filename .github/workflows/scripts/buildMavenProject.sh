@@ -5,5 +5,5 @@ pwd
 mvn -B package --file pom.xml
 mkdir staging
 cp target/"$artifactName"*.jar staging
-ls -la ./staging
+ls -lah ./staging
 cd ../

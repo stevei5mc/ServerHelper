@@ -147,7 +147,7 @@ jobs:
         pomPath: ./${{ matrix.path }}/pom.xml
       run: |
         echo "pom_hash=$(sha256sum ./${{ matrix.path }}/pom.xml|awk '{print $1}')" >> $GITHUB_OUTPUT
-        echo "srcPath=${{ env.basePath }}/java/$(dirname $(grep "main:" ${{ env.basePath }}/resources/plugin.yml | awk '{print $2}' | sed 's/\./\//g' | sed 's/"//g'))" >> $GITHUB_OUTPUT
+        echo "srcPath=${{ env.basePath }}/java/$(dirname $(grep "main:" ${{ env.basePath }}/resources/plugin.yml | awk '{print $2}' | sed 's/\./\//g' | sed 's/"//g'))" >> $GITHUB_ENV
         echo "groupId=$(mvn help:evaluate -f ${{ env.pomPath }} -Dexpression=project.groupId -q -DforceStdout)" >> $GITHUB_OUTPUT
         echo "artifactId=$(mvn help:evaluate -f ${{ env.pomPath }} -Dexpression=project.artifactId -q -DforceStdout)" >> $GITHUB_OUTPUT
         echo "version=$(mvn help:evaluate -f ${{ env.pomPath }} -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
@@ -157,8 +157,6 @@ jobs:
         echo Artifact id: ${{ steps.getProjectInfo.outputs.artifactId }}
         echo Version: ${{ steps.getProjectInfo.outputs.version }}
     - name: Replace info
-      env:
-        srcPath: ${{ steps.getProjectInfo.outputs.srcPath }}
       run: |
         mainClassPath=${{ env.srcPath }}/ServerHelperMain.java
         echo "Main class path: $mainClassPath"
