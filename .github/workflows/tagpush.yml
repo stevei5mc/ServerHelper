@@ -127,10 +127,20 @@ jobs:
         path: staging
         merge-multiple: true
         pattern: ${{ needs.Initialize.outputs.repo_name }}-*
-    - name: Organize build resources
+    - name: Verify Files hash
       run: |
-        bash ${{ env.scriptPath }}/mergeHashFiles.sh "${{ needs.Initialize.outputs.repo_name }}"
-        bash ${{ env.scriptPath }}/prepareReleasesFiles.sh "${{ needs.Initialize.outputs.repo_name }}"
+        cd ./staging && pwd && ls -lah
+        for edition in Nukkit WaterdogPE
+        do
+          bash ${{ env.scriptPath }}/verifyHash.sh "${{ needs.Initialize.outputs.repo_name }}-$edition--edition.sha256"
+        done
+        cd ../
+    - name: Merge Hash list files
+      env:
+        saveName: ${{ needs.Initialize.outputs.repo_name }}-V${{ needs.Initialize.outputs.version }}
+      run: bash ${{ env.scriptPath }}/mergeHashFiles.sh "${{ needs.Initialize.outputs.repo_name }}" "./staging" "${{ env.saveName }}"
+    - name: Prepare releases files
+      run: bash ${{ env.scriptPath }}/prepareReleasesFiles.sh
     - name: Release to github
       uses: ncipollo/release-action@v1.14.0
       with:
@@ -138,16 +148,7 @@ jobs:
         name: ${{ needs.Initialize.outputs.version }}
         token: ${{ env.GH_TOKEN }}
         bodyFile: ./docs/changelogs/${{ needs.Initialize.outputs.version }}.md
-        artifacts: ./github_releases/*.*
-    #这个暂时没有用
-    # - name: 发布至minebbs
-    #   uses: engsr6982/upload-minebbs@v1.2.0
-    #   with: 
-    #     minebbs_token: ${{ secrets.MINEBBS_TOKEN }}
-    #     resource_id: "12345"
-    #     upload_file: ./github_artifact/*.*
-    #     update_title: ${{ needs.Initialize.outputs.version }}
-    #     update_version: ${{ needs.Initialize.outputs.version }}
+        artifacts: ./staging/*.*
 
   deploy-gitHub-pages:
     name: Deploy gitHub pages

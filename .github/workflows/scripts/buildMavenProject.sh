@@ -1,3 +1,4 @@
+#!/bin/bash
 artifactName="$1"
 projectPath="$2"
 cd ./$projectPath
