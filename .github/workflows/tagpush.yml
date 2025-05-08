@@ -117,6 +117,8 @@ jobs:
   release:
     name: Release
     needs: [Initialize,build-plugin,build-Docusaurus]
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
     - name: Clone repository
@@ -137,8 +139,8 @@ jobs:
         cd ../
     - name: Merge Hash list files
       env:
-        saveName: ${{ needs.Initialize.outputs.repo_name }}-V${{ needs.Initialize.outputs.version }}
-      run: bash ${{ env.scriptPath }}/mergeHashFiles.sh "${{ needs.Initialize.outputs.repo_name }}" "./staging" "${{ env.saveName }}"
+        saveName: ${{ needs.Initialize.outputs.repo_name }}-V${{ needs.Initialize.outputs.version }}-all-edition
+      run: bash ${{ env.scriptPath }}/mergeHashFiles.sh "${{ needs.Initialize.outputs.repo_name }}" "./staging" "$saveName"
     - name: Prepare releases files
       run: bash ${{ env.scriptPath }}/prepareReleasesFiles.sh
     - name: Release to github

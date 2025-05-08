@@ -54,7 +54,7 @@
         <dependency>
             <groupId>com.github.stevei5mc</groupId>
             <artifactId>AutoRestart</artifactId>
-            <version>1.0.0-beta5</version>
+            <version>1.0.0-beta7</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
