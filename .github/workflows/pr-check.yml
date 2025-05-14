@@ -73,7 +73,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ matrix.name }}_edition-${{ steps.getProjectInfo.outputs.pom_hash }}
+        key: ${{ runner.os }}-maven-${{ steps.getProjectInfo.outputs.artifactId }}_edition-${{ steps.getProjectInfo.outputs.pom_hash }}
         restore-keys: ${{ runner.os }}-maven--${{ matrix.name }}_edition-
     - name: Build project
       run: bash ${{ env.scriptPath }}/buildMavenProject.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "${{ matrix.path }}"
