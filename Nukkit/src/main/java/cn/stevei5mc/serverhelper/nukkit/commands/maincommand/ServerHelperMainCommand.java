@@ -1,9 +1,9 @@
-package cn.stevei5mc.serverhelper.nukkit.command.maincommand;
+package cn.stevei5mc.serverhelper.nukkit.commands.maincommand;
 
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
-import cn.stevei5mc.serverhelper.nukkit.command.base.BaseCommand;
-import cn.stevei5mc.serverhelper.nukkit.command.maincommand.sub.PluginVersionCmd;
+import cn.stevei5mc.serverhelper.nukkit.commands.base.BaseCommand;
+import cn.stevei5mc.serverhelper.nukkit.commands.maincommand.sub.PluginVersionCmd;
 
 public class ServerHelperMainCommand extends BaseCommand {
 

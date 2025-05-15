@@ -20,4 +20,4 @@ commands:
   kick: kick
   mute: mute
   unmute: unmute
-   warn: warn
+  warn: warn

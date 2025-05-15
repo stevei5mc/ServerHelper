@@ -1,8 +1,8 @@
-package cn.stevei5mc.serverhelper.nukkit.command.admin;
+package cn.stevei5mc.serverhelper.nukkit.commands.admin;
 
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
-import cn.stevei5mc.serverhelper.nukkit.command.base.BaseCommand;
+import cn.stevei5mc.serverhelper.nukkit.commands.base.BaseCommand;
 import cn.stevei5mc.serverhelper.nukkit.gui.MainGui;
 
 public class AdminCommand extends BaseCommand {
