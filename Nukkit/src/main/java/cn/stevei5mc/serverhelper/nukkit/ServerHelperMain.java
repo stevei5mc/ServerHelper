@@ -3,11 +3,14 @@ package cn.stevei5mc.serverhelper.nukkit;
 import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.stevei5mc.serverhelper.nukkit.commands.admin.AdminCommand;
 import cn.stevei5mc.serverhelper.nukkit.commands.maincommand.ServerHelperMainCommand;
+import cn.stevei5mc.serverhelper.nukkit.listener.PlayerListener;
+import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,18 +25,20 @@ public class ServerHelperMain extends PluginBase {
     );
     private String defaultLanguage;
     private final HashMap<String, Language> languageBaseMap = new HashMap<>();
-    private final List<String> settings = Arrays.asList(/*"ban","kick","warn","mute"*/);
+    private final List<String> settings = Arrays.asList(/*"ban","kick","warn","mute",*/"banCommands");
 //    private Config config;
 //    private Config banSetting;
 //    private Config kickSetting;
 //    private Config warnSetting;
 //    private Config muteSetting;
+    @Getter
+    private Config banCommands;
 
     @Override
     public void onLoad() {
         instance = this;
-//        this.saveConfigResources();
-//        this.loadConfig();
+        this.saveConfigResources();
+        this.loadConfig();
     }
 
     @Override
@@ -45,6 +50,7 @@ public class ServerHelperMain extends PluginBase {
             this.getLogger().info(getBranch());
             this.getServer().getCommandMap().register("",new ServerHelperMainCommand());
             this.getServer().getCommandMap().register("admin",new AdminCommand("admin"));
+            this.getServer().getPluginManager().registerEvents(new PlayerListener(),this);
             Server.getInstance().getScheduler().scheduleDelayedTask(this, () -> {
                 this.getLogger().warning("§c警告! §c本插件为免费且开源的，如果您付费获取获取的，则有可能被误导了");
                 this.getLogger().info("§a开源链接和使用方法: §bhttps://github.com/stevei5mc/ServerHelper");
@@ -64,11 +70,11 @@ public class ServerHelperMain extends PluginBase {
     }
 
     public void saveConfigResources() {
-        saveDefaultConfig();
+        /*saveDefaultConfig();
         for (String language : languages) {
             saveResource("language/base/"+language+".yml");
             saveResource("language/custom/"+language+".yml");
-        }
+        }*/
         for (String setting : settings) {
             saveResource("Setting/"+setting+".yml");
         }
@@ -80,6 +86,7 @@ public class ServerHelperMain extends PluginBase {
 //        this.kickSetting = new Config(this.getDataFolder()+"/Setting/kick.yml",Config.YAML);
 //        this.warnSetting = new Config(this.getDataFolder()+"/Setting/warn.yml",Config.YAML);
 //        this.muteSetting = new Config(this.getDataFolder()+"/Setting/mute.yml",Config.YAML);
+        this.banCommands = new Config(this.getDataFolder()+"/Setting/banCommands.yml",Config.YAML);
     }
 
     public static ServerHelperMain getInstance() {
@@ -89,22 +96,6 @@ public class ServerHelperMain extends PluginBase {
     /*@Override
     public Config getConfig() {
         return config;
-    }*/
-
-    /*public Config getBanSetting() {
-        return banSetting;
-    }*/
-
-    /*public Config getKickSetting() {
-        return kickSetting;
-    }*/
-
-    /*public Config getWarnSetting() {
-        return warnSetting;
-    }*/
-
-    /*public Config getMuteSetting() {
-        return muteSetting;
     }*/
 
     //使用(有改动)https://github.com/MemoriesOfTime/CrystalWars/blob/master/src/main/java/cn/lanink/crystalwars/CrystalWars.java

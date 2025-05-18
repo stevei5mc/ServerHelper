@@ -8,3 +8,6 @@ permissions:
   serverhelper.admin:
     default: op
     description: "插件主权限"
+  serverhelper.admin.unban.commands:
+    default: op
+    description: "解除命令的禁用状态"
