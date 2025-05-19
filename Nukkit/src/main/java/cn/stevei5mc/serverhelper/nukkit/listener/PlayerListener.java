@@ -15,7 +15,6 @@ public class PlayerListener implements Listener {
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
         String message = event.getMessage();
-        main.getServer().getLogger().warning(player.getName() + ": §c" + message);
         ArrayList<String> playerCommands = new ArrayList<>(main.getBanCommands().getStringList("ban-commands"));
         if (!playerCommands.isEmpty() && main.getBanCommands().getBoolean("enable",false)) {
             for (String cmd : playerCommands) {
@@ -30,6 +29,9 @@ public class PlayerListener implements Listener {
                     break;
                 }
             }
+        }
+        if (!event.isCancelled()) {
+            main.getServer().getLogger().warning(player.getName() + ": §c" + message);
         }
     }
 }
