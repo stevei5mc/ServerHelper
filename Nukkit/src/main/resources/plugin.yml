@@ -8,6 +8,9 @@ permissions:
   serverhelper.admin:
     default: op
     description: "插件主权限"
+  serverhelper.admin.reload:
+    default: op
+    description: "重载配置文件"
   serverhelper.admin.unban.commands:
     default: op
     description: "解除命令的禁用状态"

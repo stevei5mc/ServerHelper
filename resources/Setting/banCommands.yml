@@ -2,5 +2,4 @@ enable: false
 ban-commands:
   - /version
   - /ver
-  - /about
-  - /help&serverhelper.admin.unban.commands
+  - /about&serverhelper.admin.unban.commands
