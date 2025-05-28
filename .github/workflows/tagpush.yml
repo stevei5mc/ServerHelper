@@ -3,7 +3,8 @@ name: tag push
 on:
   push:
     tags:
-      - '*'
+    - '[0-9]+.[0-9]+.[0-9]+'
+    - '[0-9]+.[0-9]+.[0-9]+-beta[0-9]+'
 
 env:
   GH_TOKEN: ${{ github.token }}
@@ -17,6 +18,7 @@ jobs:
       repo_name: ${{ steps.get_info.outputs.repo_name }}
       targetSha: ${{ steps.get_info.outputs.targetSha }}
       targetRef: ${{ steps.get_info.outputs.targetRef }}
+      preRrelease: ${{ steps.releaseInfo.outputs.preRrelease }}
     steps:
     - name: 获取信息
       id: get_info
@@ -25,11 +27,17 @@ jobs:
         echo "repo_name=${GITHUB_REPOSITORY/${{ github.repository_owner }}//}" >> $GITHUB_OUTPUT
         echo "targetSha=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_OUTPUT
         echo "targetRef=$(echo ${{ github.ref }} | sed 's/refs\///g' | sed 's/\//\\\//g')" >> $GITHUB_OUTPUT
+    - name: Set release info
+      id: releaseInfo
+      uses: ./.github/actions/releaseMode/action.yml
+      with:
+        version: ${{ steps.get_info.outputs.version }}
     - name:  Print info
       run: |
         echo Release version: ${{ steps.get_info.outputs.version }}
         echo Target sha: ${{ steps.get_info.outputs.targetSha }}
         echo Tatget ref: ${{ steps.get_info.outputs.targetRef }}
+        echo Release is: ${{ steps.releaseInfo.outputs.releaseType }}
 
   build-plugin:
     strategy:
@@ -151,6 +159,7 @@ jobs:
         token: ${{ env.GH_TOKEN }}
         bodyFile: ./docs/changelogs/${{ needs.Initialize.outputs.version }}.md
         artifacts: ./staging/*.*
+        prerelease: ${{ needs.Initialize.outputs.preRrelease }}
 
   deploy-gitHub-pages:
     name: Deploy gitHub pages
