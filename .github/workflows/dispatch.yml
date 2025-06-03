@@ -51,29 +51,7 @@ jobs:
           |${{ inputs.buildMode }}|${{ inputs.additionalFunctions }}|${{ inputs.artifactRetentionDays }}|
     - name: 获取信息
       id: get_info
-      run: |
-        echo "repo_name=${GITHUB_REPOSITORY/${{ github.repository_owner }}\//}" >> $GITHUB_OUTPUT
-        echo "PR_ID=${{ inputs.PR_ID }}" >> $GITHUB_OUTPUT
-        echo "url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_OUTPUT
-        echo "targetSha=$(echo ${{ github.sha }} | cut -c 1-7)" >> $GITHUB_ENV
-        echo "targetRef=$(echo ${{ github.ref_name }} | sed 's/\//\\\//g')" >> $GITHUB_ENV
-    - name: Get pr info
-      if: inputs.additionalFunctions == 'PR Approve'
-      uses: stevei5mc/Get-PR-info-action@main
-      id: getPrInfo
-      with:
-        prId: '${{ inputs.PR_ID }}'
-    - name: Set pull request env info
-      if: inputs.additionalFunctions == 'PR Approve'
-      run: |
-        echo "targetRef=$(echo pull/${{ inputs.PR_ID }}/merge | sed 's/\//\\\//g')" >> $GITHUB_ENV
-        echo "targetSha=$(echo ${{ steps.getPrInfo.outputs.headSha }} | cut -c 1-7)" >> $GITHUB_ENV
-        echo "baseSha=$(echo ${{ steps.getPrInfo.outputs.baseSha }} | cut -c 1-7)" >> $GITHUB_ENV
-        echo "baseUrl=$(echo ${{ steps.getPrInfo.outputs.baseRepoUrl }} | sed 's/\//\\\//g')" >> $GITHUB_ENV
-        echo "baselabel=$(echo ${{ steps.getPrInfo.outputs.baseLabel }} | sed 's/\//\\\//g')" >> $GITHUB_ENV
-        echo "headUrl=$(echo ${{ steps.getPrInfo.outputs.headRepoUrl }} | sed 's/\//\\\//g')" >> $GITHUB_ENV
-        echo "headlabel=$(echo ${{ steps.getPrInfo.outputs.headLabel }} | sed 's/\//\\\//g')" >> $GITHUB_ENV
-        echo "prUrl=$(echo ${{ steps.getPrInfo.outputs.htmlUrl }} | sed 's/\//\\\//g')" >> $GITHUB_ENV
+      uses: ./.github/actions/getProjectInfo
     - name:  Print info
       run: |
         echo Bases info:
@@ -83,36 +61,6 @@ jobs:
         echo Additional functions info:
         echo Functions: ${{ steps.get_info.outputs.additionalFunctions }}
         echo PR Approve ID: ${{ inputs.PR_ID }}
-    - name: Pull request summary
-      if: inputs.additionalFunctions == 'PR Approve'
-      env:
-        summaryTemplateFilePath: .github/template/pr-summary.md
-      run: |
-        sed -i 's|{1A}|${{ inputs.PR_ID }}|g; s|{1B}|${{ env.prUrl }}|g' ${{ env.summaryTemplateFilePath }}
-        sed -i 's|{2}|${{ steps.getPrInfo.outputs.commits }}|g; s|{3}|${{ steps.getPrInfo.outputs.prState }}|g' ${{ env.summaryTemplateFilePath }}
-        sed -i 's|{4}|${{ steps.getPrInfo.outputs.additions }}|g; s|{5}|${{ steps.getPrInfo.outputs.deletions }}|g; s|{6}|${{ steps.getPrInfo.outputs.changedFiles }}|g' ${{ env.summaryTemplateFilePath }}
-        sed -i 's|{7}|${{ steps.getPrInfo.outputs.requestUser }}|g' ${{ env.summaryTemplateFilePath }}
-        sed -i 's|{8A}|${{ env.headlabel }}|g; s|{8B}|${{ env.headUrl }}|g; s|{8C}|${{ env.targetSha }}|g' ${{ env.summaryTemplateFilePath }}
-        sed -i 's|{9A}|${{ env.baselabel }}|g; s|{9B}|${{ env.baseUrl }}|g; s|{9C}|${{ env.baseSha }}|g' ${{ env.summaryTemplateFilePath }}
-        cat ${{ env.summaryTemplateFilePath }} >> $GITHUB_STEP_SUMMARY
-    - name: Pull request status check
-      if: inputs.additionalFunctions == 'PR Approve'
-      run: |
-        if [ '${{ steps.getPrInfo.outputs.prState }}' = 'closed' ]; then
-          echo "prState=closed" >> $GITHUB_ENV
-          echo "::error::The pull request state is closed state"
-          exit 1
-        elif [ '${{ steps.getPrInfo.outputs.prLockedState }}' = 'true' ]; then
-          echo "prState=locked" >> $GITHUB_ENV
-          echo "::error::The pull request state is locked state"
-          exit 1
-        elif [ '${{ steps.getPrInfo.outputs.prDraftState }}' = 'true' ]; then
-          echo "prState=draft" >> $GITHUB_ENV
-          echo "::error::The pull request state is draft state"
-          exit 1
-        else
-          echo "prState=open" >> $GITHUB_ENV
-        fi
 
   build-plugin:
     if: (inputs.buildMode == 'Build plugin' || inputs.buildMode == 'Build plugin and docusaurus') || inputs.additionalFunctions == 'PR Approve'

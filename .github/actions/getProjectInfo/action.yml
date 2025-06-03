@@ -1,0 +1,49 @@
+name: "Get project info"
+description: "Get project info"
+
+inputs:
+  targetSha:
+    description: "Target sha"
+    required: true
+    default: ${{ github.sha }}
+  targetRef:
+    description: "Target ref"
+    required: true
+    default: ${{ github.ref }}
+
+outputs:
+  repoNmae:
+    description: "Repo name"
+    value: ${{ steps.getProjectBaseInfo.outputs.repo_name }}
+  releaseType:
+    description: "Release type"
+    value: ${{ steps.getProjectReleaseInfo.outputs.releaseType }}
+  prerelease:
+    description: "Prerelease state"
+    value: ${{ steps.getProjectReleaseInfo.outputs.preRrelease }}
+
+runs:
+  using: "composite"
+  steps:
+  - name: Get project base info
+    id: getProjectBaseInfo
+    shell: bash
+    run: |
+      echo "repo_name=${GITHUB_REPOSITORY/${{ github.repository_owner }}\//}" >> $GITHUB_OUTPUT
+      echo "targetSha=$(echo ${{ inputs.targetSha }} | cut -c 1-7)" >> $GITHUB_ENV
+      echo "targetRef=$(echo ${{ inputs.targetRef }} | sed 's/refs\///g' | sed 's/heads\///g' | sed 's/\//\\\//g')" >> $GITHUB_ENV
+  - name: Get project release info
+    if: contains('inputs.targetRef', 'refs/tags/')
+    id: getProjectReleaseInfo
+    shell: bash
+    run: |
+      echo "version=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
+      if echo ${GITHUB_REF/refs\/tags\//} | grep -q "*-beta*"; then
+        echo "Release version is beta version"
+        echo "releaseType=beta" >> $GITHUB_OUTPUT
+        echo "prerelease=true" >> $GITHUB_OUTPUT
+      else
+        echo "Release version is latest version"
+        echo "releaseType=latest" >> $GITHUB_OUTPUT
+        echo "prerelease=false" >> $GITHUB_OUTPUT
+      fi

@@ -27,6 +27,7 @@ public class ManagePlayersGui {
         player.showFormWindow(simple);
     }
 
+    // 玩家选择器
     public static void sendSelectPlayerUi(@NotNull Player player) {
         ArrayList<String> players = new ArrayList<>();
         for (Player p : Server.getInstance().getOnlinePlayers().values()) {
@@ -49,12 +50,15 @@ public class ManagePlayersGui {
             }else {
                 target = formResponseCustom.getDropdownResponse(1).getElementContent();
             }
-            sendManageTargetPlayerSystem(player1,target);
+            if (!target.equals("§c§lPlayer not found")) {
+                sendManageTargetPlayerSystem(player1,target);
+            }
         });
         custom.onClosed(ManagePlayersGui::sendManagePlayersSystemUi);
         player.showFormWindow(custom);
     }
 
+    // 快捷菜单
     public static void sendManageFeatureList(@NotNull Player player) {
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理功能");
         simple.addButton(new ResponseElementButton("巡查系统").onClicked(PlayerPatrolSystemGui::sendSelectPatrolPlayerUi));
@@ -62,6 +66,7 @@ public class ManagePlayersGui {
         player.showFormWindow(simple);
     }
 
+    // 玩家管理功能菜单
     public static void sendManageTargetPlayerSystem(@NotNull Player player,String target) {
         Player targetPlayer = PlayerUtils.getPlayer(target);
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理目标玩家","目标玩家： "+target);

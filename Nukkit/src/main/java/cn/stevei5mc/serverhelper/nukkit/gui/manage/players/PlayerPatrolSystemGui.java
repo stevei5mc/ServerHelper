@@ -19,6 +19,7 @@ public class PlayerPatrolSystemGui {
         throw new RuntimeException("Error");
     }
 
+    // 选择需要巡查的玩家
     public static void sendSelectPatrolPlayerUi(@NotNull Player player) {
         // 获取全部加载的世界名
         ArrayList<String> mapName = new ArrayList<>();
@@ -48,13 +49,17 @@ public class PlayerPatrolSystemGui {
         custom.addElement(new ElementToggle("旁观者模式 / 隐身模式"));
         custom.onResponded((formResponseCustom, player1) -> {
             if (Server.getInstance().getOnlinePlayers().size() >= 2) {
-                Player targetPlayer;
+                Player targetPlayer = null;
                 switch (formResponseCustom.getStepSliderResponse(0).getElementID()) {
                     case 0:
+                        String target;
                         if (!formResponseCustom.getInputResponse(3).equals("")) {
-                            targetPlayer = PlayerUtils.getPlayer(formResponseCustom.getInputResponse(3));
+                            target = formResponseCustom.getInputResponse(3);
                         }else {
-                            targetPlayer = PlayerUtils.getPlayer(formResponseCustom.getDropdownResponse(2).getElementContent());
+                            target = formResponseCustom.getDropdownResponse(2).getElementContent();
+                        }
+                        if (target.equals("§c§lPlayer not found")) {
+                            targetPlayer = PlayerUtils.getPlayer(target);
                         }
                         break;
                     default:
@@ -73,7 +78,8 @@ public class PlayerPatrolSystemGui {
         player.showFormWindow(custom);
     }
 
-    public static void sendConfirmWindow(@NotNull Player player,Player target) {
+    // 选择玩家确认菜单
+    public static void sendConfirmUi(@NotNull Player player, Player target) {
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("巡查系统");
         custom.addElement(new ElementLabel("目标玩家: "+target.getName()));
         custom.addElement(new ElementToggle("旁观者模式 / 隐身模式"));

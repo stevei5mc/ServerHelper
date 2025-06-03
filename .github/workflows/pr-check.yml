@@ -15,12 +15,13 @@ jobs:
       targetSha: ${{ steps.get_info.outputs.targetSha }}
       targetRef: ${{ steps.get_info.outputs.targetRef }}
     steps:
+    - name: 拉取代码
+      uses: actions/checkout@v4
     - name: 获取信息
       id: get_info
-      run: |
-        echo "repo_name=${GITHUB_REPOSITORY/${{ github.repository_owner }}\//}" >> $GITHUB_OUTPUT
-        echo "targetSha=$(echo ${{ github.event.pull_request.head.sha }} | cut -c 1-7)" >> $GITHUB_OUTPUT
-        echo "targetRef=$(echo ${{ github.ref }} | sed 's/refs\///g' | sed 's/\//\\\//g')" >> $GITHUB_OUTPUT
+      uses: ./.github/actions/getProjectInfo
+      with:
+        targetSha: ${{ github.event.pull_request.head.sha }}
     - name:  Print info
       run: |
         echo Release version: ${{ steps.get_info.outputs.version }}

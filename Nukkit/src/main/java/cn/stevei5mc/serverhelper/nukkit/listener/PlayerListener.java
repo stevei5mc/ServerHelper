@@ -31,7 +31,7 @@ public class PlayerListener implements Listener {
             }
         }
         if (!event.isCancelled()) {
-            main.getServer().getLogger().warning(player.getName() + ": §c" + message);
+            main.getServer().getLogger().info(player.getName() + ": §c" + message);
         }
     }
 }
