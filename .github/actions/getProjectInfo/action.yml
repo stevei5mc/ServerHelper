@@ -15,6 +15,9 @@ outputs:
   repoNmae:
     description: "Repo name"
     value: ${{ steps.getProjectBaseInfo.outputs.repo_name }}
+  actionUrl:
+    description: "Action url"
+    value: ${{ steps.getProjectBaseInfo.outputs.actionUrl }}
   releaseType:
     description: "Release type"
     value: ${{ steps.getProjectReleaseInfo.outputs.releaseType }}
@@ -30,6 +33,7 @@ runs:
     shell: bash
     run: |
       echo "repo_name=${GITHUB_REPOSITORY/${{ github.repository_owner }}\//}" >> $GITHUB_OUTPUT
+      echo "actionUrl=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_OUTPUT
       echo "targetSha=$(echo ${{ inputs.targetSha }} | cut -c 1-7)" >> $GITHUB_ENV
       echo "targetRef=$(echo ${{ inputs.targetRef }} | sed 's/refs\///g' | sed 's/heads\///g' | sed 's/\//\\\//g')" >> $GITHUB_ENV
   - name: Get project release info
