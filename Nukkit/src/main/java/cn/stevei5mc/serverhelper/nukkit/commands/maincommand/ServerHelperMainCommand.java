@@ -11,13 +11,14 @@ public class ServerHelperMainCommand extends BaseCommand {
     public ServerHelperMainCommand() {
         super("serverhelper", "ServerHelper plugin command");
         this.setPermission("serverhelper.admin");
+        String[] aliases = {"shr"};
+        this.setAliases(aliases);
         this.addSubCommand(new PluginVersionCmd("version"));
         this.addSubCommand(new ReloadCmd("reload"));
     }
 
     @Override
     public void sendHelp(CommandSender sender) {
-
     }
 
     @Override
