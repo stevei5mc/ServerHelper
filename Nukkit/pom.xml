@@ -6,7 +6,7 @@
 
     <groupId>cn.stevei5mc.serverhelper</groupId>
     <artifactId>ServerHelper-Nukkit</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0-beta1-SNAPSHOT</version>
 
     <properties>
         <java.version>1.8</java.version>
@@ -54,7 +54,7 @@
         <dependency>
             <groupId>com.github.stevei5mc</groupId>
             <artifactId>AutoRestart</artifactId>
-            <version>1.0.0-beta7</version>
+            <version>1.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

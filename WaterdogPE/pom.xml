@@ -6,7 +6,7 @@
 
     <groupId>cn.stevei5mc.serverhelper</groupId>
     <artifactId>ServerHelper-WaterdogPE</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0-beta1-SNAPSHOT</version>
 
     <properties>
         <java.version>17</java.version>

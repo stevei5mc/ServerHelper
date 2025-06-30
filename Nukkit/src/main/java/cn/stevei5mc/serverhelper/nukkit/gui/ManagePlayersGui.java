@@ -58,10 +58,11 @@ public class ManagePlayersGui {
         player.showFormWindow(custom);
     }
 
-    // 快捷菜单
+    // 快捷功能菜单
     public static void sendManageFeatureList(@NotNull Player player) {
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理功能");
         simple.addButton(new ResponseElementButton("巡查系统").onClicked(PlayerPatrolSystemGui::sendSelectPatrolPlayerUi));
+        // TODO: 到时候这里放置查询玩家背包的快捷入口
         simple.addButton(new ResponseElementButton("返回").onClicked(MainGui::sendMain));
         player.showFormWindow(simple);
     }
@@ -75,11 +76,29 @@ public class ManagePlayersGui {
         if (targetPlayer != null && targetPlayer.isOnline()) {
             simple.addButton(new ResponseElementButton("踢出"));
             simple.addButton(new ResponseElementButton("警告"));
-            simple.addButton(new ResponseElementButton("巡查").onClicked(player1 -> {
-                PlayerPatrolSystemGui.sendConfirmWindow(player,targetPlayer);
-            }));
+            simple.addButton(new ResponseElementButton("巡查").onClicked(player1 -> PlayerPatrolSystemGui.sendConfirmUi(player1,targetPlayer)));
+            simple.addButton(new ResponseElementButton("查询该玩家信息").onClicked(player1 -> sendPlayerInfoUi(player1,targetPlayer)));
         }
-        simple.addButton(new ResponseElementButton("返回").onClicked(MainGui::sendMain));
+        simple.addButton(new ResponseElementButton("返回").onClicked(ManagePlayersGui::sendSelectPlayerUi));
+        player.showFormWindow(simple);
+    }
+
+    // 显示目标玩家的信息
+    public static void sendPlayerInfoUi(@NotNull Player player,Player target) {
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理系统");
+        simple.setContent(
+                "玩家： "+target.getName()+" XUID: "+target.getLoginChainData().getXUID()+"\n"
+                +"设备系统： "+PlayerUtils.getDeviceOS(target.getLoginChainData().getDeviceOS())+" 设备型号： "+target.getLoginChainData().getDeviceModel()+"\n"
+                +"设备ID： "+target.getLoginChainData().getDeviceId()+"\n"
+                +"操作方式： "+PlayerUtils.getDeviceControls(target.getLoginChainData().getCurrentInputMode())+" UI： "+PlayerUtils.getPlayerUi(target.getLoginChainData().getUIProfile())+"\n"
+                +"链接IP: "+target.getLoginChainData().getServerAddress()+"\n"
+                +"登录Ip： "+target.getAddress()+":"+target.getPort()+" 延迟："+target.getPing()+"\n"
+                +"客户端版本： "+target.getLoginChainData().getGameVersion()+"\n"
+                +"所在位置： (X="+Math.round(target.getX())+" Y="+Math.round(target.getY())+" Z="+Math.round(target.getZ())+" Level="+target.getLevel().getName()+")\n"
+        );
+        simple.addButton(new ResponseElementButton("刷新").onClicked(player1 -> sendPlayerInfoUi(player,target)));
+        // TODO: 到时候查询玩家背包的入口放在这里
+        simple.addButton(new ResponseElementButton("返回").onClicked(player1 -> sendManageTargetPlayerSystem(player,target.getName())));
         player.showFormWindow(simple);
     }
 }
