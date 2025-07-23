@@ -29,19 +29,9 @@ public class ManagePlayersGui {
 
     // 玩家选择器
     public static void sendSelectPlayerUi(@NotNull Player player) {
-        ArrayList<String> players = new ArrayList<>();
-        for (Player p : Server.getInstance().getOnlinePlayers().values()) {
-            if (p == player) { //跳过自己
-                continue;
-            }
-            players.add(p.getName());
-        }
-        if (players.isEmpty()) {
-            players.add("§c§lPlayer not found");
-        }
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("选择玩家");
         custom.addElement(new ElementLabel("选择一名玩家或在输入框中填写玩家名，如果在输入框中输入玩家名称则选择框自动失效"));
-        custom.addElement(new ElementDropdown("选择玩家",players));
+        custom.addElement(new ElementDropdown("选择玩家",PlayerUtils.getOnlinePlayers(player,true)));
         custom.addElement(new ElementInput("输入指定玩家名称"));
         custom.onResponded((formResponseCustom, player1) -> {
             String target;
@@ -87,14 +77,14 @@ public class ManagePlayersGui {
     public static void sendPlayerInfoUi(@NotNull Player player,Player target) {
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理系统");
         simple.setContent(
-                "玩家： "+target.getName()+" XUID: "+target.getLoginChainData().getXUID()+"\n"
-                +"设备系统： "+PlayerUtils.getDeviceOS(target.getLoginChainData().getDeviceOS())+" 设备型号： "+target.getLoginChainData().getDeviceModel()+"\n"
-                +"设备ID： "+target.getLoginChainData().getDeviceId()+"\n"
-                +"操作方式： "+PlayerUtils.getDeviceControls(target.getLoginChainData().getCurrentInputMode())+" UI： "+PlayerUtils.getPlayerUi(target.getLoginChainData().getUIProfile())+"\n"
-                +"链接IP: "+target.getLoginChainData().getServerAddress()+"\n"
-                +"登录Ip： "+target.getAddress()+":"+target.getPort()+" 延迟："+target.getPing()+"\n"
-                +"客户端版本： "+target.getLoginChainData().getGameVersion()+"\n"
-                +"所在位置： (X="+Math.round(target.getX())+" Y="+Math.round(target.getY())+" Z="+Math.round(target.getZ())+" Level="+target.getLevel().getName()+")\n"
+                "玩家="+target.getName()+" XUID="+target.getLoginChainData().getXUID()+"\n"
+                +"UUID="+target.getLoginChainData().getClientUUID()+"\n"
+                +"设备系统="+PlayerUtils.getDeviceOS(target.getLoginChainData().getDeviceOS())+" 设备型号="+target.getLoginChainData().getDeviceModel()+"\n"
+                +"设备ID="+target.getLoginChainData().getDeviceId()+"\n"
+                +"操作方式="+PlayerUtils.getDeviceControls(target.getLoginChainData().getCurrentInputMode())+ " UI="+PlayerUtils.getPlayerUi(target.getLoginChainData().getUIProfile())+ " 客户端版本="+target.getLoginChainData().getGameVersion()+"\n"
+                +"链接IP="+target.getLoginChainData().getServerAddress()+"\n"
+                +"登录Ip="+target.getAddress()+":"+target.getPort()+" 延迟："+target.getPing()+"\n"
+                +"所在位置=(X="+Math.round(target.getX())+" Y="+Math.round(target.getY())+" Z="+Math.round(target.getZ())+" Level="+target.getLevel().getName()+")\n"
         );
         simple.addButton(new ResponseElementButton("刷新").onClicked(player1 -> sendPlayerInfoUi(player,target)));
         // TODO: 到时候查询玩家背包的入口放在这里

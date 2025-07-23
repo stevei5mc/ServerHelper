@@ -1,10 +1,7 @@
 package cn.stevei5mc.serverhelper.nukkit;
 
 import cn.lanink.gamecore.utils.Language;
-import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.command.Command;
-import cn.nukkit.command.CommandSender;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.stevei5mc.serverhelper.nukkit.commands.admin.AdminCommand;
@@ -53,7 +50,7 @@ public class ServerHelperMain extends PluginBase {
             this.getServer().getPluginManager().registerEvents(new PlayerListener(),this);
             Server.getInstance().getScheduler().scheduleDelayedTask(this, () -> {
                 this.getLogger().warning("§c警告! §c本插件为免费且开源的，如果您付费获取获取的，则有可能被误导了");
-                this.getLogger().info("§a开源链接和使用方法: §bhttps://github.com/stevei5mc/ServerHelper");
+                this.getLogger().info("§f[§aGITHUB§f] §bhttps://github.com/stevei5mc/ServerHelper");
             },20);
         }else {
             //不存在则停止加载插件

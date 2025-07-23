@@ -110,4 +110,22 @@ public class PlayerUtils {
             default: return "§cUnknown controls: "+ctrl+"§f";
         }
     }
+
+    public static List<String> getOnlinePlayers() {
+        return getOnlinePlayers(null,false);
+    }
+
+    public static List<String> getOnlinePlayers(Player player,boolean removeRequestPlayer) {
+        ArrayList<String> players = new ArrayList<>();
+        for (Player p : Server.getInstance().getOnlinePlayers().values()) {
+            if (p == player && removeRequestPlayer) { //跳过自己
+                continue;
+            }
+            players.add(p.getName());
+        }
+        if (players.isEmpty()) {
+            players.add("§c§lPlayer not found");
+        }
+        return players;
+    }
 }
