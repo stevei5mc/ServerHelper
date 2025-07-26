@@ -73,17 +73,17 @@ public class ServerHelperMain extends PluginBase {
             saveResource("language/custom/"+language+".yml");
         }*/
         for (String setting : settings) {
-            saveResource("Setting/"+setting+".yml");
+            saveResource("Settings/" +setting+".yml");
         }
     }
 
     public void loadConfig() {
 //        this.config = new Config(this.getDataFolder()+"/config.yml",Config.YAML);
-//        this.banSetting = new Config(this.getDataFolder()+"/Setting/ban.yml",Config.YAML);
-//        this.kickSetting = new Config(this.getDataFolder()+"/Setting/kick.yml",Config.YAML);
-//        this.warnSetting = new Config(this.getDataFolder()+"/Setting/warn.yml",Config.YAML);
-//        this.muteSetting = new Config(this.getDataFolder()+"/Setting/mute.yml",Config.YAML);
-        this.banCommands = new Config(this.getDataFolder()+"/Setting/banCommands.yml",Config.YAML);
+//        this.banSetting = new Config(this.getDataFolder()+"/Settings/ban.yml",Config.YAML);
+//        this.kickSetting = new Config(this.getDataFolder()+"/Settings/kick.yml",Config.YAML);
+//        this.warnSetting = new Config(this.getDataFolder()+ "/Settings/warn.yml",Config.YAML);
+//        this.muteSetting = new Config(this.getDataFolder()+"/Settings/mute.yml",Config.YAML);
+        this.banCommands = new Config(this.getDataFolder()+ "/Settings/banCommands.yml",Config.YAML);
     }
 
     public static ServerHelperMain getInstance() {

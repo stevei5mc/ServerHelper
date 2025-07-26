@@ -6,6 +6,7 @@ import cn.nukkit.Server;
 import cn.nukkit.form.element.*;
 import cn.nukkit.level.Level;
 import cn.stevei5mc.serverhelper.nukkit.ServerHelperMain;
+import cn.stevei5mc.serverhelper.nukkit.gui.ManagePlayersGui;
 import cn.stevei5mc.serverhelper.nukkit.utils.PlayerUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,6 +37,7 @@ public class PlayerPatrolSystemGui {
         custom.addElement(new ElementDropdown("选择世界",mapName));
         custom.addElement(new ElementLabel("如果选择隐身模式，则需要手动脱下身上的装备否则会被其他玩家发现"));
         custom.addElement(new ElementToggle("旁观者模式 / 隐身模式"));
+        custom.onClosed(ManagePlayersGui::sendManagePlayersSystemUi);
         custom.onResponded((formResponseCustom, player1) -> {
             if (Server.getInstance().getOnlinePlayers().size() >= 2) {
                 Player targetPlayer = null;
@@ -68,13 +70,12 @@ public class PlayerPatrolSystemGui {
     }
 
     // 选择玩家确认菜单
-    public static void sendConfirmUi(@NotNull Player player, Player target) {
+    public static void sendConfirmUi(@NotNull Player admin, Player target) {
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("巡查系统");
         custom.addElement(new ElementLabel("目标玩家: "+target.getName()));
         custom.addElement(new ElementToggle("旁观者模式 / 隐身模式"));
-        custom.onResponded((formResponseCustom, player1) -> {
-            PlayerUtils.teleportToPatrolTarget(player,target,formResponseCustom.getToggleResponse(1));
-        });
-        player.showFormWindow(custom);
+        custom.onClosed(player -> ManagePlayersGui.sendManageTargetPlayerSystem(admin,target));
+        custom.onResponded((form, player) -> PlayerUtils.teleportToPatrolTarget(admin,target,form.getToggleResponse(1)));
+        admin.showFormWindow(custom);
     }
 }

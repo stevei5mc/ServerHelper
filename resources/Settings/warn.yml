@@ -1,0 +1,7 @@
+enable-multlanguage: false
+show_mode: title
+reasons:
+  - type: 跨队伍联合
+    message: §c为了游戏的公平性，禁止跨队伍联合！
+  - type: 干扰正常游玩
+    message: §c请不要干扰其他玩家正常游玩体验！
