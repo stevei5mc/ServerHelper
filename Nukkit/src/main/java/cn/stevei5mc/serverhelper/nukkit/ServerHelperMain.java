@@ -41,7 +41,6 @@ public class ServerHelperMain extends PluginBase {
     @Override
     public void onEnable() {
         if (this.getServer().getPluginManager().getPlugin("MemoriesOfTime-GameCore") != null) {
-            //loadBaseLanguage();
             this.getLogger().info(getVersion());
             this.getLogger().info(getCommitId());
             this.getLogger().info(getBranch());
@@ -69,8 +68,8 @@ public class ServerHelperMain extends PluginBase {
     public void saveConfigResources() {
         /*saveDefaultConfig();
         for (String language : languages) {
-            saveResource("language/base/"+language+".yml");
-            saveResource("language/custom/"+language+".yml");
+            saveResource("languages/base/"+language+".yml");
+            saveResource("languages/custom/"+language+".yml");
         }*/
         for (String setting : settings) {
             saveResource("Settings/" +setting+".yml");
@@ -93,37 +92,6 @@ public class ServerHelperMain extends PluginBase {
     /*@Override
     public Config getConfig() {
         return config;
-    }*/
-
-    //使用(有改动)https://github.com/MemoriesOfTime/CrystalWars/blob/master/src/main/java/cn/lanink/crystalwars/CrystalWars.java
-   /* private void loadBaseLanguage() {
-        this.defaultLanguage = this.config.getString("default_language", "zh_CN");
-        if (!languages.contains(this.defaultLanguage)) {
-            this.getLogger().error("Language" + this.defaultLanguage + "Not supported, will load Chinese!");
-            this.defaultLanguage = "zh_CN";
-        }
-        for (String language : languages) {
-            Config languageConfig = new Config(Config.YAML);
-            languageConfig.load(this.getDataFolder() + "/language/" + language + ".yml");
-            this.languageBaseMap.put(language, new Language(languageConfig));
-        }
-        this.getLogger().info(this.getBaseLang().translateString("plugin_language"));
-    }
-    //同上
-    public Language getBaseLang() {
-        return this.getBaseLang(null);
-    }
-    //同上
-    public Language getBaseLang(CommandSender sender) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            String playerLanguage = player.getLoginChainData().getLanguageCode();
-            if (!this.languageBaseMap.containsKey(playerLanguage)) {
-                playerLanguage = this.defaultLanguage;
-            }
-            return this.languageBaseMap.get(playerLanguage);
-        }
-        return this.languageBaseMap.get(this.defaultLanguage);
     }*/
 
     /*public String getMessagePrefix() {

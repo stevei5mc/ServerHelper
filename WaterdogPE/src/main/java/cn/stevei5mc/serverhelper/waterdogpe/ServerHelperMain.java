@@ -38,11 +38,11 @@ public class ServerHelperMain extends Plugin {
     public void saveConfigResources() {
         saveResource("config.yml");
         for (String language : languages) {
-            saveResource("language/base/"+language+".yml");
-            saveResource("language/custom/"+language+".yml");
+            saveResource("languages/base/"+language+".yml");
+            saveResource("languages/custom/"+language+".yml");
         }
         for (String setting : settings) {
-            saveResource("Setting/"+setting+".yml");
+            saveResource("Settings/"+setting+".yml");
         }
     }
 
