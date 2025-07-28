@@ -6,7 +6,6 @@ import cn.nukkit.Server;
 import cn.nukkit.form.element.*;
 import cn.nukkit.level.Level;
 import cn.stevei5mc.serverhelper.nukkit.ServerHelperMain;
-import cn.stevei5mc.serverhelper.nukkit.gui.ManagePlayersGui;
 import cn.stevei5mc.serverhelper.nukkit.utils.PlayerUtils;
 import org.jetbrains.annotations.NotNull;
 

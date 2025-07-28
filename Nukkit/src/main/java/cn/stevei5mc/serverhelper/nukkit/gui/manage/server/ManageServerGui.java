@@ -1,10 +1,11 @@
-package cn.stevei5mc.serverhelper.nukkit.gui;
+package cn.stevei5mc.serverhelper.nukkit.gui.manage.server;
 
 import cn.lanink.gamecore.form.element.ResponseElementButton;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.stevei5mc.autorestart.gui.Admin;
+import cn.stevei5mc.serverhelper.nukkit.gui.MainGui;
 import org.jetbrains.annotations.NotNull;
 
 public class ManageServerGui {

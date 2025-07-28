@@ -1,4 +1,4 @@
-package cn.stevei5mc.serverhelper.nukkit.gui;
+package cn.stevei5mc.serverhelper.nukkit.gui.manage.players;
 
 import cn.lanink.gamecore.form.element.ResponseElementButton;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowCustom;
@@ -7,7 +7,8 @@ import cn.nukkit.Player;
 import cn.nukkit.form.element.ElementDropdown;
 import cn.nukkit.form.element.ElementInput;
 import cn.nukkit.form.element.ElementLabel;
-import cn.stevei5mc.serverhelper.nukkit.gui.manage.players.PlayerPatrolSystemGui;
+import cn.stevei5mc.serverhelper.nukkit.ServerHelperMain;
+import cn.stevei5mc.serverhelper.nukkit.gui.MainGui;
 import cn.stevei5mc.serverhelper.nukkit.utils.PlayerUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,10 +60,10 @@ public class ManagePlayersGui {
 
     // 玩家管理功能菜单
     public static void sendManageTargetPlayerSystem(@NotNull Player admin, Player target) {
-        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理目标玩家","目标玩家： "+target);
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理目标玩家","目标玩家： "+target.getName());
         simple.addButton(new ResponseElementButton("封禁"));
         simple.addButton(new ResponseElementButton("禁言"));
-        if (target != null && target.isOnline()) {
+        if (target.isOnline()) {
             simple.addButton(new ResponseElementButton("踢出"));
             simple.addButton(new ResponseElementButton("警告"));
             simple.addButton(new ResponseElementButton("巡查").onClicked(player1 -> PlayerPatrolSystemGui.sendConfirmUi(player1,target)));
@@ -82,7 +83,7 @@ public class ManagePlayersGui {
                 +"设备ID="+target.getLoginChainData().getDeviceId()+"\n"
                 +"操作方式="+PlayerUtils.getDeviceControls(target.getLoginChainData().getCurrentInputMode())+ " UI="+PlayerUtils.getPlayerUi(target.getLoginChainData().getUIProfile())+ " 客户端版本="+target.getLoginChainData().getGameVersion()+"\n"
                 +"链接IP="+target.getLoginChainData().getServerAddress()+"\n"
-                +"登录Ip="+target.getAddress()+":"+target.getPort()+" 延迟："+target.getPing()+"\n"
+                +"登录Ip="+target.getAddress()+":"+target.getPort()+" 延迟="+target.getPing()+"\n"
                 +"所在位置=(X="+Math.round(target.getX())+" Y="+Math.round(target.getY())+" Z="+Math.round(target.getZ())+" Level="+target.getLevel().getName()+")\n"
         );
         simple.addButton(new ResponseElementButton("刷新").onClicked(player -> sendPlayerInfoUi(admin,target)));
