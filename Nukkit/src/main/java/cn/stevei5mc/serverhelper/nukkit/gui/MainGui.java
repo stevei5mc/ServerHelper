@@ -3,6 +3,8 @@ package cn.stevei5mc.serverhelper.nukkit.gui;
 import cn.lanink.gamecore.form.element.ResponseElementButton;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.nukkit.Player;
+import cn.stevei5mc.serverhelper.nukkit.gui.manage.players.ManagePlayersGui;
+import cn.stevei5mc.serverhelper.nukkit.gui.manage.server.ManageServerGui;
 import org.jetbrains.annotations.NotNull;
 
 public class MainGui {

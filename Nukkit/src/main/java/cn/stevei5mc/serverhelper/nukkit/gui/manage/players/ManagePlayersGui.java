@@ -7,12 +7,9 @@ import cn.nukkit.Player;
 import cn.nukkit.form.element.ElementDropdown;
 import cn.nukkit.form.element.ElementInput;
 import cn.nukkit.form.element.ElementLabel;
-import cn.stevei5mc.serverhelper.nukkit.ServerHelperMain;
 import cn.stevei5mc.serverhelper.nukkit.gui.MainGui;
 import cn.stevei5mc.serverhelper.nukkit.utils.PlayerUtils;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
 
 public class ManagePlayersGui {
     private ManagePlayersGui() {
@@ -66,8 +63,8 @@ public class ManagePlayersGui {
         if (target.isOnline()) {
             simple.addButton(new ResponseElementButton("踢出"));
             simple.addButton(new ResponseElementButton("警告"));
-            simple.addButton(new ResponseElementButton("巡查").onClicked(player1 -> PlayerPatrolSystemGui.sendConfirmUi(player1,target)));
-            simple.addButton(new ResponseElementButton("查询该玩家信息").onClicked(player1 -> sendPlayerInfoUi(player1,target)));
+            simple.addButton(new ResponseElementButton("巡查").onClicked(p -> PlayerPatrolSystemGui.sendConfirmUi(admin,target)));
+            simple.addButton(new ResponseElementButton("查询该玩家信息").onClicked(p -> sendPlayerInfoUi(admin,target)));
         }
         simple.addButton(new ResponseElementButton("返回").onClicked(ManagePlayersGui::sendSelectPlayerUi));
         admin.showFormWindow(simple);

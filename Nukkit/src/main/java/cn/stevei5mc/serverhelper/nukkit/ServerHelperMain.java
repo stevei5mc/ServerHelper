@@ -1,6 +1,5 @@
 package cn.stevei5mc.serverhelper.nukkit;
 
-import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.Server;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
@@ -10,7 +9,6 @@ import cn.stevei5mc.serverhelper.nukkit.listener.PlayerListener;
 import lombok.Getter;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 public class ServerHelperMain extends PluginBase {
@@ -20,8 +18,6 @@ public class ServerHelperMain extends PluginBase {
             /*"bg_BG", "cs_CZ","da_DK","de_DE","el_GR","en_GB","en_US","es_ES","es_MX","fi_FI","fr_CA","fr_FR","hu_HU","id_ID","it_IT",
             "ja_JP","ko_KR","nb_NO","nl_NL","pl_PL","pt_BR","pt_PT","ru_RU","sk_SK","sv_SE","tr_TR","uk_UA","zh_CN","zh_TW"*/
     );
-    private String defaultLanguage;
-    private final HashMap<String, Language> languageBaseMap = new HashMap<>();
     private final List<String> settings = Arrays.asList(/*"ban","kick","warn","mute",*/"banCommands");
 //    private Config config;
 //    private Config banSetting;
