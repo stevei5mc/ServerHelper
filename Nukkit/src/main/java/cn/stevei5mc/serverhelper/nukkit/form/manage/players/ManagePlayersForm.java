@@ -1,4 +1,4 @@
-package cn.stevei5mc.serverhelper.nukkit.gui.manage.players;
+package cn.stevei5mc.serverhelper.nukkit.form.manage.players;
 
 import cn.lanink.gamecore.form.element.ResponseElementButton;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowCustom;
@@ -7,20 +7,16 @@ import cn.nukkit.Player;
 import cn.nukkit.form.element.ElementDropdown;
 import cn.nukkit.form.element.ElementInput;
 import cn.nukkit.form.element.ElementLabel;
-import cn.stevei5mc.serverhelper.nukkit.gui.MainGui;
+import cn.stevei5mc.serverhelper.nukkit.form.MainForm;
 import cn.stevei5mc.serverhelper.nukkit.utils.PlayerUtils;
 import org.jetbrains.annotations.NotNull;
 
-public class ManagePlayersGui {
-    private ManagePlayersGui() {
-        throw new RuntimeException("Error");
-    }
-
+public class ManagePlayersForm {
     public static void sendManagePlayersSystemUi(@NotNull Player admin){
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理玩家");
-        simple.addButton(new ResponseElementButton("选择玩家").onClicked(ManagePlayersGui::sendSelectPlayerUi));
-        simple.addButton(new ResponseElementButton("功能快捷通道").onClicked(ManagePlayersGui::sendManageFeatureList));
-        simple.addButton(new ResponseElementButton("返回").onClicked(MainGui::sendMain));
+        simple.addButton(new ResponseElementButton("选择玩家").onClicked(ManagePlayersForm::sendSelectPlayerUi));
+        simple.addButton(new ResponseElementButton("功能快捷通道").onClicked(ManagePlayersForm::sendManageFeatureList));
+        simple.addButton(new ResponseElementButton("返回").onClicked(MainForm::mainMenu));
         admin.showFormWindow(simple);
     }
 
@@ -30,6 +26,7 @@ public class ManagePlayersGui {
         custom.addElement(new ElementLabel("选择一名玩家或在输入框中填写玩家名，如果在输入框中输入玩家名称则选择框自动失效"));
         custom.addElement(new ElementDropdown("选择玩家",PlayerUtils.getOnlinePlayers(admin,true)));
         custom.addElement(new ElementInput("输入指定玩家名称"));
+        custom.onClosed(ManagePlayersForm::sendManagePlayersSystemUi);
         custom.onResponded((formResponseCustom, player1) -> {
             String target;
             if (!formResponseCustom.getInputResponse(2).equals("")) {
@@ -41,7 +38,6 @@ public class ManagePlayersGui {
                 Player targetPlayer = PlayerUtils.getPlayer(target);
                 sendManageTargetPlayerSystem(player1,targetPlayer);
             }
-            custom.onClosed(ManagePlayersGui::sendManagePlayersSystemUi);
         });
         admin.showFormWindow(custom);
     }
@@ -49,9 +45,9 @@ public class ManagePlayersGui {
     // 快捷功能菜单
     public static void sendManageFeatureList(@NotNull Player admin) {
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理功能");
-        simple.addButton(new ResponseElementButton("巡查系统").onClicked(PlayerPatrolSystemGui::sendSelectPatrolPlayerUi));
+        simple.addButton(new ResponseElementButton("巡查系统").onClicked(PlayerPatrolSystemForm::sendSelectPatrolPlayerUi));
         // TODO: 到时候这里放置查询玩家背包的快捷入口
-        simple.addButton(new ResponseElementButton("返回").onClicked(MainGui::sendMain));
+        simple.addButton(new ResponseElementButton("返回").onClicked(MainForm::mainMenu));
         admin.showFormWindow(simple);
     }
 
@@ -63,10 +59,10 @@ public class ManagePlayersGui {
         if (target.isOnline()) {
             simple.addButton(new ResponseElementButton("踢出"));
             simple.addButton(new ResponseElementButton("警告"));
-            simple.addButton(new ResponseElementButton("巡查").onClicked(p -> PlayerPatrolSystemGui.sendConfirmUi(admin,target)));
+            simple.addButton(new ResponseElementButton("巡查").onClicked(p -> PlayerPatrolSystemForm.confirmTargetPlayerMenu(admin,target)));
             simple.addButton(new ResponseElementButton("查询该玩家信息").onClicked(p -> sendPlayerInfoUi(admin,target)));
         }
-        simple.addButton(new ResponseElementButton("返回").onClicked(ManagePlayersGui::sendSelectPlayerUi));
+        simple.addButton(new ResponseElementButton("返回").onClicked(ManagePlayersForm::sendSelectPlayerUi));
         admin.showFormWindow(simple);
     }
 

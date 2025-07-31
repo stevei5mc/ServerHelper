@@ -111,10 +111,20 @@ public class PlayerUtils {
         }
     }
 
-    public static List<String> getOnlinePlayers() {
+    /**
+     * 获取在线玩家列表
+     * @return 线玩家列表
+     */
+     static List<String> getOnlinePlayers() {
         return getOnlinePlayers(null,false);
     }
 
+    /**
+     * 获取在线玩家列表
+     * @param player 查询在线玩家列表的玩家
+     * @param removeRequestPlayer 是否排除查询的玩家
+     * @return 在线玩家列表
+     */
     public static List<String> getOnlinePlayers(Player player,boolean removeRequestPlayer) {
         ArrayList<String> players = new ArrayList<>();
         for (Player p : Server.getInstance().getOnlinePlayers().values()) {

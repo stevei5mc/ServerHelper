@@ -1,4 +1,4 @@
-package cn.stevei5mc.serverhelper.nukkit.gui.manage.players;
+package cn.stevei5mc.serverhelper.nukkit.form.manage.players;
 
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowCustom;
 import cn.nukkit.Player;
@@ -12,12 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class PlayerPatrolSystemGui {
+public class PlayerPatrolSystemForm {
     private static final ServerHelperMain main = ServerHelperMain.getInstance();
-
-    private PlayerPatrolSystemGui() {
-        throw new RuntimeException("Error");
-    }
 
     // 选择需要巡查的玩家
     public static void sendSelectPatrolPlayerUi(@NotNull Player player) {
@@ -36,7 +32,7 @@ public class PlayerPatrolSystemGui {
         custom.addElement(new ElementDropdown("选择世界",mapName));
         custom.addElement(new ElementLabel("如果选择隐身模式，则需要手动脱下身上的装备否则会被其他玩家发现"));
         custom.addElement(new ElementToggle("旁观者模式 / 隐身模式"));
-        custom.onClosed(ManagePlayersGui::sendManagePlayersSystemUi);
+        custom.onClosed(ManagePlayersForm::sendManagePlayersSystemUi);
         custom.onResponded((formResponseCustom, player1) -> {
             if (Server.getInstance().getOnlinePlayers().size() >= 2) {
                 Player targetPlayer = null;
@@ -68,12 +64,12 @@ public class PlayerPatrolSystemGui {
         player.showFormWindow(custom);
     }
 
-    // 选择玩家确认菜单
-    public static void sendConfirmUi(@NotNull Player admin, Player target) {
+    // 选择玩家确认菜单 （快捷菜单确认使用）
+    public static void confirmTargetPlayerMenu(@NotNull Player admin, Player target) {
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("巡查系统");
         custom.addElement(new ElementLabel("目标玩家: "+target.getName()));
         custom.addElement(new ElementToggle("旁观者模式 / 隐身模式"));
-        custom.onClosed(player -> ManagePlayersGui.sendManageTargetPlayerSystem(admin,target));
+        custom.onClosed(player -> ManagePlayersForm.sendManageTargetPlayerSystem(admin,target));
         custom.onResponded((form, player) -> PlayerUtils.teleportToPatrolTarget(admin,target,form.getToggleResponse(1)));
         admin.showFormWindow(custom);
     }
