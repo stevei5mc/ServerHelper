@@ -76,7 +76,7 @@ jobs:
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ steps.getProjectInfo.outputs.artifactId }}-PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
+        name: ${{ steps.getPomInfo.outputs.artifactId }}-PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
         path: ${{ matrix.path }}/staging
 
 #  build-Docusaurus:
