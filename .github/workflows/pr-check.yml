@@ -59,7 +59,7 @@ jobs:
         key: ${{ runner.os }}-maven-${{ steps.getPomInfo.outputs.artifactId }}_edition-${{ steps.getPomInfo.outputs.pomHash }}
         restore-keys: ${{ runner.os }}-maven--${{ matrix.name }}_edition-
     - name: Replace info
-      with:
+      env:
         basePath: ./${{ matrix.path }}/src/main
       run: |
         srcPath=${{ env.basePath }}/java/$(dirname $(grep "main:" ${{ env.basePath }}/resources/plugin.yml | awk '{print $2}' | sed 's/\./\//g' | sed 's/"//g'))
