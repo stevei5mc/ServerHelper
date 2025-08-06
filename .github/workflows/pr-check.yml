@@ -12,15 +12,16 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       repo_name: ${{ steps.get_info.outputs.repo_name }}
-      targetSha: ${{ steps.get_info.outputs.targetSha }}
-      targetRef: ${{ steps.get_info.outputs.targetRef }}
+      targetSha: ${{ env.targetSha }}
+      targetRef: ${{ env.targetRef }}
     steps:
+    - name: 拉取代码
+      uses: actions/checkout@v4
     - name: 获取信息
       id: get_info
-      run: |
-        echo "repo_name=${GITHUB_REPOSITORY/${{ github.repository_owner }}\//}" >> $GITHUB_OUTPUT
-        echo "targetSha=$(echo ${{ github.event.pull_request.head.sha }} | cut -c 1-7)" >> $GITHUB_OUTPUT
-        echo "targetRef=$(echo ${{ github.ref }} | sed 's/refs\///g' | sed 's/\//\\\//g')" >> $GITHUB_OUTPUT
+      uses: ./.github/actions/getProjectInfo
+      with:
+        targetSha: ${{ github.event.pull_request.head.sha }}
     - name:  Print info
       run: |
         echo Release version: ${{ steps.get_info.outputs.version }}
@@ -46,35 +47,28 @@ jobs:
       with:
         java-version: ${{ matrix.java-version }}
         distribution: 'temurin'
-    - name: Get project info
-      id: getProjectInfo
-      env:
-        basePath: ./${{ matrix.path }}/src/main
+    - name: Get pom info
+      id: getPomInfo
+      uses: ./.github/actions/getMvnPomInfo
+      with:
         pomPath: ./${{ matrix.path }}/pom.xml
-      run: |
-        echo "pom_hash=$(sha256sum ./${{ matrix.path }}/pom.xml|awk '{print $1}')" >> $GITHUB_OUTPUT
-        echo "srcPath=${{ env.basePath }}/java/$(dirname $(grep "main:" ${{ env.basePath }}/resources/plugin.yml | awk '{print $2}' | sed 's/\./\//g' | sed 's/"//g'))" >> $GITHUB_ENV
-        echo "groupId=$(mvn help:evaluate -f ${{ env.pomPath }} -Dexpression=project.groupId -q -DforceStdout)" >> $GITHUB_OUTPUT
-        echo "artifactId=$(mvn help:evaluate -f ${{ env.pomPath }} -Dexpression=project.artifactId -q -DforceStdout)" >> $GITHUB_OUTPUT
-        echo "version=$(mvn help:evaluate -f ${{ env.pomPath }} -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
-    - name: Print get pom.xml gav info
-      run: |
-        echo Group id: ${{ steps.getProjectInfo.outputs.groupId }}
-        echo Artifact id: ${{ steps.getProjectInfo.outputs.artifactId }}
-        echo Version: ${{ steps.getProjectInfo.outputs.version }}
-    - name: Replace info
-      run: |
-        mainClassPath=${{ env.srcPath }}/ServerHelperMain.java
-        echo "Main class path: $mainClassPath"
-        sed -i 's/{git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' $mainClassPath
-        sed -i 's/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' $mainClassPath
-        #sed -i 's/{plugin.version}/${{ steps.getProjectInfo.outputs.version }}/g' $mainClassPath
     - name: Cache local Maven repository
       uses: actions/cache@v4
       with:
         path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ steps.getProjectInfo.outputs.artifactId }}_edition-${{ steps.getProjectInfo.outputs.pom_hash }}
+        key: ${{ runner.os }}-maven-${{ steps.getPomInfo.outputs.artifactId }}_edition-${{ steps.getPomInfo.outputs.pomHash }}
         restore-keys: ${{ runner.os }}-maven--${{ matrix.name }}_edition-
+    - name: Replace info
+      env:
+        basePath: ./${{ matrix.path }}/src/main
+      run: |
+        srcPath=${{ env.basePath }}/java/$(dirname $(grep "main:" ${{ env.basePath }}/resources/plugin.yml | awk '{print $2}' | sed 's/\./\//g' | sed 's/"//g'))
+        echo "Src path: $srcPath"
+        mainClassPath=$srcPath/ServerHelperMain.java
+        echo "Main class path: $mainClassPath"
+        sed -i 's/{git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' $mainClassPath
+        sed -i 's/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' $mainClassPath
+        #sed -i 's/{plugin.version}/${{ steps.getPomInfo.outputs.version }}/g' $mainClassPath
     - name: Build project
       run: bash ${{ env.scriptPath }}/buildMavenProject.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "${{ matrix.path }}"
     - name: Get artifact hash
@@ -82,7 +76,7 @@ jobs:
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ steps.getProjectInfo.outputs.artifactId }}-PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
+        name: ${{ steps.getPomInfo.outputs.artifactId }}-PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
         path: ${{ matrix.path }}/staging
 
 #  build-Docusaurus:

@@ -1,16 +1,14 @@
 package cn.stevei5mc.serverhelper.nukkit;
 
-import cn.lanink.gamecore.utils.Language;
-import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.command.CommandSender;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.stevei5mc.serverhelper.nukkit.commands.admin.AdminCommand;
 import cn.stevei5mc.serverhelper.nukkit.commands.maincommand.ServerHelperMainCommand;
+import cn.stevei5mc.serverhelper.nukkit.listener.PlayerListener;
+import lombok.Getter;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 public class ServerHelperMain extends PluginBase {
@@ -20,34 +18,34 @@ public class ServerHelperMain extends PluginBase {
             /*"bg_BG", "cs_CZ","da_DK","de_DE","el_GR","en_GB","en_US","es_ES","es_MX","fi_FI","fr_CA","fr_FR","hu_HU","id_ID","it_IT",
             "ja_JP","ko_KR","nb_NO","nl_NL","pl_PL","pt_BR","pt_PT","ru_RU","sk_SK","sv_SE","tr_TR","uk_UA","zh_CN","zh_TW"*/
     );
-    private String defaultLanguage;
-    private final HashMap<String, Language> languageBaseMap = new HashMap<>();
-    private final List<String> settings = Arrays.asList(/*"ban","kick","warn","mute"*/);
+    private final List<String> settings = Arrays.asList(/*"ban","kick","warn","mute",*/"banCommands");
 //    private Config config;
 //    private Config banSetting;
 //    private Config kickSetting;
 //    private Config warnSetting;
 //    private Config muteSetting;
+    @Getter
+    private Config banCommands;
 
     @Override
     public void onLoad() {
         instance = this;
-//        this.saveConfigResources();
-//        this.loadConfig();
+        this.saveConfigResources();
+        this.loadConfig();
     }
 
     @Override
     public void onEnable() {
         if (this.getServer().getPluginManager().getPlugin("MemoriesOfTime-GameCore") != null) {
-            //loadBaseLanguage();
             this.getLogger().info(getVersion());
             this.getLogger().info(getCommitId());
             this.getLogger().info(getBranch());
             this.getServer().getCommandMap().register("",new ServerHelperMainCommand());
-            this.getServer().getCommandMap().register("admin",new AdminCommand("admin"));
+            this.getServer().getCommandMap().register("",new AdminCommand("admin"));
+            this.getServer().getPluginManager().registerEvents(new PlayerListener(),this);
             Server.getInstance().getScheduler().scheduleDelayedTask(this, () -> {
                 this.getLogger().warning("§c警告! §c本插件为免费且开源的，如果您付费获取获取的，则有可能被误导了");
-                this.getLogger().info("§a开源链接和使用方法: §bhttps://github.com/stevei5mc/ServerHelper");
+                this.getLogger().info("§f[§aGITHUB§f] §bhttps://github.com/stevei5mc/ServerHelper");
             },20);
         }else {
             //不存在则停止加载插件
@@ -64,22 +62,23 @@ public class ServerHelperMain extends PluginBase {
     }
 
     public void saveConfigResources() {
-        saveDefaultConfig();
+        /*saveDefaultConfig();
         for (String language : languages) {
-            saveResource("language/base/"+language+".yml");
-            saveResource("language/custom/"+language+".yml");
-        }
+            saveResource("languages/base/"+language+".yml");
+            saveResource("languages/custom/"+language+".yml");
+        }*/
         for (String setting : settings) {
-            saveResource("Setting/"+setting+".yml");
+            saveResource("Settings/" +setting+".yml");
         }
     }
 
     public void loadConfig() {
 //        this.config = new Config(this.getDataFolder()+"/config.yml",Config.YAML);
-//        this.banSetting = new Config(this.getDataFolder()+"/Setting/ban.yml",Config.YAML);
-//        this.kickSetting = new Config(this.getDataFolder()+"/Setting/kick.yml",Config.YAML);
-//        this.warnSetting = new Config(this.getDataFolder()+"/Setting/warn.yml",Config.YAML);
-//        this.muteSetting = new Config(this.getDataFolder()+"/Setting/mute.yml",Config.YAML);
+//        this.banSetting = new Config(this.getDataFolder()+"/Settings/ban.yml",Config.YAML);
+//        this.kickSetting = new Config(this.getDataFolder()+"/Settings/kick.yml",Config.YAML);
+//        this.warnSetting = new Config(this.getDataFolder()+ "/Settings/warn.yml",Config.YAML);
+//        this.muteSetting = new Config(this.getDataFolder()+"/Settings/mute.yml",Config.YAML);
+        this.banCommands = new Config(this.getDataFolder()+ "/Settings/banCommands.yml",Config.YAML);
     }
 
     public static ServerHelperMain getInstance() {
@@ -89,53 +88,6 @@ public class ServerHelperMain extends PluginBase {
     /*@Override
     public Config getConfig() {
         return config;
-    }*/
-
-    /*public Config getBanSetting() {
-        return banSetting;
-    }*/
-
-    /*public Config getKickSetting() {
-        return kickSetting;
-    }*/
-
-    /*public Config getWarnSetting() {
-        return warnSetting;
-    }*/
-
-    /*public Config getMuteSetting() {
-        return muteSetting;
-    }*/
-
-    //使用(有改动)https://github.com/MemoriesOfTime/CrystalWars/blob/master/src/main/java/cn/lanink/crystalwars/CrystalWars.java
-   /* private void loadBaseLanguage() {
-        this.defaultLanguage = this.config.getString("default_language", "zh_CN");
-        if (!languages.contains(this.defaultLanguage)) {
-            this.getLogger().error("Language" + this.defaultLanguage + "Not supported, will load Chinese!");
-            this.defaultLanguage = "zh_CN";
-        }
-        for (String language : languages) {
-            Config languageConfig = new Config(Config.YAML);
-            languageConfig.load(this.getDataFolder() + "/language/" + language + ".yml");
-            this.languageBaseMap.put(language, new Language(languageConfig));
-        }
-        this.getLogger().info(this.getBaseLang().translateString("plugin_language"));
-    }
-    //同上
-    public Language getBaseLang() {
-        return this.getBaseLang(null);
-    }
-    //同上
-    public Language getBaseLang(CommandSender sender) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            String playerLanguage = player.getLoginChainData().getLanguageCode();
-            if (!this.languageBaseMap.containsKey(playerLanguage)) {
-                playerLanguage = this.defaultLanguage;
-            }
-            return this.languageBaseMap.get(playerLanguage);
-        }
-        return this.languageBaseMap.get(this.defaultLanguage);
     }*/
 
     /*public String getMessagePrefix() {

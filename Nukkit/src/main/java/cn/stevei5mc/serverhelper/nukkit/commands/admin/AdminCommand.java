@@ -3,7 +3,7 @@ package cn.stevei5mc.serverhelper.nukkit.commands.admin;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.stevei5mc.serverhelper.nukkit.commands.base.BaseCommand;
-import cn.stevei5mc.serverhelper.nukkit.gui.MainGui;
+import cn.stevei5mc.serverhelper.nukkit.form.MainForm;
 
 public class AdminCommand extends BaseCommand {
     public AdminCommand(String name) {
@@ -18,6 +18,6 @@ public class AdminCommand extends BaseCommand {
 
     @Override
     public void sendUI(Player player) {
-        MainGui.sendMain(player);
+        MainForm.mainMenu(player);
     }
 }

@@ -6,7 +6,7 @@
 
     <groupId>cn.stevei5mc.serverhelper</groupId>
     <artifactId>ServerHelper-Nukkit</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0-beta1-SNAPSHOT</version>
 
     <properties>
         <java.version>1.8</java.version>
@@ -15,24 +15,8 @@
 
     <repositories>
         <repository>
-            <id>opencollab-repo-release</id>
-            <url>https://repo.opencollab.dev/maven-releases/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>opencollab-repo-snapshot</id>
-            <url>https://repo.opencollab.dev/maven-snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+            <id>opencollab-repository</id>
+            <url>https://repo.opencollab.dev/main</url>
         </repository>
         <repository>
             <id>repo-lanink-cn</id>
@@ -54,7 +38,7 @@
         <dependency>
             <groupId>com.github.stevei5mc</groupId>
             <artifactId>AutoRestart</artifactId>
-            <version>1.0.0-beta7</version>
+            <version>1.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -72,6 +56,12 @@
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>24.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.32</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
