@@ -1,6 +1,6 @@
 rootProject.name = "ServerHelper"
 
-include(":ServerHelper-WaterdogPE",":ServerHelper-Nukkit")
+include("Nukkit","WaterdogPE")
 
-project(":ServerHelper-WaterdogPE").projectDir = file("WaterdogPE")
-project(":ServerHelper-Nukkit").projectDir = file("Nukkit")
+project(":Nukkit").name = "ServerHelper-Nukkit"
+project(":WaterdogPE").name = "ServerHelper-WaterdogPE"
