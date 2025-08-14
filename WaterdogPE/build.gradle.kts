@@ -11,8 +11,12 @@ dependencies {
     compileOnly("dev.waterdog.waterdogpe:waterdog:2.0.3")
 }
 
-
 tasks.processResources {
+    filteringCharset = "UTF-8"
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    from("src/main/resources") { expand(
+        "version" to project.version
+    )}
     from("${rootDir}/resources")
     into("build/resources/main")
 }
