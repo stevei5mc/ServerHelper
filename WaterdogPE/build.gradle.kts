@@ -1,3 +1,7 @@
+plugins {
+    alias(libs.plugins.shadow)
+}
+
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
@@ -8,15 +12,21 @@ repositories {
 }
 
 dependencies {
+    api(project(":ServerHelper-Common"))
     compileOnly("dev.waterdog.waterdogpe:waterdog:2.0.3")
 }
 
-tasks.processResources {
-    filteringCharset = "UTF-8"
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    from("src/main/resources") { expand(
-        "version" to project.version
-    )}
-    from("${rootDir}/resources")
-    into("build/resources/main")
+tasks{
+    processResources {
+        filteringCharset = "UTF-8"
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        from("src/main/resources") { expand(
+            "version" to project.version
+        )}
+        from("${rootDir}/resources")
+        into("build/resources/main")
+    }
+    shadowJar {
+        archiveClassifier.set("")
+    }
 }
