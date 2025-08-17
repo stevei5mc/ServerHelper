@@ -18,8 +18,6 @@ dependencies {
 
 tasks{
     processResources {
-        filteringCharset = "UTF-8"
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
         from("src/main/resources") { expand(
             "version" to project.version
         )}

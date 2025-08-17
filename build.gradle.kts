@@ -42,5 +42,9 @@ subprojects {
         named<Delete>("clean") {
             delete("target")
         }
+        named<Copy>("processResources") {
+            filteringCharset = "UTF-8"
+            duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        }
     }
 }
