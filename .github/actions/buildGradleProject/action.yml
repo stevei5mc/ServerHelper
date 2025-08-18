@@ -1,0 +1,20 @@
+name: "Cache gradle"
+description: "Cache gradle"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Build project
+      shell: bash
+      run: |
+        chmod 777 gradlew && ls -lah
+        ./gradlew shadowJar javadocJar
+    - name: Get artifact hash
+      shell: bash
+      run: |
+        targetSuffixName=$(grep "version = " ./build.gradle.kts |  sed 's/version = //g' | sed 's/"//g')
+        for edition in Nukkit WaterdogPE
+        do
+          bash .github/workflows/scripts/getArtifactHash.sh "ServerHelper-$edition" "jar" "$edition/target"
+          ls -lah ./$edition
+        done
