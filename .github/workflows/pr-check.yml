@@ -29,55 +29,27 @@ jobs:
         echo Tatget ref: ${{ steps.get_info.outputs.targetRef }}
 
   build-plugin:
-    strategy:
-      fail-fast: false
-      matrix:
-        include: [
-          {path: "Nukkit",java-version: '8'},
-          {path: "WaterdogPE",java-version: '17'}
-        ]
-    runs-on: ubuntu-latest
-    needs: Initialize
     name: Build plugin
+    needs: Initialize
+    runs-on: ubuntu-latest
+    env:
+      java-version: "17"
     steps:
-    - name: 拉取代码
-      uses: actions/checkout@v4
-    - name: Setup java ${{ matrix.java-version }}
-      uses: actions/setup-java@v4
-      with:
-        java-version: ${{ matrix.java-version }}
-        distribution: 'temurin'
-    - name: Get pom info
-      id: getPomInfo
-      uses: ./.github/actions/getMvnPomInfo
-      with:
-        pomPath: ./${{ matrix.path }}/pom.xml
-    - name: Cache local Maven repository
-      uses: actions/cache@v4
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ steps.getPomInfo.outputs.artifactId }}_edition-${{ steps.getPomInfo.outputs.pomHash }}
-        restore-keys: ${{ runner.os }}-maven--${{ matrix.name }}_edition-
-    - name: Replace info
-      env:
-        basePath: ./${{ matrix.path }}/src/main
-      run: |
-        srcPath=${{ env.basePath }}/java/$(dirname $(grep "main:" ${{ env.basePath }}/resources/plugin.yml | awk '{print $2}' | sed 's/\./\//g' | sed 's/"//g'))
-        echo "Src path: $srcPath"
-        mainClassPath=$srcPath/ServerHelperMain.java
-        echo "Main class path: $mainClassPath"
-        sed -i 's/{git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' $mainClassPath
-        sed -i 's/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' $mainClassPath
-        #sed -i 's/{plugin.version}/${{ steps.getPomInfo.outputs.version }}/g' $mainClassPath
-    - name: Build project
-      run: bash ${{ env.scriptPath }}/buildMavenProject.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "${{ matrix.path }}"
-    - name: Get artifact hash
-      run: bash ${{ env.scriptPath }}/getArtifactHash.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "jar" "${{ matrix.path }}/staging"
-    - name: Upload build artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ steps.getPomInfo.outputs.artifactId }}-PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
-        path: ${{ matrix.path }}/staging
+      - name: 拉取代码
+        uses: actions/checkout@v4
+      - name: Setup java ${{ env.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.java-version }}
+          distribution: 'temurin'
+      - name:  Cache local Gradle wrapper and repository
+        uses: ./.github/actions/cacheGradle
+      - name:  Build project and get artifact hash
+        uses: ./.github/actions/buildGradleProject
+      - name: Upload build artifact
+        uses: ./.github/actions/uploadArtifact
+        with:
+          artifactName: PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
 
 #  build-Docusaurus:
 #    name: Build docusaurus

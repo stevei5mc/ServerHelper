@@ -1,3 +1,5 @@
+import org.gradle.external.javadoc.StandardJavadocDocletOptions
+
 plugins {
     id("java")
 }
@@ -35,6 +37,9 @@ subprojects {
         }
         withType<Javadoc> {
             options.encoding = "UTF-8"
+            (options as StandardJavadocDocletOptions).apply {
+                addStringOption("Xdoclint:all,-missing", "-quiet")
+            }
         }
         withType<Jar> {
             destinationDirectory.set(file("$projectDir/target"))

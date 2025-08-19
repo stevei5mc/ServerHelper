@@ -90,7 +90,7 @@ jobs:
     - name: Upload build artifact
       uses: ./.github/actions/uploadArtifact
       with:
-        artifactSuffixName: Dispatch-Build_${{ github.run_number }}
+        artifactName: Dispatch-Build_${{ github.run_number }}
         artifactSaveDays: ${{ inputs.artifactRetentionDays }}
 
   build-Docusaurus:
