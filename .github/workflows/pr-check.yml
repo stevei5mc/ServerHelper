@@ -5,7 +5,6 @@ on:
 
 env:
   GH_TOKEN: ${{ github.token }}
-  scriptPath: ".github/workflows/scripts"
 
 jobs:
   Initialize:
@@ -20,13 +19,14 @@ jobs:
     - name: 获取信息
       id: get_info
       uses: ./.github/actions/getProjectInfo
+    - name: Summary base info
+      uses: johngeorgewright/summary-action@v1.0.0
       with:
-        targetSha: ${{ github.event.pull_request.head.sha }}
-    - name:  Print info
-      run: |
-        echo Release version: ${{ steps.get_info.outputs.version }}
-        echo Target sha: ${{ steps.get_info.outputs.targetSha }}
-        echo Tatget ref: ${{ steps.get_info.outputs.targetRef }}
+        summary: |
+          # BUILD INFO
+          |Tatget ref|Target sha|Artifact retention days|
+          |:-:|:-:|:-:|
+          | ${{ env.targetRef }}|${{ env.targetSha }}|${{ inputs.artifactRetentionDays }}|
 
   build-plugin:
     name: Build plugin
@@ -44,8 +44,17 @@ jobs:
           distribution: 'temurin'
       - name:  Cache local Gradle wrapper and repository
         uses: ./.github/actions/cacheGradle
-      - name:  Build project and get artifact hash
-        uses: ./.github/actions/buildGradleProject
+      - name: Replace info
+        run: |
+          classPath=Common/src/main/java/cn/stevei5mc/serverhelper/common/base/BaseInfo.java
+          version=$(grep "version = " ./build.gradle.kts |  sed 's/version = //g' | sed 's/"//g')
+          sed 's/{git.commit.id}/${{ needs.Initialize.outputs.targetSha }}/g; s/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g; s/{project.version}/${{ steps.getProjectInfo.outputs.version }}/g' $classPath
+      - name:  Build project
+        run: |
+          chmod 777 gradlew && ls -lah
+          ./gradlew shadowJar javadocJar
+      - name: Get artifact hash
+        run: bash .github/workflows/scripts/getArtifactHash.sh
       - name: Upload build artifact
         uses: ./.github/actions/uploadArtifact
         with:

@@ -10,7 +10,7 @@ on:
         type: choice
         options: ['Build plugin','Build docusaurus','Build plugin and docusaurus']
       gradleExpandParameters:
-        description: 'Build gradle expand parameters'
+        description: 'Gradle build expand parameters'
         required: false
       additionalFunctions:
         description: "Additional functions"
@@ -43,26 +43,17 @@ jobs:
     steps:
     - name: 拉取代码
       uses: actions/checkout@v4
+    - name: 获取信息
+      id: get_info
+      uses: ./.github/actions/getProjectInfo
     - name: Summary base info
       uses: johngeorgewright/summary-action@v1.0.0
       with:
         summary: |
-          # Base info
-          |Build mode|Additional functions|Artifact retention days|
+          # BUILD INFO
+          |Tatget ref|Target sha|Artifact retention days|
           |:-:|:-:|:-:|
-          |${{ inputs.buildMode }}|${{ inputs.additionalFunctions }}|${{ inputs.artifactRetentionDays }}|
-    - name: 获取信息
-      id: get_info
-      uses: ./.github/actions/getProjectInfo
-    - name:  Print info
-      run: |
-        echo Bases info:
-        echo Build mode: ${{ inputs.buildMode }}
-        echo Target sha: ${{ env.targetSha }}
-        echo Tatget ref: ${{ env.targetRef }}
-        echo Additional functions info:
-        echo Functions: ${{ inputs.additionalFunctions }}
-        echo PR Approve ID: ${{ inputs.PR_ID }}
+          | ${{ env.targetRef }}|${{ env.targetSha }}|${{ inputs.artifactRetentionDays }}|
 
   build-plugin:
     if: (inputs.buildMode == 'Build plugin' || inputs.buildMode == 'Build plugin and docusaurus') || inputs.additionalFunctions == 'PR Approve'
