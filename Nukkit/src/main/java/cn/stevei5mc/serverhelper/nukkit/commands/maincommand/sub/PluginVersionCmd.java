@@ -22,10 +22,10 @@ public class PluginVersionCmd extends BaseSubCommand {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        sender.sendMessage("§b=== ServerHelper version info ===");
-        sender.sendMessage(BaseInfo.version);
-        sender.sendMessage(BaseInfo.commitId);
-        sender.sendMessage(BaseInfo.branch);
+        sender.sendMessage("§b=== ServerHelper VERSION info ===");
+        sender.sendMessage(BaseInfo.VERSION);
+        sender.sendMessage(BaseInfo.COMMIT_ID);
+        sender.sendMessage(BaseInfo.BRANCH);
         sender.sendMessage("§b==================================");
         return true;
     }

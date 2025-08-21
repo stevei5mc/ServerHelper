@@ -5,9 +5,6 @@ import dev.waterdog.waterdogpe.plugin.Plugin;
 import dev.waterdog.waterdogpe.utils.config.Configuration;
 import dev.waterdog.waterdogpe.utils.config.YamlConfig;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class ServerHelperMain extends Plugin {
 
     private static ServerHelperMain instance;
@@ -25,9 +22,9 @@ public class ServerHelperMain extends Plugin {
         this.getLogger().info("§f[§aGITHUB§f] §bhttps://github.com/stevei5mc/ServerHelper");
 //        saveConfigResources();
 //        loadConfig();
-        this.getLogger().info(BaseInfo.version);
-        this.getLogger().info(BaseInfo.commitId);
-        this.getLogger().info(BaseInfo.branch);
+        this.getLogger().info(BaseInfo.VERSION);
+        this.getLogger().info(BaseInfo.COMMIT_ID);
+        this.getLogger().info(BaseInfo.BRANCH);
     }
 
     public void saveConfigResources() {

@@ -7,8 +7,8 @@ do
   cd $edition/target
   echo "--------------------"
   echo "files sha256 value:"
-  sha256sum "ServerHelper-$edition"*.jar | tee ServerHelper-$edition-$version.sha256
+  sha256sum "ServerHelper-$edition"*.jar | tee "ServerHelper-$edition-$version.sha256"
   echo "--------------------"
-  ls -lah ./$edition/target
+  ls -lah
   cd $oldDir
 done

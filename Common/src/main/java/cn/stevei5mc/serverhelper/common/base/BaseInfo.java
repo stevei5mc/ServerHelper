@@ -8,9 +8,9 @@ import java.util.List;
 public class BaseInfo {
 
     // 版本信息
-    public static final String commitId = "";
-    public static final String branch = "";
-    public static final String version = "";
+    public static final String COMMIT_ID = "§bCommit id§7:§a {git.commit.id}";
+    public static final String BRANCH = "§bBranch§7:§a {git.branch}";
+    public static final String VERSION = "§bVersion§7:§a {project.version}";
 
     // 配置文件信息
     public static final int configFileVersion = 1;

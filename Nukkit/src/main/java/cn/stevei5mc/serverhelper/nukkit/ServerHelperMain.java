@@ -31,9 +31,9 @@ public class ServerHelperMain extends PluginBase {
     @Override
     public void onEnable() {
         if (this.getServer().getPluginManager().getPlugin("MemoriesOfTime-GameCore") != null) {
-            this.getLogger().info(BaseInfo.version);
-            this.getLogger().info(BaseInfo.commitId);
-            this.getLogger().info(BaseInfo.branch);
+            this.getLogger().info(BaseInfo.VERSION);
+            this.getLogger().info(BaseInfo.COMMIT_ID);
+            this.getLogger().info(BaseInfo.BRANCH);
             this.getServer().getCommandMap().register("",new ServerHelperMainCommand());
             this.getServer().getCommandMap().register("",new AdminCommand("admin"));
             this.getServer().getPluginManager().registerEvents(new PlayerListener(),this);

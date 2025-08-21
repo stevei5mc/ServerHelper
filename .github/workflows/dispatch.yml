@@ -9,6 +9,9 @@ on:
         default: 'Build plugin'
         type: choice
         options: ['Build plugin','Build docusaurus','Build plugin and docusaurus']
+      gradleExpandParameters:
+        description: 'Build gradle expand parameters'
+        required: false
       additionalFunctions:
         description: "Additional functions"
         required: false
@@ -27,7 +30,6 @@ on:
 
 env:
   GH_TOKEN: ${{ github.token }}
-  scriptPath: ".github/workflows/scripts"
 
 jobs:
   Initialize:
@@ -74,10 +76,7 @@ jobs:
       uses: actions/checkout@v4
     - name: 拉取 PR 代码
       if: inputs.additionalFunctions == 'PR Approve'
-      run: |
-        ls -la
-        gh pr checkout ${{ inputs.PR_ID }}
-        ls -la
+      run: gh pr checkout ${{ inputs.PR_ID }} && ls -la
     - name: Setup java ${{ env.java-version }}
       uses: actions/setup-java@v4
       with:
@@ -85,69 +84,75 @@ jobs:
         distribution: 'temurin'
     - name:  Cache local Gradle wrapper and repository
       uses: ./.github/actions/cacheGradle
-    - name:  Build project and get artifact hash
-      uses: ./.github/actions/buildGradleProject
+    - name: Replace info
+      run: |
+        classPath=Common/src/main/java/cn/stevei5mc/serverhelper/common/base/BaseInfo.java
+        version=$(grep "version = " ./build.gradle.kts |  sed 's/version = //g' | sed 's/"//g')
+        sed -i 's/{git.commit.id}/${{ needs.Initialize.outputs.targetSha }}/g; s/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g; s/{project.version}/${{ steps.getProjectInfo.outputs.version }}/g' $classPath
+    - name:  Build project
+      run: |
+        chmod 777 gradlew && ls -lah
+        ./gradlew shadowJar javadocJar ${{ inputs.gradleExpandParameters }}
+    - name: Get artifact hash
+      run: bash .github/workflows/scripts/getArtifactHash.sh
     - name: Upload build artifact
       uses: ./.github/actions/uploadArtifact
       with:
         artifactName: Dispatch-Build_${{ github.run_number }}
         artifactSaveDays: ${{ inputs.artifactRetentionDays }}
 
-  build-Docusaurus:
-    if: inputs.buildMode == 'Build docusaurus' || inputs.buildMode == 'Build plugin and docusaurus'
-    name: Build docusaurus
-    needs: Initialize
-    runs-on: ubuntu-latest
-    steps:
-    - name: 拉取代码
-      uses: actions/checkout@v4
-    - name: 拉取 PR 代码
-      if: inputs.additionalFunctions == 'PR Approve'
-      run: |
-        ls -la
-        gh pr checkout ${{ inputs.PR_ID }}
-        ls -la
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 18
-    - name: 构建
-      run: |
-        cd Docusaurus
-        yarn install --frozen-lockfile
-        yarn build
-        cd ../
-    - name: 上传构建
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: Docusaurus/build
-        retention-days: ${{ inputs.artifactRetentionDays }}
+#  build-Docusaurus:
+#    if: inputs.buildMode == 'Build docusaurus' || inputs.buildMode == 'Build plugin and docusaurus'
+#    name: Build docusaurus
+#    needs: Initialize
+#    runs-on: ubuntu-latest
+#    steps:
+#    - name: 拉取代码
+#      uses: actions/checkout@v4
+#    - name: 拉取 PR 代码
+#      if: inputs.additionalFunctions == 'PR Approve'
+#      run: gh pr checkout ${{ inputs.PR_ID }} && ls -la
+#    - uses: actions/setup-node@v4
+#      with:
+#        node-version: 18
+#    - name: 构建
+#      run: |
+#        cd Docusaurus
+#        yarn install --frozen-lockfile
+#        yarn build
+#        cd ../
+#    - name: 上传构建
+#      uses: actions/upload-pages-artifact@v3
+#      with:
+#        path: Docusaurus/build
+#        retention-days: ${{ inputs.artifactRetentionDays }}
 
-  PR-Approve:
-    if: inputs.additionalFunctions == 'PR Approve' && needs.Initialize.outputs.prState == 'open' && always()
-    name: PR Approve
-    needs: [Initialize,build-plugin,build-Docusaurus]
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-    steps:
-    - name: 拉取代码
-      uses: actions/checkout@v4
-    - name: 准备信息模板
-      run: |
-        sed -i 's/action_url/${{ needs.Initialize.outputs.url }}/g' .github/template/*.md
+#  PR-Approve:
+#    if: inputs.additionalFunctions == 'PR Approve' && needs.Initialize.outputs.prState == 'open' && always()
+#    name: PR Approve
+#    needs: [Initialize,build-plugin,build-Docusaurus]
+#    runs-on: ubuntu-latest
+#    permissions:
+#      pull-requests: write
+#    steps:
+#    - name: 拉取代码
+#      uses: actions/checkout@v4
+#    - name: 准备信息模板
+#      run: |
+#        sed -i 's/action_url/${{ needs.Initialize.outputs.url }}/g' .github/template/*.md
 
-  deploy-gitHub-pages:
-    if: inputs.additionalFunctions == 'Deploy gitHub pages'
-    name: Deploy gitHub pages
-    needs: [build-plugin,build-Docusaurus]
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-    - name: 部署到 GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
+#  deploy-gitHub-pages:
+#    if: inputs.additionalFunctions == 'Deploy gitHub pages'
+#    name: Deploy gitHub pages
+#    needs: [build-plugin,build-Docusaurus]
+#    permissions:
+#      pages: write
+#      id-token: write
+#    environment:
+#      name: github-pages
+#      url: ${{ steps.deployment.outputs.page_url }}
+#    runs-on: ubuntu-latest
+#    steps:
+#    - name: 部署到 GitHub Pages
+#      id: deployment
+#      uses: actions/deploy-pages@v4
