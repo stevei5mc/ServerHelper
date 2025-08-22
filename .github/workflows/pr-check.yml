@@ -47,12 +47,12 @@ jobs:
       - name: Replace info
         run: |
           classPath=Common/src/main/java/cn/stevei5mc/serverhelper/common/base/BaseInfo.java
-          version=$(grep "version = " ./build.gradle.kts |  sed 's/version = //g' | sed 's/"//g')
+          version=$(grep "version =" "./build.gradle.kts" | sed 's/.*version = "\(.*\)".*/\1/')
           sed 's/{git.commit.id}/${{ needs.Initialize.outputs.targetSha }}/g; s/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g; s/{project.version}/${{ steps.getProjectInfo.outputs.version }}/g' $classPath
       - name:  Build project
         run: |
           chmod 777 gradlew && ls -lah
-          ./gradlew shadowJar javadocJar
+          ./gradlew shadowJar javadocJar --no-daemon
       - name: Get artifact hash
         run: bash .github/workflows/scripts/getArtifactHash.sh
       - name: Upload build artifact
