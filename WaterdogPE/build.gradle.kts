@@ -22,7 +22,6 @@ tasks{
             "version" to project.version
         )}
         from("${rootDir}/resources")
-        into("build/resources/main")
     }
     shadowJar {
         archiveClassifier.set("")

@@ -55,10 +55,15 @@ jobs:
           ./gradlew shadowJar javadocJar --no-daemon
       - name: Get artifact hash
         run: bash .github/workflows/scripts/getArtifactHash.sh
-      - name: Upload build artifact
-        uses: ./.github/actions/uploadArtifact
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          artifactName: PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
+          artifactName: ${{ needs.Initialize.outputs.repo_name }}-PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
+          retention-days: ${{ inputs.artifactRetentionDays }}
+          path: |
+            Common/target/*
+            Nukkit/target/*
+            WaterdogPE/target/*
 
 #  build-Docusaurus:
 #    name: Build docusaurus

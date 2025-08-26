@@ -60,10 +60,15 @@ jobs:
           ./gradlew shadowJar javadocJar --no-daemon
       - name: Get artifact hash
         run: bash .github/workflows/scripts/getArtifactHash.sh
-      - name: Upload build artifact
-        uses: ./.github/actions/uploadArtifact
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          artifactName: Release-${{ needs.Initialize.outputs.version }}
+          artifactName: ${{ needs.Initialize.outputs.repo_name }}-Release-${{ needs.Initialize.outputs.version }}
+          retention-days: ${{ inputs.artifactRetentionDays }}
+          path: |
+            Common/target/*
+            Nukkit/target/*
+            WaterdogPE/target/*
       - name: Prepare releases files
         run: bash ${{ env.scriptPath }}/prepareReleasesFiles.sh
       - name: Release to github

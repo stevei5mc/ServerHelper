@@ -40,6 +40,7 @@ jobs:
       targetSha: ${{ env.targetSha }}
       targetRef: ${{ env.targetRef }}
       prState: ${{ env.prState }}
+      repo_name: ${{ steps.get_info.outputs.repo_name }}
     steps:
     - name: 拉取代码
       uses: actions/checkout@v4
@@ -86,11 +87,15 @@ jobs:
         ./gradlew shadowJar javadocJar --no-daemon ${{ inputs.gradleExpandParameters }}
     - name: Get artifact hash
       run: bash .github/workflows/scripts/getArtifactHash.sh
-    - name: Upload build artifact
-      uses: ./.github/actions/uploadArtifact
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
       with:
-        artifactName: Dispatch-Build_${{ github.run_number }}
-        artifactSaveDays: ${{ inputs.artifactRetentionDays }}
+        name: ${{ needs.Initialize.outputs.repo_name }}-Dispatch-Build_${{ github.run_number }}
+        retention-days: ${{ inputs.artifactRetentionDays }}
+        path: |
+          Common/target/*
+          Nukkit/target/*
+          WaterdogPE/target/*
 
 #  build-Docusaurus:
 #    if: inputs.buildMode == 'Build docusaurus' || inputs.buildMode == 'Build plugin and docusaurus'
