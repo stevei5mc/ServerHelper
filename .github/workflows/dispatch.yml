@@ -87,15 +87,14 @@ jobs:
         ./gradlew shadowJar javadocJar --no-daemon ${{ inputs.gradleExpandParameters }}
     - name: Get artifact hash
       run: bash .github/workflows/scripts/getArtifactHash.sh
+    - name: Prepare releases files
+      run: bash .github/workflows/scripts/prepareReleasesFiles.sh
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: ${{ needs.Initialize.outputs.repo_name }}-Dispatch-Build_${{ github.run_number }}
         retention-days: ${{ inputs.artifactRetentionDays }}
-        path: |
-          Common/target/*
-          Nukkit/target/*
-          WaterdogPE/target/*
+        path: ./staging
 
 #  build-Docusaurus:
 #    if: inputs.buildMode == 'Build docusaurus' || inputs.buildMode == 'Build plugin and docusaurus'

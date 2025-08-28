@@ -4,7 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
-import cn.stevei5mc.serverhelper.common.base.BaseInfo;
+import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
 import cn.stevei5mc.serverhelper.nukkit.ServerHelperMain;
 
 import java.util.ArrayList;

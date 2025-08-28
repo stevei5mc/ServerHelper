@@ -3,7 +3,7 @@ package cn.stevei5mc.serverhelper.nukkit;
 import cn.nukkit.Server;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
-import cn.stevei5mc.serverhelper.common.base.BaseInfo;
+import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
 import cn.stevei5mc.serverhelper.nukkit.commands.admin.AdminCommand;
 import cn.stevei5mc.serverhelper.nukkit.commands.maincommand.ServerHelperMainCommand;
 import cn.stevei5mc.serverhelper.nukkit.listener.PlayerListener;
@@ -39,7 +39,7 @@ public class ServerHelperMain extends PluginBase {
             this.getServer().getPluginManager().registerEvents(new PlayerListener(),this);
             Server.getInstance().getScheduler().scheduleDelayedTask(this, () -> {
                 this.getLogger().warning("§c警告! §c本插件为免费且开源的，如果您付费获取获取的，则有可能被误导了");
-                this.getLogger().info("§f[§aGITHUB§f] §bhttps://github.com/stevei5mc/ServerHelper");
+                this.getLogger().info(BaseInfo.GH_URL);
             },20);
         }else {
             //不存在则停止加载插件

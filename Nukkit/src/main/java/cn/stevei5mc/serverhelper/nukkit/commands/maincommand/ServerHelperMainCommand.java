@@ -2,7 +2,7 @@ package cn.stevei5mc.serverhelper.nukkit.commands.maincommand;
 
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
-import cn.stevei5mc.serverhelper.common.base.BaseInfo;
+import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
 import cn.stevei5mc.serverhelper.nukkit.commands.base.BaseCommand;
 import cn.stevei5mc.serverhelper.nukkit.commands.maincommand.sub.PluginVersionCmd;
 import cn.stevei5mc.serverhelper.nukkit.commands.maincommand.sub.ReloadCmd;

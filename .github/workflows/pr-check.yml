@@ -20,13 +20,7 @@ jobs:
       id: get_info
       uses: ./.github/actions/getProjectInfo
     - name: Summary base info
-      uses: johngeorgewright/summary-action@v1.0.0
-      with:
-        summary: |
-          # BUILD INFO
-          |Tatget ref|Target sha|Artifact retention days|
-          |:-:|:-:|:-:|
-          | ${{ env.targetRef }}|${{ env.targetSha }}|${{ inputs.artifactRetentionDays }}|
+      uses: ./.github/actions/getPrInfo
 
   build-plugin:
     name: Build plugin
@@ -55,15 +49,13 @@ jobs:
           ./gradlew shadowJar javadocJar --no-daemon
       - name: Get artifact hash
         run: bash .github/workflows/scripts/getArtifactHash.sh
+      - name: Prepare releases files
+        run: bash .github/workflows/scripts/prepareReleasesFiles.sh
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           artifactName: ${{ needs.Initialize.outputs.repo_name }}-PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
-          retention-days: ${{ inputs.artifactRetentionDays }}
-          path: |
-            Common/target/*
-            Nukkit/target/*
-            WaterdogPE/target/*
+          path: ./staging
 
 #  build-Docusaurus:
 #    name: Build docusaurus

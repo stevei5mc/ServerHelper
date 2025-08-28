@@ -1,6 +1,6 @@
 package cn.stevei5mc.serverhelper.waterdogpe;
 
-import cn.stevei5mc.serverhelper.common.base.BaseInfo;
+import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
 import dev.waterdog.waterdogpe.plugin.Plugin;
 import dev.waterdog.waterdogpe.utils.config.Configuration;
 import dev.waterdog.waterdogpe.utils.config.YamlConfig;
@@ -19,7 +19,7 @@ public class ServerHelperMain extends Plugin {
     public void onEnable() {
         instance = this;
         this.getLogger().warn("§c警告! §c本插件为免费且开源的，如果您付费获取获取的，则有可能被误导了");
-        this.getLogger().info("§f[§aGITHUB§f] §bhttps://github.com/stevei5mc/ServerHelper");
+        this.getLogger().info(BaseInfo.GH_URL);
 //        saveConfigResources();
 //        loadConfig();
         this.getLogger().info(BaseInfo.VERSION);

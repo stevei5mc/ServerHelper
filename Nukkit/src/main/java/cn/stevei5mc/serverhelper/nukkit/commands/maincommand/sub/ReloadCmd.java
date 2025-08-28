@@ -2,7 +2,7 @@ package cn.stevei5mc.serverhelper.nukkit.commands.maincommand.sub;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
-import cn.stevei5mc.serverhelper.common.base.BaseInfo;
+import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
 import cn.stevei5mc.serverhelper.nukkit.commands.base.BaseSubCommand;
 
 public class ReloadCmd extends BaseSubCommand {
