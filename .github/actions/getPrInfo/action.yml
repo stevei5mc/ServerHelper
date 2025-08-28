@@ -14,7 +14,7 @@ runs:
     uses: stevei5mc/Get-PR-info-action@main
     id: getPrInfo
     with:
-      prId: '${{ inputs.PR_ID }}'
+      prId: '${{ inputs.prId }}'
   - name: Set pull request env info
     shell: bash
     run: |
