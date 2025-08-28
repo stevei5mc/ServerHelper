@@ -52,8 +52,8 @@ jobs:
       - name: Replace info
         run: |
           classPath=Common/src/main/java/cn/stevei5mc/serverhelper/common/base/BaseInfo.java
-          version=$(grep "version =" "./build.gradle.kts" | sed 's/.*version = "\(.*\)".*/\1/')
-          sed 's/{git.commit.id}/${{ needs.Initialize.outputs.targetSha }}/g; s/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g; s/{project.version}/${{ steps.getProjectInfo.outputs.version }}/g' $classPath
+          sed -i "s/\(version = \)\"[^\"]*\"/\1\"${{ needs.Initialize.outputs.version }}\"/" ./build.gradle.kts
+          sed -i 's/{git.commit.id}/${{ needs.Initialize.outputs.targetSha }}/g; s/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g; s/{project.version}/${{ needs.Initialize.outputs.version }}/g' $classPath
       - name:  Build project
         run: |
           chmod 777 gradlew && ls -lah
