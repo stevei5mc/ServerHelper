@@ -6,6 +6,10 @@ inputs:
     description: "Pr id"
     required: true
     default: '${{ github.event.pull_request.number }}'
+  prApprove:
+    description: "PR approve"
+    required: true
+    default: 'false'
 
 runs:
   using: "composite"
@@ -39,6 +43,7 @@ runs:
       sed -i 's|{9A}|${{ env.baselabel }}|g; s|{9B}|${{ env.baseUrl }}|g; s|{9C}|${{ env.baseSha }}|g' ${{ env.summaryTemplateFilePath }}
       cat ${{ env.summaryTemplateFilePath }} >> $GITHUB_STEP_SUMMARY
   - name: Pull request status check
+    if: inputs.prApprove == 'true'
     shell: bash
     run: |
       if [ '${{ steps.getPrInfo.outputs.prState }}' = 'closed' ]; then
