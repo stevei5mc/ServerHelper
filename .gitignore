@@ -1,6 +1,8 @@
 .mvn/
 .idea/
 target/
+.run/
+staging/
 
 pom.xml.tag
 pom.xml.releaseBackup
@@ -12,3 +14,9 @@ buildNumber.properties
 .project
 .classpath
 *.iml
+*.jar
+*.war
+*.zip
+*.rar
+*.7z
+*.gz

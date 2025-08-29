@@ -1,6 +1,6 @@
 name: ServerHelper
 main: cn.stevei5mc.serverhelper.nukkit.ServerHelperMain
-version: "1.0.0-SNAPSHOT"
+version: "1.0.0-beta1-SNAPSHOT"
 author: stevei5mc
 api: ["1.0.0"]
 
@@ -8,3 +8,9 @@ permissions:
   serverhelper.admin:
     default: op
     description: "插件主权限"
+  serverhelper.admin.reload:
+    default: op
+    description: "重载配置文件"
+  serverhelper.admin.unban.commands:
+    default: op
+    description: "解除命令的禁用状态"

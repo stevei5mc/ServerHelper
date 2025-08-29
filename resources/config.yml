@@ -1,6 +1,9 @@
 # 配置文件版本
 version: 1
 message_prefix: "§b§ServerHelper §r§7>> "
+enable-multlanguage: false
+default_language: "zh_CN"
+
 # 数据保存类型
 data_type: sqlite
 
@@ -20,4 +23,4 @@ commands:
   kick: kick
   mute: mute
   unmute: unmute
-   warn: warn
+  warn: warn

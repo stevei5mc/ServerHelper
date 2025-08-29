@@ -3,152 +3,134 @@ name: dispatch
 on:
   workflow_dispatch:
     inputs:
-      build-plugin:
-        description: 'Build plugin'
+      buildMode:
+        description: 'Build mode'
         required: false
-        default: true
-        type: boolean
-      build-Docusaurus:
-        description: 'Build docusaurus'
-        required: false
-        default: false
-        type: boolean
-      additional-functions:
+        default: 'Build plugin'
+        type: choice
+        options: ['Build plugin','Build docusaurus','Build plugin and docusaurus']
+      additionalFunctions:
         description: "Additional functions"
         required: false
-        default: 'warning'
+        default: 'Not used'
         type: choice
-        options:
-        - Not used
-        - PR Approve
-        - Deploy gitHub pages
+        options: ['Not used','PR Approve','Deploy gitHub pages']
       PR_ID:
         description: 'PR Approve ID'
         required: false
+      artifactRetentionDays:
+        description: "Artifact retention days"
+        required: false
+        default: '90'
+        type: choice
+        options: ['1','7','14','30','60','90']    
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  scriptPath: ".github/workflows/scripts"
 
 jobs:
-  initialize:
+  Initialize:
     runs-on: ubuntu-latest
     outputs:
-      repo_name: ${{ steps.get_info.outputs.repo_name }}
-      artifact_name: ${{ steps.get_info.outputs.repo_name }}-Dispatch-Build_${{ github.run_number }}
-      additional-functions: ${{ steps.get_info.outputs.additional-functions }}
       PR_ID: ${{ steps.get_info.outputs.PR_ID }}
       url: ${{ steps.get_info.outputs.url }}
+      targetSha: ${{ env.targetSha }}
+      targetRef: ${{ env.targetRef }}
+      prState: ${{ env.prState }}
     steps:
-    - name: 获取信息
-      id: get_info
-      run: |
-        echo "repo_name=${GITHUB_REPOSITORY/${{ github.repository_owner }}\//}" >> $GITHUB_OUTPUT
-        echo "additional-functions=${{ inputs.additional-functions }}" >> $GITHUB_OUTPUT
-        echo "PR_ID=${{ inputs.PR_ID }}" >> $GITHUB_OUTPUT
-        echo "url=github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_OUTPUT
-    - name:  Output info list
-      run: |
-        echo Bases info:
-        echo Build plugin : ${{ inputs.build-plugin }}
-        echo Build docusaurus : ${{ inputs.build-Docusaurus }}
-        echo Artifact name: ${{ steps.get_info.outputs.repo_name }}-Dispatch-Build_${{ github.run_number }}
-        echo Additional functions info:
-        echo Functions: ${{ steps.get_info.additional-functions }}
-        echo PR Approve ID : ${{ inputs.PR_ID }}
-    - name: Summary Action
-      if: steps.get_info.outputs.additional-functions != 'Not used'
+    - name: 拉取代码
+      uses: actions/checkout@v4
+    - name: Summary base info
       uses: johngeorgewright/summary-action@v1.0.0
       with:
         summary: |
-          # Build
-          |Plugins|Docusaurus|
-          |:-:|:-:|
-          |${{ inputs.build-plugin }}|${{ inputs.build-Docusaurus }}|
-          ---
-          # Additional functions
-          |Functions|PR ID|
-          |:-:|:-:|
-          |${{ inputs.additional-functions }}|${{ inputs.PR_ID }}|
-
+          # Base info
+          |Build mode|Additional functions|Artifact retention days|
+          |:-:|:-:|:-:|
+          |${{ inputs.buildMode }}|${{ inputs.additionalFunctions }}|${{ inputs.artifactRetentionDays }}|
+    - name: 获取信息
+      id: get_info
+      uses: ./.github/actions/getProjectInfo
+    - name:  Print info
+      run: |
+        echo Bases info:
+        echo Build mode: ${{ inputs.buildMode }}
+        echo Target sha: ${{ env.targetSha }}
+        echo Tatget ref: ${{ env.targetRef }}
+        echo Additional functions info:
+        echo Functions: ${{ inputs.additionalFunctions }}
+        echo PR Approve ID: ${{ inputs.PR_ID }}
 
   build-plugin:
-    if: ${{ inputs.build-plugin }}
+    if: (inputs.buildMode == 'Build plugin' || inputs.buildMode == 'Build plugin and docusaurus') || inputs.additionalFunctions == 'PR Approve'
     strategy:
+      fail-fast: false
       matrix:
-        include:
-          - name: "Nukkit"
-            path: "Nukkit"
-            java: '8'
-          - name: "WaterdogPE"
-            path: "WaterdogPE"
-            java: '17'
+        include: [
+          {path: "Nukkit",java-version: '8'},
+          {path: "WaterdogPE",java-version: '17'}
+        ]
     runs-on: ubuntu-latest
-    needs: initialize
-    name: Build ${{ matrix.name }} Edition
+    needs: Initialize
+    name: Build plugin
     steps:
     - name: 拉取代码
-      uses: actions/checkout@v4.1.6
-    - name: 拉取代码(批准PR专用)
-      if: needs.initialize.outputs.additional-functions == 'PR Approve'
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: actions/checkout@v4
+    - name: 拉取 PR 代码
+      if: inputs.additionalFunctions == 'PR Approve'
       run: |
         ls -la
         gh pr checkout ${{ inputs.PR_ID }}
         ls -la
-    - name: Setup java ${{ matrix.java }}
+    - name: Setup java ${{ matrix.java-version }}
       uses: actions/setup-java@v4
       with:
-        java-version: ${{ matrix.java }}
+        java-version: ${{ matrix.java-version }}
         distribution: 'temurin'
-    - name: Extractor pom.xml gav info 
-      uses: andreacomo/maven-gav-extractor@v2.0.1
+    - name: Get pom info
       id: getPomInfo
+      uses: ./.github/actions/getMvnPomInfo
       with:
-        pom-location: ./${{ matrix.path }}/pom.xml 
-    - name: Show get pom.xml gav info
-      run: |
-        echo Group id: ${{ steps.getPomInfo.outputs.group-id }}
-        echo Artifact id: ${{ steps.getPomInfo.outputs.artifact-id }}
-        echo Version: ${{ steps.getPomInfo.outputs.version }}
-    - name: Get pom.xml hash
-      id: pom_hash
-      run: echo "pom_hash=$(sha256sum ./${{ matrix.path }}/pom.xml|awk '{print $1}')" >> $GITHUB_OUTPUT
+        pomPath: ./${{ matrix.path }}/pom.xml
     - name: Cache local Maven repository
       uses: actions/cache@v4
       with:
         path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ matrix.name }}_edition-${{ steps.pom_hash.outputs.pom_hash }}
-        restore-keys: |
-          ${{ runner.os }}-maven--${{ matrix.name }}_edition-
-    - name: Build project and get artifact hash
+        key: ${{ runner.os }}-maven-${{ steps.getPomInfo.outputs.artifactId }}_edition-${{ steps.getPomInfo.outputs.pomHash }}
+        restore-keys: ${{ runner.os }}-maven--${{ matrix.name }}_edition-
+    - name: Replace info
+      env:
+        basePath: ./${{ matrix.path }}/src/main
       run: |
-        cd ./${{ matrix.path }}
-        pwd
-        mvn -B package --file pom.xml
-        mkdir staging
-        cp target/*.jar staging
-        ls -la
-        cd ./staging
-        bash ../../.github/workflows/get_build_files_hash.sh "${{ steps.getPomInfo.outputs.artifact-id }}"
-        cd ../../
+        srcPath=${{ env.basePath }}/java/$(dirname $(grep "main:" ${{ env.basePath }}/resources/plugin.yml | awk '{print $2}' | sed 's/\./\//g' | sed 's/"//g'))
+        echo "Src path: $srcPath"
+        mainClassPath=$srcPath/ServerHelperMain.java
+        echo "Main class path: $mainClassPath"
+        sed -i 's/{git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' $mainClassPath
+        sed -i 's/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' $mainClassPath
+        #sed -i 's/{plugin.version}/${{ steps.getPomInfo.outputs.version }}/g' $mainClassPath
+    - name: Build project
+      run: bash ${{ env.scriptPath }}/buildMavenProject.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "${{ matrix.path }}"
+    - name: Get artifact hash
+      run: bash ${{ env.scriptPath }}/getArtifactHash.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "jar" "${{ matrix.path }}/staging"
     - name: Upload build artifact
-      uses: actions/upload-artifact@v4.3.3
+      uses: actions/upload-artifact@v4
       with:
-        name: ${{ needs.initialize.outputs.artifact_name }}-for_${{ matrix.name }}_Edition
+        name: ${{ steps.getPomInfo.outputs.artifactId }}-Dispatch-Build_${{ github.run_number }}
         path: ${{ matrix.path }}/staging
+        retention-days: ${{ inputs.artifactRetentionDays }}
 
   build-Docusaurus:
-    if: ${{ inputs.build-Docusaurus }}
+    if: inputs.buildMode == 'Build docusaurus' || inputs.buildMode == 'Build plugin and docusaurus'
     name: Build docusaurus
-    needs: initialize
+    needs: Initialize
     runs-on: ubuntu-latest
     steps:
     - name: 拉取代码
       uses: actions/checkout@v4
-      with:
-        submodules: true
-    - name: 拉取代码(批准PR专用)
-      if: needs.initialize.outputs.additional-functions == 'PR Approve'
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: 拉取 PR 代码
+      if: inputs.additionalFunctions == 'PR Approve'
       run: |
         ls -la
         gh pr checkout ${{ inputs.PR_ID }}
@@ -170,60 +152,34 @@ jobs:
       uses: actions/upload-pages-artifact@v3
       with:
         path: Docusaurus/build
+        retention-days: ${{ inputs.artifactRetentionDays }}
 
   PR-Approve:
-    if: needs.initialize.outputs.additional-functions == 'PR Approve' && always()
+    if: inputs.additionalFunctions == 'PR Approve' && needs.Initialize.outputs.prState == 'open' && always()
     name: PR Approve
-    needs: [build-plugin,build-Docusaurus]
+    needs: [Initialize,build-plugin,build-Docusaurus]
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
     steps:
     - name: 拉取代码
       uses: actions/checkout@v4
-      with:
-        submodules: true
-    - name: 批准PR
-      if: needs.build-plugin.result == 'success'
-      uses: hmarr/auto-approve-action@v4.0.0
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        pull-request-number: ${{ inputs.PR_ID }}
-        review-message: |
-          构建成功，本PR获得批准合并。如果有新的提交则自动取消本次批准！
-          非常感谢您对本次作出的贡献。
-
-          The build was successful, and this PR was approved for merging.
-          If there is a new submission, this approval will be automatically canceled.
-          Thank you very much for your contribution to this event。
-
-          ${{ needs.initialize.outputs.url }}
-    - name: PR review message
-      if: failure() || needs.build-plugin.result != 'success'
-      uses: miry/prcomment@v0.1.3
-      with:
-        msg: |
-          构建失败，请查看构建获取失败原因：
-          Build failed, please check the build to obtain the reason for the failure:
-
-          ${{ steps.get_info.outputs.url }}
-        pr: ${{ inputs.PR_ID }}
-        token: ${{ secrets.GITHUB_TOKEN }}
+    - name: 准备信息模板
+      run: |
+        sed -i 's/action_url/${{ needs.Initialize.outputs.url }}/g' .github/template/*.md
 
   deploy-gitHub-pages:
-    if: needs.initialize.outputs.additional-functions == 'Deploy gitHub pages'
+    if: inputs.additionalFunctions == 'Deploy gitHub pages'
     name: Deploy gitHub pages
     needs: [build-plugin,build-Docusaurus]
-    # 给予 GITHUB_TOKEN 进行 Pages 部署所必须的权限
     permissions:
-      pages: write # 以部署到 Pages
-      id-token: write # 以验证部署来自恰当的源
-    # 部署到 Github Pages 环境
-    # environment:
-    #   name: github-pages
-    #   url: ${{ steps.deployment.outputs.page_url }}
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-       - name: 部署到 GitHub Pages
-         id: deployment
-         uses: actions/deploy-pages@v4
+    - name: 部署到 GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4

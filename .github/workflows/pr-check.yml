@@ -3,99 +3,99 @@ name: PR check
 on:
   pull_request:
 
+env:
+  GH_TOKEN: ${{ github.token }}
+  scriptPath: ".github/workflows/scripts"
+
 jobs:
-  initialize:
+  Initialize:
     runs-on: ubuntu-latest
     outputs:
       repo_name: ${{ steps.get_info.outputs.repo_name }}
-      artifact_name: ${{ steps.get_info.outputs.repo_name }}-PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
+      targetSha: ${{ env.targetSha }}
+      targetRef: ${{ env.targetRef }}
     steps:
+    - name: 拉取代码
+      uses: actions/checkout@v4
     - name: 获取信息
       id: get_info
+      uses: ./.github/actions/getProjectInfo
+      with:
+        targetSha: ${{ github.event.pull_request.head.sha }}
+    - name:  Print info
       run: |
-        echo "repo_name=${GITHUB_REPOSITORY/${{ github.repository_owner }}\//}" >> $GITHUB_OUTPUT
+        echo Release version: ${{ steps.get_info.outputs.version }}
+        echo Target sha: ${{ steps.get_info.outputs.targetSha }}
+        echo Tatget ref: ${{ steps.get_info.outputs.targetRef }}
 
   build-plugin:
     strategy:
+      fail-fast: false
       matrix:
-        include:
-          - name: "Nukkit"
-            path: "Nukkit"
-            java: '8'
-          - name: "WaterdogPE"
-            path: "WaterdogPE"
-            java: '17'
+        include: [
+          {path: "Nukkit",java-version: '8'},
+          {path: "WaterdogPE",java-version: '17'}
+        ]
     runs-on: ubuntu-latest
-    needs: initialize
-    name: Build ${{ matrix.name }} Edition
+    needs: Initialize
+    name: Build plugin
     steps:
     - name: 拉取代码
-      uses: actions/checkout@v4.1.6
-    - name: Setup java ${{ matrix.java }}
+      uses: actions/checkout@v4
+    - name: Setup java ${{ matrix.java-version }}
       uses: actions/setup-java@v4
       with:
-        java-version: ${{ matrix.java }}
+        java-version: ${{ matrix.java-version }}
         distribution: 'temurin'
-    - name: Extractor pom.xml gav info 
-      uses: andreacomo/maven-gav-extractor@v2.0.1
+    - name: Get pom info
       id: getPomInfo
+      uses: ./.github/actions/getMvnPomInfo
       with:
-        pom-location: ./${{ matrix.path }}/pom.xml 
-    - name: Show get pom.xml gav info
-      run: |
-        echo ${{ steps.getPomInfo.outputs.group-id }}
-        echo ${{ steps.getPomInfo.outputs.artifact-id }}
-        echo ${{ steps.getPomInfo.outputs.version }}
-    - name: Get pom.xml hash
-      id: pom_hash
-      run: echo "pom_hash=$(sha256sum ./${{ matrix.path }}/pom.xml|awk '{print $1}')" >> $GITHUB_OUTPUT
+        pomPath: ./${{ matrix.path }}/pom.xml
     - name: Cache local Maven repository
       uses: actions/cache@v4
       with:
         path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ matrix.name }}_edition-${{ steps.pom_hash.outputs.pom_hash }}
-        restore-keys: |
-          ${{ runner.os }}-maven--${{ matrix.name }}_edition-
-    - name: Build project and get artifact hash
+        key: ${{ runner.os }}-maven-${{ steps.getPomInfo.outputs.artifactId }}_edition-${{ steps.getPomInfo.outputs.pomHash }}
+        restore-keys: ${{ runner.os }}-maven--${{ matrix.name }}_edition-
+    - name: Replace info
+      env:
+        basePath: ./${{ matrix.path }}/src/main
       run: |
-        cd ./${{ matrix.path }}
-        pwd
-        mvn -B package --file pom.xml
-        mkdir staging
-        cp target/*.jar staging
-        ls -la
-        cd ./staging
-        bash ../../.github/workflows/get_build_files_hash.sh "${{ steps.getPomInfo.outputs.artifact-id }}"
-        cd ../../
+        srcPath=${{ env.basePath }}/java/$(dirname $(grep "main:" ${{ env.basePath }}/resources/plugin.yml | awk '{print $2}' | sed 's/\./\//g' | sed 's/"//g'))
+        echo "Src path: $srcPath"
+        mainClassPath=$srcPath/ServerHelperMain.java
+        echo "Main class path: $mainClassPath"
+        sed -i 's/{git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' $mainClassPath
+        sed -i 's/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' $mainClassPath
+        #sed -i 's/{plugin.version}/${{ steps.getPomInfo.outputs.version }}/g' $mainClassPath
+    - name: Build project
+      run: bash ${{ env.scriptPath }}/buildMavenProject.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "${{ matrix.path }}"
+    - name: Get artifact hash
+      run: bash ${{ env.scriptPath }}/getArtifactHash.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "jar" "${{ matrix.path }}/staging"
     - name: Upload build artifact
-      uses: actions/upload-artifact@v4.3.3
+      uses: actions/upload-artifact@v4
       with:
-        name: ${{ needs.initialize.outputs.artifact_name }}-for_${{ matrix.name }}_Edition
+        name: ${{ steps.getPomInfo.outputs.artifactId }}-PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
         path: ${{ matrix.path }}/staging
 
-  build-Docusaurus:
-    name: Build docusaurus
-    needs: initialize
-    runs-on: ubuntu-latest
-    steps:
-    - name: 拉取代码
-      uses: actions/checkout@v4
-      with:
-        submodules: true
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 18
-    - name: 安装依赖
-      run: |
-        cd Docusaurus && pwd
-        yarn install --frozen-lockfile
-        ls -la && cd ../
-    - name: 构建网站
-      run: |
-        cd Docusaurus && pwd
-        yarn build
-        ls -la && cd ../
-    - name: 上传构建
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: Docusaurus/build
+#  build-Docusaurus:
+#    name: Build docusaurus
+#    needs: Initialize
+#    runs-on: ubuntu-latest
+#    steps:
+#    - name: 拉取代码
+#      uses: actions/checkout@v4
+#    - uses: actions/setup-node@v4
+#      with:
+#        node-version: 18
+#    - name: 构建
+#      run: |
+#        cd Docusaurus
+#        yarn install --frozen-lockfile
+#        yarn build
+#        cd ../
+#    - name: 上传构建
+#      uses: actions/upload-pages-artifact@v3
+#      with:
+#        path: Docusaurus/build

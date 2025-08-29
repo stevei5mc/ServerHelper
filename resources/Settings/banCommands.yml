@@ -1,0 +1,5 @@
+enable: false
+ban-commands:
+  - /ver
+  - /version&serverhelper.admin.unban.commands
+  - /about&serverhelper.admin.unban.commands&test1%test2
