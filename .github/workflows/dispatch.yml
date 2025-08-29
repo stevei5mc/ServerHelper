@@ -40,7 +40,7 @@ jobs:
       targetSha: ${{ env.targetSha }}
       targetRef: ${{ env.targetRef }}
       prState: ${{ env.prState }}
-      repo_name: ${{ steps.get_info.outputs.repo_name }}
+      repo_name: ${{ steps.get_info.outputs.repoNmae }}
     steps:
     - name: 拉取代码
       uses: actions/checkout@v4
