@@ -15,5 +15,6 @@ do
 done
 cd ./staging
 cat ServerHelper-*-$version.sha256 | tee ServerHelper-$version.sha256
+echo "--------------------"
 ls -lah
 cd ../

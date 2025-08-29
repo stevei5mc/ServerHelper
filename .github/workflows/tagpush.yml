@@ -34,7 +34,7 @@ jobs:
           | ${{ env.targetRef }}|${{ env.targetSha }}|${{ inputs.artifactRetentionDays }}|${{ steps.get_info.outputs.version }}|${{ steps.releaseInfo.outputs.releaseType }}|
 
   build-plugin:
-    name: Build plugin
+    name: Build and release plugin
     needs: Initialize
     runs-on: ubuntu-latest
     env:
@@ -65,7 +65,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          artifactName: ${{ needs.Initialize.outputs.repo_name }}-Release-${{ needs.Initialize.outputs.version }}
+          name: ${{ needs.Initialize.outputs.repo_name }}-Release-${{ needs.Initialize.outputs.version }}
           path: ./staging
       - name: Release to github
         uses: ncipollo/release-action@v1.14.0
@@ -78,7 +78,7 @@ jobs:
           prerelease: ${{ needs.Initialize.outputs.preRrelease }}
 
   build-Docusaurus:
-    name: Build docusaurus
+    name: Build and deploy docusaurus
     needs: [Initialize,build-plugin]
     permissions:
       pages: write

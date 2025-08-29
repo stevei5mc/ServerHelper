@@ -19,7 +19,7 @@ jobs:
     - name: 获取信息
       id: get_info
       uses: ./.github/actions/getProjectInfo
-    - name: Summary base info
+    - name: Summary PR info
       uses: ./.github/actions/getPrInfo
 
   build-plugin:
@@ -54,7 +54,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          artifactName: ${{ needs.Initialize.outputs.repo_name }}-PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
+          name: ${{ needs.Initialize.outputs.repo_name }}-PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
           path: ./staging
 
 #  build-Docusaurus:
