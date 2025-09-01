@@ -24,7 +24,7 @@ public class PlayerListener implements Listener {
                 String[] cmd2 = cmd.split("&");
                 String permission = BaseInfo.unbanCommandPermission;
                 if (message.equalsIgnoreCase(cmd2[0].trim())) {
-                    if (cmd2.length == 2 && !cmd2[1].isEmpty()) {
+                    if (cmd2.length >= 2 && !cmd2[1].isEmpty()) {
                         permission = cmd2[1];
                     }
                     boolean isBanCmdWorld = cmd2.length < 3; // 在没有写禁用命令的世界时 = true

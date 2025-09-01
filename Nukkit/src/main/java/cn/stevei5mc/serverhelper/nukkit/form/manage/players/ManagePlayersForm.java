@@ -76,6 +76,7 @@ public class ManagePlayersForm {
                 +"设备系统="+ PlayerDeviceInfo.getDeviceOS(target.getLoginChainData().getDeviceOS())+" 设备型号="+target.getLoginChainData().getDeviceModel()+"\n"
                 +"设备ID="+target.getLoginChainData().getDeviceId()+"\n"
                 +"操作方式="+PlayerDeviceInfo.getDeviceControls(target.getLoginChainData().getCurrentInputMode())+ " UI="+PlayerDeviceInfo.getPlayerUi(target.getLoginChainData().getUIProfile())+ " 客户端版本="+target.getLoginChainData().getGameVersion()+"\n"
+                +"使用语言="+target.getLoginChainData().getLanguageCode()+"\n"
                 +"链接IP="+target.getLoginChainData().getServerAddress()+"\n"
                 +"登录Ip="+target.getAddress()+":"+target.getPort()+" 延迟="+target.getPing()+"\n"
                 +"所在位置=(X="+Math.round(target.getX())+" Y="+Math.round(target.getY())+" Z="+Math.round(target.getZ())+" Level="+target.getLevel().getName()+")\n"
