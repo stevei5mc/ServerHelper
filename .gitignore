@@ -3,6 +3,8 @@
 target/
 .run/
 staging/
+.gradle/
+build/
 
 pom.xml.tag
 pom.xml.releaseBackup
@@ -20,3 +22,5 @@ buildNumber.properties
 *.rar
 *.7z
 *.gz
+
+!gradle/wrapper/gradle-wrapper.jar

@@ -1,4 +1,4 @@
 name: "ServerHelper"
 author: "stevei5mc"
-version: "1.0.0-beta1-SNAPSHOT"
+version: "${version}"
 main: "cn.stevei5mc.serverhelper.waterdogpe.ServerHelperMain"

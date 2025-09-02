@@ -8,14 +8,13 @@ on:
 
 env:
   GH_TOKEN: ${{ github.token }}
-  scriptPath: ".github/workflows/scripts"
 
 jobs:
   Initialize:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.get_info.outputs.version }}
-      repo_name: ${{ steps.get_info.outputs.repo_name }}
+      repo_name: ${{ steps.get_info.outputs.repoNmae }}
       targetSha: ${{ env.targetSha }}
       targetRef: ${{ env.targetRef }}
       preRrelease: ${{ steps.releaseInfo.outputs.preRrelease }}
@@ -25,70 +24,68 @@ jobs:
     - name: 获取信息
       id: get_info
       uses: ./.github/actions/getProjectInfo
-    - name:  Print info
-      run: |
-        echo Release version: ${{ steps.get_info.outputs.version }}
-        echo Target sha: ${{ steps.get_info.outputs.targetSha }}
-        echo Tatget ref: ${{ steps.get_info.outputs.targetRef }}
-        echo Release is: ${{ steps.releaseInfo.outputs.releaseType }}
+    - name: Summary base info
+      uses: johngeorgewright/summary-action@v1.0.0
+      with:
+        summary: |
+          # BUILD INFO
+          |Tatget ref|Target sha|Artifact retention days|Release version|Release type|
+          |:-:|:-:|:-:|
+          | ${{ env.targetRef }}|${{ env.targetSha }}|${{ inputs.artifactRetentionDays }}|${{ steps.get_info.outputs.version }}|${{ steps.releaseInfo.outputs.releaseType }}|
 
   build-plugin:
-    strategy:
-      fail-fast: false
-      matrix:
-        include: [
-          {path: "Nukkit",java-version: '8'},
-          {path: "WaterdogPE",java-version: '17'}
-        ]
-    runs-on: ubuntu-latest
+    name: Build and release plugin
     needs: Initialize
-    name: Build plugin
+    runs-on: ubuntu-latest
+    env:
+      java-version: "17"
     steps:
-    - name: Clone repository
-      uses: actions/checkout@v4
-    - name: Setup java ${{ matrix.java-version }}
-      uses: actions/setup-java@v4
-      with:
-        java-version: ${{ matrix.java }}
-        distribution: 'temurin'
-    - name: Get pom info
-      id: getPomInfo
-      uses: ./.github/actions/getMvnPomInfo
-      with:
-        pomPath: ./${{ matrix.path }}/pom.xml
-    - name: Cache local Maven repository
-      uses: actions/cache@v4
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ steps.getPomInfo.outputs.artifactId }}_edition-${{ steps.getPomInfo.outputs.pomHash }}
-        restore-keys: ${{ runner.os }}-maven--${{ matrix.name }}_edition-
-    - name: Replace info
-      wnv:
-        basePath: ./${{ matrix.path }}/src/main
-      run: |
-        srcPath=${{ env.basePath }}/java/$(dirname $(grep "main:" ${{ env.basePath }}/resources/plugin.yml | awk '{print $2}' | sed 's/\./\//g' | sed 's/"//g'))
-        echo "Src path: $srcPath"
-        mainClassPath=$srcPath/ServerHelperMain.java
-        echo "Main class path: $mainClassPath"
-        sed -i 's/{git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' $mainClassPath
-        sed -i 's/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' $mainClassPath
-        #sed -i 's/{plugin.version}/${{ needs.Initialize.outputs.version }}/g' $mainClassPath
-    - name: 修复pom.xml错误的版本号
-      if: steps.getProjectInfo.outputs.version != needs.Initialize.outputs.version
-      run: mvn versions:set -f ./${{ matrix.path }}/pom.xml -DnewVersion=${{ needs.Initialize.outputs.version }}
-    - name: Build project
-      run: bash ${{ env.scriptPath }}/buildMavenProject.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "${{ matrix.path }}"
-    - name: Get artifact hash
-      run: bash ${{ env.scriptPath }}/getArtifactHash.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "jar" "${{ matrix.path }}/staging"
-    - name: Upload build artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ steps.getPomInfo.outputs.artifactId }}-Release-${{ needs.Initialize.outputs.version }}
-        path: ${{ matrix.path }}/staging
+      - name: 拉取代码
+        uses: actions/checkout@v4
+      - name: Setup java ${{ env.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.java-version }}
+          distribution: 'temurin'
+      - name:  Cache local Gradle wrapper and repository
+        uses: ./.github/actions/cacheGradle
+      - name: Replace info
+        run: |
+          classPath=Common/src/main/java/cn/stevei5mc/serverhelper/common/utils/BaseInfo.java
+          sed -i "s/\(version = \)\"[^\"]*\"/\1\"${{ needs.Initialize.outputs.version }}\"/" ./build.gradle.kts
+          sed -i 's/{git.commit.id}/${{ needs.Initialize.outputs.targetSha }}/g; s/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g; s/{project.version}/${{ needs.Initialize.outputs.version }}/g' $classPath
+      - name:  Build project
+        run: |
+          chmod 777 gradlew && ls -lah
+          ./gradlew shadowJar javadocJar --no-daemon
+      - name: Get artifact hash
+        run: bash .github/workflows/scripts/getArtifactHash.sh
+      - name: Prepare releases files
+        run: bash .github/workflows/scripts/prepareReleasesFiles.sh
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ needs.Initialize.outputs.repo_name }}-Release-${{ needs.Initialize.outputs.version }}
+          path: ./staging
+      - name: Release to github
+        uses: ncipollo/release-action@v1.14.0
+        with:
+          tag: ${{ needs.Initialize.outputs.version }}
+          name: ${{ needs.Initialize.outputs.version }}
+          token: ${{ env.GH_TOKEN }}
+          bodyFile: ./docs/changelogs/${{ needs.Initialize.outputs.version }}.md
+          artifacts: ./staging/*.*
+          prerelease: ${{ needs.Initialize.outputs.preRrelease }}
 
   build-Docusaurus:
-    name: Build docusaurus
-    needs: Initialize
+    name: Build and deploy docusaurus
+    needs: [Initialize,build-plugin]
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
     - name: Clone repository
@@ -107,57 +104,6 @@ jobs:
       uses: actions/upload-pages-artifact@v3
       with:
         path: Docusaurus/build
-
-  release:
-    name: Release
-    needs: [Initialize,build-plugin,build-Docusaurus]
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    steps:
-    - name: Clone repository
-      uses: actions/checkout@v4
-    - name: Download artifact
-      uses: actions/download-artifact@v4
-      with:
-        path: staging
-        merge-multiple: true
-        pattern: ${{ needs.Initialize.outputs.repo_name }}-*
-    - name: Verify Files hash
-      run: |
-        cd ./staging && pwd && ls -lah
-        for edition in Nukkit WaterdogPE
-        do
-          bash ${{ env.scriptPath }}/verifyHash.sh "${{ needs.Initialize.outputs.repo_name }}-$edition--edition.sha256"
-        done
-        cd ../
-    - name: Merge Hash list files
-      env:
-        saveName: ${{ needs.Initialize.outputs.repo_name }}-V${{ needs.Initialize.outputs.version }}-all-edition
-      run: bash ${{ env.scriptPath }}/mergeHashFiles.sh "${{ needs.Initialize.outputs.repo_name }}" "./staging" "$saveName"
-    - name: Prepare releases files
-      run: bash ${{ env.scriptPath }}/prepareReleasesFiles.sh
-    - name: Release to github
-      uses: ncipollo/release-action@v1.14.0
-      with:
-        tag: ${{ needs.Initialize.outputs.version }}
-        name: ${{ needs.Initialize.outputs.version }}
-        token: ${{ env.GH_TOKEN }}
-        bodyFile: ./docs/changelogs/${{ needs.Initialize.outputs.version }}.md
-        artifacts: ./staging/*.*
-        prerelease: ${{ needs.Initialize.outputs.preRrelease }}
-
-  deploy-gitHub-pages:
-    name: Deploy gitHub pages
-    needs: [build-plugin,build-Docusaurus]
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
     - name: Deploy GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4

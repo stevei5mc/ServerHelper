@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
+import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
 import cn.stevei5mc.serverhelper.nukkit.ServerHelperMain;
 
 import java.util.ArrayList;
@@ -21,9 +22,9 @@ public class PlayerListener implements Listener {
         if (!playerCommands.isEmpty() && main.getBanCommands().getBoolean("enable",false)) {
             for (String cmd : playerCommands) {
                 String[] cmd2 = cmd.split("&");
-                String permission = "serverhelper.admin.unban.commands";
+                String permission = BaseInfo.unbanCommandPermission;
                 if (message.equalsIgnoreCase(cmd2[0].trim())) {
-                    if (cmd2.length == 2 && !cmd2[1].isEmpty()) {
+                    if (cmd2.length >= 2 && !cmd2[1].isEmpty()) {
                         permission = cmd2[1];
                     }
                     boolean isBanCmdWorld = cmd2.length < 3; // 在没有写禁用命令的世界时 = true

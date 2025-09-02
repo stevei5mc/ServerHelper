@@ -2,6 +2,7 @@ package cn.stevei5mc.serverhelper.nukkit.commands.maincommand.sub;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
+import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
 import cn.stevei5mc.serverhelper.nukkit.commands.base.BaseSubCommand;
 
 public class PluginVersionCmd extends BaseSubCommand {
@@ -11,7 +12,7 @@ public class PluginVersionCmd extends BaseSubCommand {
 
     @Override
     public boolean canUser(CommandSender sender) {
-        return sender.hasPermission("serverhelper.admin");
+        return sender.hasPermission(BaseInfo.adminMainPermission);
     }
 
     @Override
@@ -21,10 +22,10 @@ public class PluginVersionCmd extends BaseSubCommand {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        sender.sendMessage("§b=== ServerHelper version info ===");
-        sender.sendMessage(main.getVersion());
-        sender.sendMessage(main.getCommitId());
-        sender.sendMessage(main.getBranch());
+        sender.sendMessage("§b=== ServerHelper VERSION info ===");
+        sender.sendMessage(BaseInfo.VERSION);
+        sender.sendMessage(BaseInfo.COMMIT_ID);
+        sender.sendMessage(BaseInfo.BRANCH);
         sender.sendMessage("§b==================================");
         return true;
     }

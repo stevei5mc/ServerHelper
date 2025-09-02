@@ -9,6 +9,9 @@ on:
         default: 'Build plugin'
         type: choice
         options: ['Build plugin','Build docusaurus','Build plugin and docusaurus']
+      gradleExpandParameters:
+        description: 'Gradle build expand parameters'
+        required: false
       additionalFunctions:
         description: "Additional functions"
         required: false
@@ -27,7 +30,6 @@ on:
 
 env:
   GH_TOKEN: ${{ github.token }}
-  scriptPath: ".github/workflows/scripts"
 
 jobs:
   Initialize:
@@ -38,144 +40,114 @@ jobs:
       targetSha: ${{ env.targetSha }}
       targetRef: ${{ env.targetRef }}
       prState: ${{ env.prState }}
+      repo_name: ${{ steps.get_info.outputs.repoNmae }}
     steps:
     - name: 拉取代码
       uses: actions/checkout@v4
+    - name: 获取信息
+      id: get_info
+      uses: ./.github/actions/getProjectInfo
     - name: Summary base info
       uses: johngeorgewright/summary-action@v1.0.0
       with:
         summary: |
-          # Base info
-          |Build mode|Additional functions|Artifact retention days|
+          # BUILD INFO
+          |Tatget ref|Target sha|Artifact retention days|
           |:-:|:-:|:-:|
-          |${{ inputs.buildMode }}|${{ inputs.additionalFunctions }}|${{ inputs.artifactRetentionDays }}|
-    - name: 获取信息
-      id: get_info
-      uses: ./.github/actions/getProjectInfo
-    - name:  Print info
-      run: |
-        echo Bases info:
-        echo Build mode: ${{ inputs.buildMode }}
-        echo Target sha: ${{ env.targetSha }}
-        echo Tatget ref: ${{ env.targetRef }}
-        echo Additional functions info:
-        echo Functions: ${{ inputs.additionalFunctions }}
-        echo PR Approve ID: ${{ inputs.PR_ID }}
+          | ${{ env.targetRef }}|${{ env.targetSha }}|${{ inputs.artifactRetentionDays }}|
 
   build-plugin:
     if: (inputs.buildMode == 'Build plugin' || inputs.buildMode == 'Build plugin and docusaurus') || inputs.additionalFunctions == 'PR Approve'
-    strategy:
-      fail-fast: false
-      matrix:
-        include: [
-          {path: "Nukkit",java-version: '8'},
-          {path: "WaterdogPE",java-version: '17'}
-        ]
-    runs-on: ubuntu-latest
-    needs: Initialize
     name: Build plugin
+    needs: Initialize
+    runs-on: ubuntu-latest
+    env:
+      java-version: "17"
     steps:
     - name: 拉取代码
       uses: actions/checkout@v4
     - name: 拉取 PR 代码
       if: inputs.additionalFunctions == 'PR Approve'
-      run: |
-        ls -la
-        gh pr checkout ${{ inputs.PR_ID }}
-        ls -la
-    - name: Setup java ${{ matrix.java-version }}
+      run: gh pr checkout ${{ inputs.PR_ID }} && ls -la
+    - name: Setup java ${{ env.java-version }}
       uses: actions/setup-java@v4
       with:
-        java-version: ${{ matrix.java-version }}
+        java-version: ${{ env.java-version }}
         distribution: 'temurin'
-    - name: Get pom info
-      id: getPomInfo
-      uses: ./.github/actions/getMvnPomInfo
-      with:
-        pomPath: ./${{ matrix.path }}/pom.xml
-    - name: Cache local Maven repository
-      uses: actions/cache@v4
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ steps.getPomInfo.outputs.artifactId }}_edition-${{ steps.getPomInfo.outputs.pomHash }}
-        restore-keys: ${{ runner.os }}-maven--${{ matrix.name }}_edition-
+    - name:  Cache local Gradle wrapper and repository
+      uses: ./.github/actions/cacheGradle
     - name: Replace info
-      env:
-        basePath: ./${{ matrix.path }}/src/main
       run: |
-        srcPath=${{ env.basePath }}/java/$(dirname $(grep "main:" ${{ env.basePath }}/resources/plugin.yml | awk '{print $2}' | sed 's/\./\//g' | sed 's/"//g'))
-        echo "Src path: $srcPath"
-        mainClassPath=$srcPath/ServerHelperMain.java
-        echo "Main class path: $mainClassPath"
-        sed -i 's/{git.commit.id.abbrev}/${{ needs.Initialize.outputs.targetSha }}/g' $mainClassPath
-        sed -i 's/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g' $mainClassPath
-        #sed -i 's/{plugin.version}/${{ steps.getPomInfo.outputs.version }}/g' $mainClassPath
-    - name: Build project
-      run: bash ${{ env.scriptPath }}/buildMavenProject.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "${{ matrix.path }}"
+        classPath=Common/src/main/java/cn/stevei5mc/serverhelper/common/utils/BaseInfo.java
+        version=$(grep "version =" "./build.gradle.kts" | sed 's/.*version = "\(.*\)".*/\1/')
+        sed -i 's/{git.commit.id}/${{ needs.Initialize.outputs.targetSha }}/g; s/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g; s/{project.version}/$version/g' $classPath
+    - name:  Build project
+      run: |
+        chmod 777 gradlew && ls -lah
+        ./gradlew shadowJar javadocJar --no-daemon ${{ inputs.gradleExpandParameters }}
     - name: Get artifact hash
-      run: bash ${{ env.scriptPath }}/getArtifactHash.sh "${{ steps.getProjectInfo.outputs.artifactId }}" "jar" "${{ matrix.path }}/staging"
-    - name: Upload build artifact
+      run: bash .github/workflows/scripts/getArtifactHash.sh
+    - name: Prepare releases files
+      run: bash .github/workflows/scripts/prepareReleasesFiles.sh
+    - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ steps.getPomInfo.outputs.artifactId }}-Dispatch-Build_${{ github.run_number }}
-        path: ${{ matrix.path }}/staging
+        name: ${{ needs.Initialize.outputs.repo_name }}-Dispatch-Build_${{ github.run_number }}
         retention-days: ${{ inputs.artifactRetentionDays }}
+        path: ./staging
 
-  build-Docusaurus:
-    if: inputs.buildMode == 'Build docusaurus' || inputs.buildMode == 'Build plugin and docusaurus'
-    name: Build docusaurus
-    needs: Initialize
-    runs-on: ubuntu-latest
-    steps:
-    - name: 拉取代码
-      uses: actions/checkout@v4
-    - name: 拉取 PR 代码
-      if: inputs.additionalFunctions == 'PR Approve'
-      run: |
-        ls -la
-        gh pr checkout ${{ inputs.PR_ID }}
-        ls -la
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 18
-    - name: 构建
-      run: |
-        cd Docusaurus
-        yarn install --frozen-lockfile
-        yarn build
-        cd ../
-    - name: 上传构建
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: Docusaurus/build
-        retention-days: ${{ inputs.artifactRetentionDays }}
+#  build-Docusaurus:
+#    if: inputs.buildMode == 'Build docusaurus' || inputs.buildMode == 'Build plugin and docusaurus'
+#    name: Build docusaurus
+#    needs: Initialize
+#    runs-on: ubuntu-latest
+#    steps:
+#    - name: 拉取代码
+#      uses: actions/checkout@v4
+#    - name: 拉取 PR 代码
+#      if: inputs.additionalFunctions == 'PR Approve'
+#      run: gh pr checkout ${{ inputs.PR_ID }} && ls -la
+#    - uses: actions/setup-node@v4
+#      with:
+#        node-version: 18
+#    - name: 构建
+#      run: |
+#        cd Docusaurus
+#        yarn install --frozen-lockfile
+#        yarn build
+#        cd ../
+#    - name: 上传构建
+#      uses: actions/upload-pages-artifact@v3
+#      with:
+#        path: Docusaurus/build
+#        retention-days: ${{ inputs.artifactRetentionDays }}
 
-  PR-Approve:
-    if: inputs.additionalFunctions == 'PR Approve' && needs.Initialize.outputs.prState == 'open' && always()
-    name: PR Approve
-    needs: [Initialize,build-plugin,build-Docusaurus]
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-    steps:
-    - name: 拉取代码
-      uses: actions/checkout@v4
-    - name: 准备信息模板
-      run: |
-        sed -i 's/action_url/${{ needs.Initialize.outputs.url }}/g' .github/template/*.md
+#  PR-Approve:
+#    if: inputs.additionalFunctions == 'PR Approve' && needs.Initialize.outputs.prState == 'open' && always()
+#    name: PR Approve
+#    needs: [Initialize,build-plugin,build-Docusaurus]
+#    runs-on: ubuntu-latest
+#    permissions:
+#      pull-requests: write
+#    steps:
+#    - name: 拉取代码
+#      uses: actions/checkout@v4
+#    - name: 准备信息模板
+#      run: |
+#        sed -i 's/action_url/${{ needs.Initialize.outputs.url }}/g' .github/template/*.md
 
-  deploy-gitHub-pages:
-    if: inputs.additionalFunctions == 'Deploy gitHub pages'
-    name: Deploy gitHub pages
-    needs: [build-plugin,build-Docusaurus]
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-    - name: 部署到 GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
+#  deploy-gitHub-pages:
+#    if: inputs.additionalFunctions == 'Deploy gitHub pages'
+#    name: Deploy gitHub pages
+#    needs: [build-plugin,build-Docusaurus]
+#    permissions:
+#      pages: write
+#      id-token: write
+#    environment:
+#      name: github-pages
+#      url: ${{ steps.deployment.outputs.page_url }}
+#    runs-on: ubuntu-latest
+#    steps:
+#    - name: 部署到 GitHub Pages
+#      id: deployment
+#      uses: actions/deploy-pages@v4

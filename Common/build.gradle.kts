@@ -1,0 +1,3 @@
+tasks.processResources {
+    enabled = false
+}
