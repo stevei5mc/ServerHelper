@@ -7,6 +7,8 @@ import java.util.List;
 
 public class BaseInfo {
     public static final String GH_URL = "[GITHUB] https://github.com/stevei5mc/ServerHelper";
+    public static final String defaultLanguage = "zh_CN";
+
     // 版本信息
     public static final String COMMIT_ID = "§bCommit id§7:§a {git.commit.id}";
     public static final String BRANCH = "§bBranch§7:§a {git.branch}";
