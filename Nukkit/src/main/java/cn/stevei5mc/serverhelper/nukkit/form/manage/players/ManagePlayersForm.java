@@ -28,16 +28,16 @@ public class ManagePlayersForm {
         custom.addElement(new ElementDropdown("选择玩家",PlayerUtils.getOnlinePlayers(admin,true)));
         custom.addElement(new ElementInput("输入指定玩家名称"));
         custom.onClosed(ManagePlayersForm::sendManagePlayersSystemUi);
-        custom.onResponded((formResponseCustom, player1) -> {
+        custom.onResponded((form, p) -> {
             String target;
-            if (!formResponseCustom.getInputResponse(2).equals("")) {
-                target = formResponseCustom.getInputResponse(2);
+            if (!form.getInputResponse(2).equals("")) {
+                target = form.getInputResponse(2);
             }else {
-                target = formResponseCustom.getDropdownResponse(1).getElementContent();
+                target = form.getDropdownResponse(1).getElementContent();
             }
             if (!target.equals("§c§lPlayer not found")) {
                 Player targetPlayer = PlayerUtils.getPlayer(target);
-                sendManageTargetPlayerSystem(player1,targetPlayer);
+                sendManageTargetPlayerSystem(admin,targetPlayer);
             }
         });
         admin.showFormWindow(custom);
@@ -58,8 +58,8 @@ public class ManagePlayersForm {
         simple.addButton(new ResponseElementButton("封禁"));
         simple.addButton(new ResponseElementButton("禁言"));
         if (target.isOnline()) {
-            simple.addButton(new ResponseElementButton("踢出"));
-            simple.addButton(new ResponseElementButton("警告"));
+            simple.addButton(new ResponseElementButton("踢出").onClicked(p -> StaffPunishForm.sendKickPlayerUi(admin,target)));
+            simple.addButton(new ResponseElementButton("警告").onClicked(p -> StaffPunishForm.sendWarnPlayerUi(admin,target)));
             simple.addButton(new ResponseElementButton("巡查").onClicked(p -> PlayerPatrolSystemForm.confirmTargetPlayerMenu(admin,target)));
             simple.addButton(new ResponseElementButton("查询该玩家信息").onClicked(p -> sendPlayerInfoUi(admin,target)));
         }
@@ -81,9 +81,9 @@ public class ManagePlayersForm {
                 +"登录Ip="+target.getAddress()+":"+target.getPort()+" 延迟="+target.getPing()+"\n"
                 +"所在位置=(X="+Math.round(target.getX())+" Y="+Math.round(target.getY())+" Z="+Math.round(target.getZ())+" Level="+target.getLevel().getName()+")\n"
         );
-        simple.addButton(new ResponseElementButton("刷新").onClicked(player -> sendPlayerInfoUi(admin,target)));
+        simple.addButton(new ResponseElementButton("刷新").onClicked(p -> sendPlayerInfoUi(admin,target)));
         // TODO: 到时候查询玩家背包的入口放在这里
-        simple.addButton(new ResponseElementButton("返回").onClicked(player -> sendManageTargetPlayerSystem(admin,target)));
+        simple.addButton(new ResponseElementButton("返回").onClicked(p -> sendManageTargetPlayerSystem(admin,target)));
         admin.showFormWindow(simple);
     }
 }

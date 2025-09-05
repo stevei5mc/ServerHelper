@@ -22,12 +22,14 @@ public class StaffPunishForm {
     public static void sendKickPlayerUi(@NotNull Player admin, Player target) {
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("管理系统");
         custom.addElement(new ElementLabel("目标玩家： "+target.getName()+"\n"));
+        custom.onClosed(p -> ManagePlayersForm.sendManageTargetPlayerSystem(admin,target));
         admin.showFormWindow(custom);
     }
 
     public static void sendWarnPlayerUi(@NotNull Player admin, Player target) {
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("管理系统");
         custom.addElement(new ElementLabel("目标玩家： "+target.getName()+"\n"));
+        custom.onClosed(p -> ManagePlayersForm.sendManageTargetPlayerSystem(admin,target));
         admin.showFormWindow(custom);
 
     }
