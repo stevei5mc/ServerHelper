@@ -7,6 +7,7 @@ import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
 import cn.stevei5mc.serverhelper.nukkit.commands.admin.AdminCommand;
 import cn.stevei5mc.serverhelper.nukkit.commands.maincommand.ServerHelperMainCommand;
 import cn.stevei5mc.serverhelper.nukkit.listener.PlayerListener;
+import cn.stevei5mc.serverhelper.nukkit.utils.PluginI18n;
 import lombok.Getter;
 
 public class ServerHelperMain extends PluginBase {
@@ -31,6 +32,7 @@ public class ServerHelperMain extends PluginBase {
     @Override
     public void onEnable() {
         if (this.getServer().getPluginManager().getPlugin("MemoriesOfTime-GameCore") != null) {
+            PluginI18n.loadLanguages();
             this.getLogger().info(BaseInfo.VERSION);
             this.getLogger().info(BaseInfo.COMMIT_ID);
             this.getLogger().info(BaseInfo.BRANCH);
