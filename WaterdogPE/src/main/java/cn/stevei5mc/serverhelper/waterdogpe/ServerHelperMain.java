@@ -18,24 +18,24 @@ public class ServerHelperMain extends Plugin {
     @Override
     public void onEnable() {
         instance = this;
+        saveConfigResources();
+        loadConfig();
         this.getLogger().warn("§c警告! §c本插件为免费且开源的，如果您付费获取获取的，则有可能被误导了");
         this.getLogger().info(BaseInfo.GH_URL);
-//        saveConfigResources();
-//        loadConfig();
         this.getLogger().info(BaseInfo.VERSION);
         this.getLogger().info(BaseInfo.COMMIT_ID);
         this.getLogger().info(BaseInfo.BRANCH);
     }
 
     public void saveConfigResources() {
-        saveResource("config.yml");
+        //saveResource("config.yml");
         for (String language : BaseInfo.getLanguages()) {
             saveResource(BaseInfo.baseLanguagesFilesPath + language+".yml");
             saveResource(BaseInfo.customLanguagesFilesPath + language+".yml");
         }
-        for (String setting : BaseInfo.getSettings()) {
+        /*for (String setting : BaseInfo.getSettings()) {
             saveResource("Settings/"+setting+".yml");
-        }
+        }*/
     }
 
     @Override

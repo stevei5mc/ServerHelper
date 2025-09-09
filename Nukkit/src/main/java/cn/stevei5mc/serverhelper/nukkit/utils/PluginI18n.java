@@ -15,7 +15,7 @@ public class PluginI18n {
             defaultLanguage = BaseInfo.defaultLanguage;
         }
         main.getLogger().info("Default language " + defaultLanguage);
-        for (String language : BaseInfo.getLanguages()) {
+        for (String languageName : BaseInfo.getLanguages()) {
             Config languageFile = new Config(Config.YAML);
         }
     }

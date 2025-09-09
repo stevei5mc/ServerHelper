@@ -13,7 +13,7 @@ import lombok.Getter;
 public class ServerHelperMain extends PluginBase {
 //这里被注释掉的代码都是暂时用不上的
     private static ServerHelperMain instance;
-//    private Config config;
+    private Config config;
 //    private Config banSetting;
 //    private Config kickSetting;
     @Getter
@@ -58,11 +58,11 @@ public class ServerHelperMain extends PluginBase {
     }
 
     public void saveConfigResources() {
-        //saveDefaultConfig();
-        /*for (String language : BaseInfo.getLanguages()) {
+        saveDefaultConfig();
+        for (String language : BaseInfo.getLanguages()) {
             saveResource(BaseInfo.baseLanguagesFilesPath + language+".yml");
             saveResource(BaseInfo.customLanguagesFilesPath + language+".yml");
-        }*/
+        }
         for (String setting : BaseInfo.getSettings()) {
             saveResource(BaseInfo.settingsFilesPath + setting+".yml");
         }
@@ -82,10 +82,10 @@ public class ServerHelperMain extends PluginBase {
         return instance;
     }
 
-    /*@Override
+    @Override
     public Config getConfig() {
         return config;
-    }*/
+    }
 
     /*public String getMessagePrefix() {
         return config.getString("message_prefix","§b§ServerHelper §r§7>> ");
