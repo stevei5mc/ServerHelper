@@ -19,7 +19,7 @@ public class BaseInfo {
     public static final int languageFilesVersion = 1;
     public static final String settingsFilesPath = "Settings/";
     public static final String baseLanguagesFilesPath = "languages/base/";
-    public static final String customLanguagesFilesPath = "languages/custom/";
+    public static final String privateLanguagesFilesPath = "languages/private/";
     @Getter
     private static final List<String> languages = Arrays.asList(
             "zh_CN"
