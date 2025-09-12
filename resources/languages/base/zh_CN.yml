@@ -1,11 +1,39 @@
-command.tip.not.permission: §c你没有权限使用此命令！
-command.tip.in.game.run: §c请在游戏内使用此命令！
-command.tip.unknown: §c未知的命令或参数，请检查后再试！
+command-message-notPermission: §c你没有权限使用此命令！
+command-message-inGameRun: §c请在游戏内使用此命令！
+command-message-unknown: §c未知的命令或参数，请检查后再试!
+command-message-isBanCommandList: §c您没有权限使用处于被禁用状态下的命令 §e%1%§c
 
-gui.main.title:
+form-button-back: 返回
 
-gui.player.ban.title:
+form-managerPlayer-description-targetPlayer: 目标玩家：%1%
 
-gui.player.mute.title:
+form-main-title: ServerHelper
+form-main-button-managerPlayer: 管理玩家
+form-main-button-managerServer: 管理服务器
 
-gui.player.warn.title:
+form-managerPlayer-title: 管理玩家
+form-managerPlayer-button-selectPlayer: 选择玩家
+form-managerPlayer-button-featureList: 功能快捷通道
+
+form-managerPlayer-selectPlayer-title: 管理系统 - 选择玩家
+form-managerPlayer-selectPlayer-description: 选择一名玩家或在输入框中填写玩家名，如果在输入框中输入玩家名称则选择框自动失效
+form-managerPlayer-selectPlayer-dropdown: 选择玩家
+form-managerPlayer-selectPlayer-input: 输入指定玩家名称：
+
+form-managerPlayer-shortcutFeatureList-title: 快捷管理系统
+form-managerPlayer-fullFeatureList-title: 管理系统 - 管理玩家
+form-managerPlayer-fullFeatureList-button-ban: 封禁
+form-managerPlayer-fullFeatureList-button-mute: 禁言
+form-managerPlayer-fullFeatureList-button-kick: 踢出
+form-managerPlayer-fullFeatureList-button-warn: 警告
+form-managerPlayer-fullFeatureList-button-patrol: 巡查
+form-managerPlayer-fullFeatureList-button-queryPlayerInfo: 查询信息
+
+form-managerPlayer-queryPlayerInfo-title: 管理系统 - 玩家信息查询
+form-managerPlayer-queryPlayerInfo-description: |
+  Player=(name=%1% xuid=%2% uuid=%3%)
+  Device=(os=%4% model=%5% id=%6%)
+  IP=(login=%7% server=%8%)
+  Game=(version=%9% lang=%10% ui=%11% controls=%12%)
+  Position=(X=%13% Y=%14% Z=%15% world=%16%)
+form-managerPlayer-queryPlayerInfo-button-update: 刷新
