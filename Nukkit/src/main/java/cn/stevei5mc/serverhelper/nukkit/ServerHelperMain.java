@@ -69,13 +69,13 @@ public class ServerHelperMain extends PluginBase {
     }
 
     public void loadConfig() {
-    String path = this.getDataFolder() + "/" + BaseInfo.settingsFilesPath;
-//        this.config = new Config(this.getDataFolder()+"/config.yml",Config.YAML);
+        String path = this.getDataFolder() + "/" + BaseInfo.settingsFilesPath;
+        this.config = new Config(this.getDataFolder()+"/config.yml",Config.YAML);
+        this.banCommands = new Config(path + "banCommands.yml",Config.YAML);
 //        this.banSetting = new Config(this.getDataFolder()+"/Settings/ban.yml",Config.YAML);
 //        this.kickSetting = new Config(this.getDataFolder()+"/Settings/kick.yml",Config.YAML);
 //        this.warnSetting = new Config(this.getDataFolder()+ "/Settings/warn.yml",Config.YAML);
 //        this.muteSetting = new Config(this.getDataFolder()+"/Settings/mute.yml",Config.YAML);
-        this.banCommands = new Config(path + "banCommands.yml",Config.YAML);
     }
 
     public static ServerHelperMain getInstance() {

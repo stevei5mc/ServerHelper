@@ -1,7 +1,7 @@
 command-message-notPermission: §c你没有权限使用此命令！
 command-message-inGameRun: §c请在游戏内使用此命令！
 command-message-unknown: §c未知的命令或参数，请检查后再试!
-command-message-isBanCommandList: §c您没有权限使用处于被禁用状态下的命令 §e%1%§c
+command-message-isBanCommandList: §c您没有权限使用处于被禁用状态下的命令： §e%1%§c
 
 form-button-back: 返回
 
