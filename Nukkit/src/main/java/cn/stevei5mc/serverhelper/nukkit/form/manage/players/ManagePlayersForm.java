@@ -3,6 +3,7 @@ package cn.stevei5mc.serverhelper.nukkit.form.manage.players;
 import cn.lanink.gamecore.form.element.ResponseElementButton;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowCustom;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
+import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.form.element.ElementDropdown;
 import cn.nukkit.form.element.ElementInput;
@@ -10,6 +11,7 @@ import cn.nukkit.form.element.ElementLabel;
 import cn.stevei5mc.serverhelper.common.utils.PlayerDeviceInfo;
 import cn.stevei5mc.serverhelper.nukkit.form.MainForm;
 import cn.stevei5mc.serverhelper.nukkit.utils.PlayerUtils;
+import cn.stevei5mc.serverhelper.nukkit.utils.PluginI18n;
 import org.jetbrains.annotations.NotNull;
 
 public class ManagePlayersForm {
@@ -54,36 +56,34 @@ public class ManagePlayersForm {
 
     // 玩家管理功能菜单
     public static void sendManageTargetPlayerSystem(@NotNull Player admin, Player target) {
-        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理目标玩家","目标玩家： "+target.getName());
-        simple.addButton(new ResponseElementButton("封禁"));
-        simple.addButton(new ResponseElementButton("禁言"));
+        Language baseLang = PluginI18n.getBaseLang(admin);
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(baseLang.translateString("form-managerPlayer-fullFeatureList-title"), baseLang.translateString("form-managerPlayer-description-targetPlayer",target.getName()));
+        simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeatureList-button-ban")));
+        simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeatureList-button-mute")));
         if (target.isOnline()) {
-            simple.addButton(new ResponseElementButton("踢出"));
-            simple.addButton(new ResponseElementButton("警告"));
-            simple.addButton(new ResponseElementButton("巡查").onClicked(p -> PlayerPatrolSystemForm.confirmTargetPlayerMenu(admin,target)));
-            simple.addButton(new ResponseElementButton("查询该玩家信息").onClicked(p -> sendPlayerInfoUi(admin,target)));
+            simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeatureList-button-kick")));
+            simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeatureList-button-warn")));
+            simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeatureList-button-patrol")).onClicked(p -> PlayerPatrolSystemForm.confirmTargetPlayerMenu(admin,target)));
+            simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeatureList-button-queryInfo")).onClicked(p -> sendPlayerInfoUi(admin,target)));
         }
-        simple.addButton(new ResponseElementButton("返回").onClicked(ManagePlayersForm::sendSelectPlayerUi));
+        simple.addButton(new ResponseElementButton(baseLang.translateString("form-button-back")).onClicked(ManagePlayersForm::sendSelectPlayerUi));
         admin.showFormWindow(simple);
     }
 
     // 显示目标玩家的信息
     public static void sendPlayerInfoUi(@NotNull Player admin, Player target) {
-        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理系统");
+        Language baseLang = PluginI18n.getBaseLang(admin);
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(baseLang.translateString("form-managerPlayer-queryPlayerInfo-title"));
         simple.setContent(
-                "玩家="+target.getName()+" XUID="+target.getLoginChainData().getXUID()+"\n"
-                +"UUID="+target.getLoginChainData().getClientUUID()+"\n"
-                +"设备系统="+ PlayerDeviceInfo.getDeviceOS(target.getLoginChainData().getDeviceOS())+" 设备型号="+target.getLoginChainData().getDeviceModel()+"\n"
-                +"设备ID="+target.getLoginChainData().getDeviceId()+"\n"
-                +"操作方式="+PlayerDeviceInfo.getDeviceControls(target.getLoginChainData().getCurrentInputMode())+ " UI="+PlayerDeviceInfo.getPlayerUi(target.getLoginChainData().getUIProfile())+ " 客户端版本="+target.getLoginChainData().getGameVersion()+"\n"
-                +"使用语言="+target.getLoginChainData().getLanguageCode()+"\n"
-                +"链接IP="+target.getLoginChainData().getServerAddress()+"\n"
-                +"登录Ip="+target.getAddress()+":"+target.getPort()+" 延迟="+target.getPing()+"\n"
-                +"所在位置=(X="+Math.round(target.getX())+" Y="+Math.round(target.getY())+" Z="+Math.round(target.getZ())+" Level="+target.getLevel().getName()+")\n"
-        );
-        simple.addButton(new ResponseElementButton("刷新").onClicked(player -> sendPlayerInfoUi(admin,target)));
+                baseLang.translateString("form-managerPlayer-queryPlayerInfo-description", target.getName(), target.getLoginChainData().getXUID(), target.getLoginChainData().getClientUUID(),
+                PlayerDeviceInfo.getDeviceOS(target.getLoginChainData().getDeviceOS()), target.getLoginChainData().getDeviceModel(), target.getLoginChainData().getDeviceId(),
+                target.getAddress()+":"+target.getPort(), target.getLoginChainData().getServerAddress(), target.getPing(),
+                target.getLoginChainData().getGameVersion(), target.getLoginChainData().getLanguageCode(), PlayerDeviceInfo.getPlayerUi(target.getLoginChainData().getUIProfile()), PlayerDeviceInfo.getDeviceControls(target.getLoginChainData().getCurrentInputMode()),
+                Math.round(target.getX()), Math.round(target.getY()), Math.round(target.getZ()), target.getLevel().getName()
+        ));
+        simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-queryPlayerInfo-button-update")).onClicked(player -> sendPlayerInfoUi(admin,target)));
         // TODO: 到时候查询玩家背包的入口放在这里
-        simple.addButton(new ResponseElementButton("返回").onClicked(player -> sendManageTargetPlayerSystem(admin,target)));
+        simple.addButton(new ResponseElementButton(baseLang.translateString("form-button-back")).onClicked(player -> sendManageTargetPlayerSystem(admin,target)));
         admin.showFormWindow(simple);
     }
 }

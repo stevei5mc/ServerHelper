@@ -6,6 +6,7 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
 import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
 import cn.stevei5mc.serverhelper.nukkit.ServerHelperMain;
+import cn.stevei5mc.serverhelper.nukkit.utils.PluginI18n;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +34,7 @@ public class PlayerListener implements Listener {
                         isBanCmdWorld = worldBanCmdList.contains(player.getLevel().getFolderName());
                     }
                     if (!player.hasPermission(permission) && isBanCmdWorld) {
-                        player.sendMessage("§c你没有权限执行该命令，请确认后再试！");
+                        player.sendMessage(PluginI18n.getBaseLang(player).translateString("command-message-isBanCommandList",message));
                         event.setCancelled(true);
                         break;
                     }
