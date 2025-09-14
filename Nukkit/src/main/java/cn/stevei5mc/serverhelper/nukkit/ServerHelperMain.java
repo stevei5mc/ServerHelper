@@ -59,10 +59,10 @@ public class ServerHelperMain extends PluginBase {
 
     public void saveConfigResources() {
         saveDefaultConfig();
-        for (String language : BaseInfo.getLanguages()) {
+        /*for (String language : BaseInfo.getLanguages()) {
             saveResource(BaseInfo.baseLanguagesFilesPath + language+".yml");
             saveResource(BaseInfo.privateLanguagesFilesPath + language+".yml");
-        }
+        }*/
         for (String setting : BaseInfo.getSettings()) {
             saveResource(BaseInfo.settingsFilesPath + setting+".yml");
         }
