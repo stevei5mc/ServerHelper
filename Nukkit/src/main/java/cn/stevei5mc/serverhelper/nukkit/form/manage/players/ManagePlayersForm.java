@@ -51,7 +51,7 @@ public class ManagePlayersForm {
     public static void sendManageFeatureList(@NotNull Player admin) {
         Language baseLang = PluginI18n.getBaseLang(admin);
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(baseLang.translateString("form-managerPlayer-shortcutFeature-title"));
-        simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeatureList-button-patrol")).onClicked(PlayerPatrolSystemForm::sendSelectPatrolPlayerUi));
+        simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeature-button-patrol")).onClicked(PlayerPatrolSystemForm::sendSelectPatrolPlayerUi));
         // TODO: 到时候这里放置查询玩家背包的快捷入口
         simple.addButton(new ResponseElementButton(baseLang.translateString("form-button-back")).onClicked(MainForm::mainMenu));
         admin.showFormWindow(simple);
@@ -60,14 +60,14 @@ public class ManagePlayersForm {
     // 玩家管理功能菜单
     public static void sendManageTargetPlayerSystem(@NotNull Player admin, Player target) {
         Language baseLang = PluginI18n.getBaseLang(admin);
-        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(baseLang.translateString("form-managerPlayer-fullFeatureList-title"), baseLang.translateString("form-managerPlayer-description-targetPlayer",target.getName()));
-        simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeatureList-button-ban")));
-        simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeatureList-button-mute")));
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(baseLang.translateString("form-managerPlayer-fullFeature-title"), baseLang.translateString("form-managerPlayer-description-targetPlayer",target.getName()));
+        simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeature-button-ban")));
+        simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeature-button-mute")));
         if (target.isOnline()) {
-            simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeatureList-button-kick")));
-            simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeatureList-button-warn")));
-            simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeatureList-button-patrol")).onClicked(p -> PlayerPatrolSystemForm.confirmTargetPlayerMenu(admin,target)));
-            simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeatureList-button-queryInfo")).onClicked(p -> sendPlayerInfoUi(admin,target)));
+            simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeature-button-kick")));
+            simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeature-button-warn")));
+            simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeature-button-patrol")).onClicked(p -> PlayerPatrolSystemForm.confirmTargetPlayerMenu(admin,target)));
+            simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeature-button-queryInfo")).onClicked(p -> sendPlayerInfoUi(admin,target)));
         }
         simple.addButton(new ResponseElementButton(baseLang.translateString("form-button-back")).onClicked(ManagePlayersForm::sendSelectPlayerUi));
         admin.showFormWindow(simple);

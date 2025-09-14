@@ -5,7 +5,7 @@ command-message-isBanCommandList: §c您没有权限使用处于被禁用状态�
 
 form-button-back: 返回
 
-form-managerPlayer-description-targetPlayer: 目标玩家：%1%
+form-managerPlayer-description-targetPlayer: 目标玩家：  %1%
 
 form-main-title: ServerHelper
 form-main-button-managerPlayer: 管理玩家
@@ -21,13 +21,13 @@ form-managerPlayer-selectPlayer-dropdown: 选择玩家
 form-managerPlayer-selectPlayer-input: 输入指定玩家名称：
 
 form-managerPlayer-shortcutFeature-title: 管理系统 - 快捷管理玩家
-form-managerPlayer-fullFeatureList-title: 管理系统 - 管理玩家
-form-managerPlayer-fullFeatureList-button-ban: 封禁
-form-managerPlayer-fullFeatureList-button-mute: 禁言
-form-managerPlayer-fullFeatureList-button-kick: 踢出
-form-managerPlayer-fullFeatureList-button-warn: 警告
-form-managerPlayer-fullFeatureList-button-patrol: 巡查
-form-managerPlayer-fullFeatureList-button-queryInfo: 查询信息
+form-managerPlayer-fullFeature-title: 管理系统 - 管理玩家
+form-managerPlayer-fullFeature-button-ban: 封禁
+form-managerPlayer-fullFeature-button-mute: 禁言
+form-managerPlayer-fullFeature-button-kick: 踢出
+form-managerPlayer-fullFeature-button-warn: 警告
+form-managerPlayer-fullFeature-button-patrol: 巡查
+form-managerPlayer-fullFeature-button-queryInfo: 查询信息
 
 form-managerPlayer-queryInfo-title: 管理系统 - 玩家信息查询
 form-managerPlayer-queryInfo-description: |
