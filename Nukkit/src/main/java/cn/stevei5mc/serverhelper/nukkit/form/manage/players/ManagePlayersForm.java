@@ -16,19 +16,21 @@ import org.jetbrains.annotations.NotNull;
 
 public class ManagePlayersForm {
     public static void sendManagePlayersSystemUi(@NotNull Player admin){
-        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理玩家");
-        simple.addButton(new ResponseElementButton("选择玩家").onClicked(ManagePlayersForm::sendSelectPlayerUi));
-        simple.addButton(new ResponseElementButton("功能快捷通道").onClicked(ManagePlayersForm::sendManageFeatureList));
-        simple.addButton(new ResponseElementButton("返回").onClicked(MainForm::mainMenu));
+        Language baseLang = PluginI18n.getBaseLang(admin);
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(baseLang.translateString("form-managerPlayer-title"));
+        simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-button-selectPlayer")).onClicked(ManagePlayersForm::sendSelectPlayerUi));
+        simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-button-shortcutFeature")).onClicked(ManagePlayersForm::sendManageFeatureList));
+        simple.addButton(new ResponseElementButton(baseLang.translateString("form-button-back")).onClicked(MainForm::mainMenu));
         admin.showFormWindow(simple);
     }
 
     // 玩家选择器
     public static void sendSelectPlayerUi(@NotNull Player admin) {
-        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("选择玩家");
-        custom.addElement(new ElementLabel("选择一名玩家或在输入框中填写玩家名，如果在输入框中输入玩家名称则选择框自动失效"));
-        custom.addElement(new ElementDropdown("选择玩家",PlayerUtils.getOnlinePlayers(admin,true)));
-        custom.addElement(new ElementInput("输入指定玩家名称"));
+        Language baseLang = PluginI18n.getBaseLang(admin);
+        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("form-managerPlayer-selectPlayer-title");
+        custom.addElement(new ElementLabel(baseLang.translateString("form-managerPlayer-selectPlayer-description")));
+        custom.addElement(new ElementDropdown(baseLang.translateString("form-managerPlayer-selectPlayer-dropdown"), PlayerUtils.getOnlinePlayers(admin,true)));
+        custom.addElement(new ElementInput(baseLang.translateString("form-managerPlayer-selectPlayer-input")));
         custom.onClosed(ManagePlayersForm::sendManagePlayersSystemUi);
         custom.onResponded((formResponseCustom, player1) -> {
             String target;
@@ -47,10 +49,11 @@ public class ManagePlayersForm {
 
     // 快捷功能菜单
     public static void sendManageFeatureList(@NotNull Player admin) {
-        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理功能");
-        simple.addButton(new ResponseElementButton("巡查系统").onClicked(PlayerPatrolSystemForm::sendSelectPatrolPlayerUi));
+        Language baseLang = PluginI18n.getBaseLang(admin);
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(baseLang.translateString("form-managerPlayer-shortcutFeature-title"));
+        simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeatureList-button-patrol")).onClicked(PlayerPatrolSystemForm::sendSelectPatrolPlayerUi));
         // TODO: 到时候这里放置查询玩家背包的快捷入口
-        simple.addButton(new ResponseElementButton("返回").onClicked(MainForm::mainMenu));
+        simple.addButton(new ResponseElementButton(baseLang.translateString("form-button-back")).onClicked(MainForm::mainMenu));
         admin.showFormWindow(simple);
     }
 
@@ -73,15 +76,15 @@ public class ManagePlayersForm {
     // 显示目标玩家的信息
     public static void sendPlayerInfoUi(@NotNull Player admin, Player target) {
         Language baseLang = PluginI18n.getBaseLang(admin);
-        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(baseLang.translateString("form-managerPlayer-queryPlayerInfo-title"));
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(baseLang.translateString("form-managerPlayer-queryInfo-title"));
         simple.setContent(
-                baseLang.translateString("form-managerPlayer-queryPlayerInfo-description", target.getName(), target.getLoginChainData().getXUID(), target.getLoginChainData().getClientUUID(),
+                baseLang.translateString("form-managerPlayer-queryInfo-description", target.getName(), target.getLoginChainData().getXUID(), target.getLoginChainData().getClientUUID(),
                 PlayerDeviceInfo.getDeviceOS(target.getLoginChainData().getDeviceOS()), target.getLoginChainData().getDeviceModel(), target.getLoginChainData().getDeviceId(),
                 target.getAddress()+":"+target.getPort(), target.getLoginChainData().getServerAddress(), target.getPing(),
                 target.getLoginChainData().getGameVersion(), target.getLoginChainData().getLanguageCode(), PlayerDeviceInfo.getPlayerUi(target.getLoginChainData().getUIProfile()), PlayerDeviceInfo.getDeviceControls(target.getLoginChainData().getCurrentInputMode()),
                 Math.round(target.getX()), Math.round(target.getY()), Math.round(target.getZ()), target.getLevel().getName()
         ));
-        simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-queryPlayerInfo-button-update")).onClicked(player -> sendPlayerInfoUi(admin,target)));
+        simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-queryInfo-button-update")).onClicked(player -> sendPlayerInfoUi(admin,target)));
         // TODO: 到时候查询玩家背包的入口放在这里
         simple.addButton(new ResponseElementButton(baseLang.translateString("form-button-back")).onClicked(player -> sendManageTargetPlayerSystem(admin,target)));
         admin.showFormWindow(simple);

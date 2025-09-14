@@ -13,14 +13,14 @@ form-main-button-managerServer: 管理服务器
 
 form-managerPlayer-title: 管理玩家
 form-managerPlayer-button-selectPlayer: 选择玩家
-form-managerPlayer-button-featureList: 功能快捷通道
+form-managerPlayer-button-shortcutFeature: 功能快捷通道
 
 form-managerPlayer-selectPlayer-title: 管理系统 - 选择玩家
 form-managerPlayer-selectPlayer-description: 选择一名玩家或在输入框中填写玩家名，如果在输入框中输入玩家名称则选择框自动失效
 form-managerPlayer-selectPlayer-dropdown: 选择玩家
 form-managerPlayer-selectPlayer-input: 输入指定玩家名称：
 
-form-managerPlayer-shortcutFeatureList-title: 快捷管理系统
+form-managerPlayer-shortcutFeature-title: 管理系统 - 快捷管理玩家
 form-managerPlayer-fullFeatureList-title: 管理系统 - 管理玩家
 form-managerPlayer-fullFeatureList-button-ban: 封禁
 form-managerPlayer-fullFeatureList-button-mute: 禁言
@@ -29,11 +29,11 @@ form-managerPlayer-fullFeatureList-button-warn: 警告
 form-managerPlayer-fullFeatureList-button-patrol: 巡查
 form-managerPlayer-fullFeatureList-button-queryInfo: 查询信息
 
-form-managerPlayer-queryPlayerInfo-title: 管理系统 - 玩家信息查询
-form-managerPlayer-queryPlayerInfo-description: |
+form-managerPlayer-queryInfo-title: 管理系统 - 玩家信息查询
+form-managerPlayer-queryInfo-description: |
   Player=(name=%1% xuid=%2% uuid=%3%)
   Device=(os=%4% model=%5% id=%6%)
   IP=(login=%7% server=%8%) Ping=%9%
   Game=(version=%10% lang=%11% ui=%12% controls=%13%)
   Position=(X=%14% Y=%15% Z=%16% world=%17%)
-form-managerPlayer-queryPlayerInfo-button-update: 刷新
+form-managerPlayer-queryInfo-button-update: 刷新
