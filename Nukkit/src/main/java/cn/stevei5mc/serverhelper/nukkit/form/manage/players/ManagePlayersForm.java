@@ -27,7 +27,7 @@ public class ManagePlayersForm {
     // 玩家选择器
     public static void sendSelectPlayerUi(@NotNull Player admin) {
         Language baseLang = PluginI18n.getBaseLang(admin);
-        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("form-managerPlayer-selectPlayer-title");
+        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(baseLang.translateString("form-managerPlayer-selectPlayer-title"));
         custom.addElement(new ElementLabel(baseLang.translateString("form-managerPlayer-selectPlayer-description")));
         custom.addElement(new ElementDropdown(baseLang.translateString("form-managerPlayer-selectPlayer-dropdown"), PlayerUtils.getOnlinePlayers(admin,true)));
         custom.addElement(new ElementInput(baseLang.translateString("form-managerPlayer-selectPlayer-input")));
@@ -60,7 +60,7 @@ public class ManagePlayersForm {
     // 玩家管理功能菜单
     public static void sendManageTargetPlayerSystem(@NotNull Player admin, Player target) {
         Language baseLang = PluginI18n.getBaseLang(admin);
-        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(baseLang.translateString("form-managerPlayer-fullFeature-title"), baseLang.translateString("form-managerPlayer-description-targetPlayer",target.getName()));
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(baseLang.translateString("form-managerPlayer-fullFeature-title"), baseLang.translateString("form-managerPlayer-description-targetPlayer", target.getName()));
         simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeature-button-ban")));
         simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeature-button-mute")));
         if (target.isOnline()) {

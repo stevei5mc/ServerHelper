@@ -1,7 +1,7 @@
 command-message-notPermission: §c你没有权限使用此命令！
 command-message-inGameRun: §c请在游戏内使用此命令！
 command-message-unknown: §c未知的命令或参数，请检查后再试!
-command-message-isBanCommandList: §c您没有权限使用处于被禁用状态下的命令： §e%1%§c
+command-message-isBanCommandList: §c您没有权限使用处于被禁用状态下的命令： §e%1%§c ！
 
 form-button-back: 返回
 
@@ -16,7 +16,7 @@ form-managerPlayer-button-selectPlayer: 选择玩家
 form-managerPlayer-button-shortcutFeature: 功能快捷通道
 
 form-managerPlayer-selectPlayer-title: 管理系统 - 选择玩家
-form-managerPlayer-selectPlayer-description: 选择一名玩家或在输入框中填写玩家名，如果在输入框中输入玩家名称则选择框自动失效
+form-managerPlayer-selectPlayer-description: 选择一名玩家或在输入框中填写玩家名，如果在输入框中输入玩家名称则选择框自动失效！
 form-managerPlayer-selectPlayer-dropdown: 选择玩家
 form-managerPlayer-selectPlayer-input: 输入指定玩家名称：
 
@@ -28,6 +28,17 @@ form-managerPlayer-fullFeature-button-kick: 踢出
 form-managerPlayer-fullFeature-button-warn: 警告
 form-managerPlayer-fullFeature-button-patrol: 巡查
 form-managerPlayer-fullFeature-button-queryInfo: 查询信息
+
+form-managerPlayer-patrol-title: 巡查系统
+form-managerPlayer-patrol-description-mode: 如果在输入框中输入玩家名称则选择框选择的玩家自动失效，但如果选择随机模式则输入框和选择框都会失效！
+form-managerPlayer-patrol-description-warn: 如果选择隐身模式了，则需要手动脱下身上的装备否则会被其他玩家发现！
+form-managerPlayer-patrol-stepSlider-randomMode: 随机模式
+form-managerPlayer-patrol-stepSlider-randomMode-allWorld: 全部世界
+form-managerPlayer-patrol-stepSlider-randomMode-currentWorld: 当前世界
+form-managerPlayer-patrol-stepSlider-randomMode-selectWorld: 指定世界
+form-managerPlayer-patrol-dropdown-selectWorld: 选择世界
+form-managerPlayer-patrol-toggle-searchMode: 指定搜索 / 随机搜索
+form-managerPlayer-patrol-toggle-patrolMode: 旁观者模式 / 隐身模式
 
 form-managerPlayer-queryInfo-title: 管理系统 - 玩家信息查询
 form-managerPlayer-queryInfo-description: |
