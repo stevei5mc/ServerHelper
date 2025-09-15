@@ -1,6 +1,7 @@
 package cn.stevei5mc.serverhelper.waterdogpe;
 
 import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
+import cn.stevei5mc.serverhelper.waterdogpe.utils.PluginI18N;
 import dev.waterdog.waterdogpe.plugin.Plugin;
 import dev.waterdog.waterdogpe.utils.config.Configuration;
 import dev.waterdog.waterdogpe.utils.config.YamlConfig;
@@ -41,6 +42,7 @@ public class ServerHelperMain extends Plugin {
     @Override
     public void loadConfig() {
         config = new YamlConfig(this.getDataFolder()+"/config.yml");
+        PluginI18N.loadLanguages();
     }
 
     @Override
