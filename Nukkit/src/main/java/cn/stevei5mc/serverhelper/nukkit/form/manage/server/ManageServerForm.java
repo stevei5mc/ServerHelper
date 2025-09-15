@@ -13,9 +13,9 @@ import org.jetbrains.annotations.NotNull;
 public class ManageServerForm {
     public static void sendManageServerUi(@NotNull Player player) {
         Language baseLang = PluginI18n.getBaseLang(player);
-        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理服务器");
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(baseLang.translateString("form-managerServer-title"));
         if (Server.getInstance().getPluginManager().getPlugin("AutoRestart") != null) {
-            simple.addButton(new ResponseElementButton("重启管理").onClicked(Admin::sendMain));
+            simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerServer-button-restart")).onClicked(Admin::sendMain));
         }
         simple.addButton(new ResponseElementButton(baseLang.translateString("form-button-back")).onClicked(MainForm::mainMenu));
         player.showFormWindow(simple);

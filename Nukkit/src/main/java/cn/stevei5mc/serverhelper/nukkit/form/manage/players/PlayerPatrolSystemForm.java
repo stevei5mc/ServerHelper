@@ -27,7 +27,7 @@ public class PlayerPatrolSystemForm {
         }
         // ui
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(baseLang.translateString("form-managerPlayer-patrol-title"));
-        custom.addElement(new ElementToggle(baseLang.translateString("form-managerPlayer-patrol-toggle-searchMode"),false));
+        custom.addElement(new ElementToggle(baseLang.translateString("form-managerPlayer-patrol-toggle-searchMode"),true));
         custom.addElement(new ElementLabel(baseLang.translateString("form-managerPlayer-patrol-description-mode")));
         custom.addElement(new ElementDropdown(baseLang.translateString("form-managerPlayer-selectPlayer-dropdown"), PlayerUtils.getOnlinePlayers(admin,true)));
         custom.addElement(new ElementInput(baseLang.translateString("form-managerPlayer-selectPlayer-input")));
@@ -40,8 +40,8 @@ public class PlayerPatrolSystemForm {
         custom.onResponded((formResponseCustom, player1) -> {
             if (Server.getInstance().getOnlinePlayers().size() >= 2) {
                 Player targetPlayer = null;
+                String target = "";
                 if (formResponseCustom.getToggleResponse(0)) {
-                    String target;
                     if (!formResponseCustom.getInputResponse(3).equals("")) {
                         target = formResponseCustom.getInputResponse(3);
                     }else {
@@ -52,14 +52,15 @@ public class PlayerPatrolSystemForm {
                     }
                 }else {
                     targetPlayer = PlayerUtils.getRandomPlayer(formResponseCustom.getStepSliderResponse(4).getElementID(),player1,formResponseCustom.getDropdownResponse(5).getElementContent());
+                    target = targetPlayer != null ? targetPlayer.getName() : null;
                 }
-                if (targetPlayer != null) {
+                if (targetPlayer != null && targetPlayer.isOnline()) {
                     PlayerUtils.teleportToPatrolTarget(player1, targetPlayer, formResponseCustom.getToggleResponse(7));
                 }else {
-                    player1.sendMessage("无法找到目标玩家，请确保目标玩家在线并重新尝试");
+                    player1.sendMessage(baseLang.translateString("message-targetPlayer-isOffline", target));
                 }
             }else{
-                player1.sendMessage("没有足够的在线玩家，至少需要两名玩家在线");
+                player1.sendMessage(baseLang.translateString("message-minPlayer"));
             }
         });
         admin.showFormWindow(custom);

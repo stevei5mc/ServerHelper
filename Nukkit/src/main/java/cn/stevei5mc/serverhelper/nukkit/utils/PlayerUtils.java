@@ -67,9 +67,9 @@ public class PlayerUtils {
             }
             admin.addEffect(Effect.getEffect(16).setDuration(12000).setAmplifier(5).setVisible(false));
             admin.teleport(target);
-            admin.sendMessage("你已传送至：" + target.getName());
+            admin.sendMessage(PluginI18n.getBaseLang(admin).translateString("teleport-to-player", target.getName()));
         } else {
-            admin.sendMessage("目标玩家不在线，请选择其他玩家");
+            admin.sendMessage(PluginI18n.getBaseLang(admin).translateString("message-targetPlayer-isOffline",target.getName()));
         }
     }
 

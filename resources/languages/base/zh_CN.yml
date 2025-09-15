@@ -37,7 +37,7 @@ form-managerPlayer-patrol-stepSlider-randomMode-allWorld: 全部世界
 form-managerPlayer-patrol-stepSlider-randomMode-currentWorld: 当前世界
 form-managerPlayer-patrol-stepSlider-randomMode-selectWorld: 指定世界
 form-managerPlayer-patrol-dropdown-selectWorld: 选择世界
-form-managerPlayer-patrol-toggle-searchMode: 指定搜索 / 随机搜索
+form-managerPlayer-patrol-toggle-searchMode: 随机搜索 / 指定搜索
 form-managerPlayer-patrol-toggle-patrolMode: 旁观者模式 / 隐身模式
 
 form-managerPlayer-queryInfo-title: 管理系统 - 玩家信息查询
@@ -48,3 +48,11 @@ form-managerPlayer-queryInfo-description: |
   Game=(version=%10% lang=%11% ui=%12% controls=%13%)
   Position=(X=%14% Y=%15% Z=%16% world=%17%)
 form-managerPlayer-queryInfo-button-update: 刷新
+
+form-managerServer-title: 管理服务器
+form-managerServer-button-restart: 重启管理
+
+message-minPlayer: §c没有足够的在线玩家，至少需要两名玩家在线！
+message-targetPlayer-isOffline: §c无法找到目标玩家 §e%1%§c ，请确保目标玩家处于在线状态后再试！
+
+teleport-to-player: 你已传送至玩家： %1%
