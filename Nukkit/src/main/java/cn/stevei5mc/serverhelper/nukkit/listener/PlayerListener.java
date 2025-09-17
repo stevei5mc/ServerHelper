@@ -51,10 +51,10 @@ public class PlayerListener implements Listener {
         String message = event.getMessage();
         if (!main.getPrivateConfig().getBoolean("waterdogPE-mode",false) && event.getPlayer().hasPermission(BaseInfo.staffChatPermission) &&message.startsWith(main.getPrivateConfig().getString("staffChat.sendPrefix", "!staff"))) {
             event.setCancelled(true);
+            String sendMessage = main.getConfig().getString("staffChat.message").replace("%player%", event.getPlayer().getName()).replace("%message%",message.replace("!staff",""));
+            main.getLogger().info(sendMessage);
             for (Player player : main.getServer().getOnlinePlayers().values()) {
-                String sendMessage = main.getConfig().getString("staffChat.message").replace("%player%", event.getPlayer().getName()).replace("%message%",message.replace("!staff",""));
                 player.sendMessage(sendMessage);
-                main.getLogger().info(sendMessage);
             }
         }
     }
