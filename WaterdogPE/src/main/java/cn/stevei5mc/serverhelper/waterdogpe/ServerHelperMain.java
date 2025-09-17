@@ -4,12 +4,15 @@ import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
 import dev.waterdog.waterdogpe.plugin.Plugin;
 import dev.waterdog.waterdogpe.utils.config.Configuration;
 import dev.waterdog.waterdogpe.utils.config.YamlConfig;
+import lombok.Getter;
 
 public class ServerHelperMain extends Plugin {
 
     private static ServerHelperMain instance;
 
     private YamlConfig config;
+    @Getter
+    private Configuration privateConfig;
     
     public static ServerHelperMain getInstance() {
         return instance;
@@ -29,18 +32,20 @@ public class ServerHelperMain extends Plugin {
 
     public void saveConfigResources() {
         saveResource("config.yml");
-        for (String language : BaseInfo.getLanguages()) {
+        saveResource("nukkit-private.yml");
+        /*for (String language : BaseInfo.getLanguages()) {
             saveResource(BaseInfo.baseLanguagesFilesPath + language+".yml");
             saveResource(BaseInfo.customLanguagesFilesPath + language+".yml");
         }
         for (String setting : BaseInfo.getSettings()) {
             saveResource("Settings/"+setting+".yml");
-        }
+        }*/
     }
 
     @Override
     public void loadConfig() {
         config = new YamlConfig(this.getDataFolder()+"/config.yml");
+        privateConfig = new YamlConfig(this.getDataFolder()+"nukkit-private.yml");
     }
 
     @Override

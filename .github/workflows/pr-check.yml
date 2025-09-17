@@ -1,4 +1,4 @@
-name: PR check
+name: PR CI
 
 on:
   pull_request:
@@ -9,6 +9,7 @@ env:
 jobs:
   Initialize:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     outputs:
       repo_name: ${{ steps.get_info.outputs.repoNmae }}
       targetSha: ${{ env.targetSha }}
@@ -26,6 +27,7 @@ jobs:
     name: Build plugin
     needs: Initialize
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       java-version: "17"
     steps:

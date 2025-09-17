@@ -24,3 +24,7 @@ commands:
   mute: mute
   unmute: unmute
   warn: warn
+
+staffChat:
+  sendPrefix: "!staff"
+  message: "§d§l[§cSTAFF CHAT§d] Sf<%player%>§7>> %message%"
