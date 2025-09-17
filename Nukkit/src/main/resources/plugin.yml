@@ -14,3 +14,6 @@ permissions:
   serverhelper.admin.unban.commands:
     default: op
     description: "解除命令的禁用状态"
+  serverhelper.admin.staffChat:
+    default: op
+    description: "解除命令的禁用状态"

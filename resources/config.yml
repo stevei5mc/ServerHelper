@@ -27,4 +27,4 @@ commands:
 
 staffChat:
   sendPrefix: "!staff"
-  message: "§d§l[§cSTAFF CHAT§d] Sf<%player%>§7>> %message%"
+  message: "§d§l[§cStaff Chat§d] §f<%player%> §7>> %message%"

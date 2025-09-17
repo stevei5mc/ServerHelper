@@ -30,4 +30,5 @@ public class BaseInfo {
     public static final String adminMainPermission = "serverhelper.admin";
     public static final String reloadPermission = " serverhelper.admin.reload";
     public static final String unbanCommandPermission = "serverhelper.admin.unban.commands";
+    public static final String staffChatPermission = "serverhelper.admin.staffChat";
 }
