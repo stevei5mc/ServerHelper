@@ -72,7 +72,7 @@ public class ServerHelperMain extends PluginBase {
     public void loadConfig() {
     String path = this.getDataFolder() + "/" + BaseInfo.settingsFilesPath;
         this.config = new Config(this.getDataFolder()+"/config.yml", Config.YAML);
-        this.privateConfig = new Config(this.getDataFolder()+"nukkit-private.yml", Config.YAML);
+        this.privateConfig = new Config(this.getDataFolder()+"/nukkit-private.yml", Config.YAML);
         this.banCommands = new Config(path + "banCommands.yml", Config.YAML);
 //        this.banSetting = new Config(this.getDataFolder()+"/Settings/ban.yml",Config.YAML);
 //        this.kickSetting = new Config(this.getDataFolder()+"/Settings/kick.yml",Config.YAML);
