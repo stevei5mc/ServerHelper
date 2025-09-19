@@ -54,7 +54,9 @@ public class PlayerListener implements Listener {
             String sendMessage = main.getConfig().getString("staffChat.message").replace("%player%", event.getPlayer().getName()).replace("%message%",message.replace("!staff",""));
             main.getLogger().info(sendMessage);
             for (Player player : main.getServer().getOnlinePlayers().values()) {
-                player.sendMessage(sendMessage);
+                if (player.hasPermission(BaseInfo.staffChatPermission)) {
+                    player.sendMessage(sendMessage);
+                }
             }
         }
     }

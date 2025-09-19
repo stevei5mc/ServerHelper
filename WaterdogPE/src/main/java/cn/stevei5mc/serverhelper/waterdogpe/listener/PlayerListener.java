@@ -15,7 +15,9 @@ public class PlayerListener {
             String sendMessage = main.getConfig().getString("staffChat.message").replace("%player%", event.getPlayer().getName()).replace("%message%",message.replace("!staff",""));
             main.getLogger().info(sendMessage);
             for (ProxiedPlayer player : main.getProxy().getPlayers().values()) {
-                player.sendMessage(sendMessage);
+                if (player.hasPermission(BaseInfo.staffChatPermission)) {
+                    player.sendMessage(sendMessage);
+                }
             }
         }
     }
