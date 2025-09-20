@@ -1,7 +1,7 @@
 package cn.stevei5mc.serverhelper.waterdogpe;
 
 import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
-import cn.stevei5mc.serverhelper.waterdogpe.commands.maincmd.ServerHelperMainCmd;
+import cn.stevei5mc.serverhelper.waterdogpe.commands.ServerHelperMainCmd;
 import cn.stevei5mc.serverhelper.waterdogpe.listener.PlayerListener;
 import dev.waterdog.waterdogpe.event.defaults.PlayerChatEvent;
 import dev.waterdog.waterdogpe.plugin.Plugin;

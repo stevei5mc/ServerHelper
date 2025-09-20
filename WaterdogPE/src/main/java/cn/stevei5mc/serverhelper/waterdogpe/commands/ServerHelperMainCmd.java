@@ -1,4 +1,4 @@
-package cn.stevei5mc.serverhelper.waterdogpe.commands.maincmd;
+package cn.stevei5mc.serverhelper.waterdogpe.commands;
 
 import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.base.CommandBase;
@@ -11,7 +11,7 @@ public class ServerHelperMainCmd extends CommandBase {
 
     @Override
     public boolean onExecute(CommandSender sender, String s, String[] args) {
-        if (checkPermission(sender, BaseInfo.adminMainPermission)) {
+        if (checkPermission(sender, getPermission())) {
             if (args.length > 0) {
                 String p = args[0];
                 switch (p) {
