@@ -14,8 +14,7 @@ public class ServerHelperMainCmd extends CommandBase {
         String msgPrefix = main.getMessagePrefix();
         if (checkPermission(sender, getPermission())) {
             if (args.length > 0) {
-                String p = args[0];
-                switch (p) {
+                switch (args[0]) {
                     case "version":
                         sender.sendMessage("§b=== ServerHelper VERSION info ===");
                         sender.sendMessage(BaseInfo.VERSION);

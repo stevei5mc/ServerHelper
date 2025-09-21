@@ -48,10 +48,11 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerChat(PlayerChatEvent event) {
-        String message = event.getMessage();
-        if (!main.getPrivateConfig().getBoolean("waterdogPE-mode",false) && event.getPlayer().hasPermission(BaseInfo.staffChatPermission) &&message.startsWith(main.getConfig().getString("staffChat.sendPrefix", "!staff"))) {
+        String message = event.getMessage().trim();
+        String sendPrefix = main.getConfig().getString("staffChat.sendPrefix", "!staff");
+        if (!main.getPrivateConfig().getBoolean("waterdogPE-mode",false) && event.getPlayer().hasPermission(BaseInfo.staffChatPermission) && message.startsWith(sendPrefix)) {
             event.setCancelled(true);
-            String sendMessage = main.getConfig().getString("staffChat.message").replace("%player%", event.getPlayer().getName()).replace("%message%",message.replace("!staff",""));
+            String sendMessage = main.getConfig().getString("staffChat.message").replace("%player%", event.getPlayer().getName()).replace("%message%",message.replace(sendPrefix,""));
             main.getLogger().info(sendMessage);
             for (Player player : main.getServer().getOnlinePlayers().values()) {
                 if (player.hasPermission(BaseInfo.staffChatPermission)) {
