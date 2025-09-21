@@ -1,6 +1,7 @@
 package cn.stevei5mc.serverhelper.waterdogpe;
 
 import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
+import cn.stevei5mc.serverhelper.common.utils.CommonUtils;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.ServerHelperMainCmd;
 import cn.stevei5mc.serverhelper.waterdogpe.listener.PlayerListener;
 import dev.waterdog.waterdogpe.event.defaults.PlayerChatEvent;
@@ -27,8 +28,7 @@ public class ServerHelperMain extends Plugin {
         this.getLogger().info(BaseInfo.BRANCH);
         this.getLogger().warn("§c警告! §c本插件为免费且开源的，如果您付费获取获取的，则有可能被误导了");
         this.getLogger().info(BaseInfo.GH_URL);
-        String[] aliases = {cmdPrefix +"shr"};
-        this.getProxy().getCommandMap().registerCommand(new ServerHelperMainCmd(cmdPrefix+"ServerHelper", "ServerHelper plugin command", BaseInfo.adminMainPermission, aliases));
+        this.getProxy().getCommandMap().registerCommand(new ServerHelperMainCmd(cmdPrefix+"ServerHelper", "ServerHelper plugin command", BaseInfo.adminMainPermission, CommonUtils.toArray(cmdPrefix+"shr")));
         this.getProxy().getEventManager().subscribe(PlayerChatEvent.class, PlayerListener::onPlayerChat);
     }
 

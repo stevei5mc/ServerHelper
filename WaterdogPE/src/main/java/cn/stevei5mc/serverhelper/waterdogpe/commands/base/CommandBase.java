@@ -1,5 +1,6 @@
 package cn.stevei5mc.serverhelper.waterdogpe.commands.base;
 
+import cn.stevei5mc.serverhelper.common.utils.CommonUtils;
 import cn.stevei5mc.serverhelper.waterdogpe.ServerHelperMain;
 import dev.waterdog.waterdogpe.command.Command;
 import dev.waterdog.waterdogpe.command.CommandSender;
@@ -25,7 +26,7 @@ public abstract class CommandBase extends Command {
         if(sender.hasPermission(permission)) {
             return true;
         }else {
-            sender.sendMessage("§c你没有权限使用此命令！");
+            sender.sendMessage(main.getMessagePrefix()+"§c你没有权限使用此命令！");
             return false;
         }
     }

@@ -7,7 +7,7 @@ import cn.nukkit.Player;
 import cn.nukkit.form.element.ElementDropdown;
 import cn.nukkit.form.element.ElementInput;
 import cn.nukkit.form.element.ElementLabel;
-import cn.stevei5mc.serverhelper.common.utils.PlayerDeviceInfo;
+import cn.stevei5mc.serverhelper.common.utils.PlayerDeviceInfoUtil;
 import cn.stevei5mc.serverhelper.nukkit.form.MainForm;
 import cn.stevei5mc.serverhelper.nukkit.utils.PlayerUtils;
 import org.jetbrains.annotations.NotNull;
@@ -73,9 +73,9 @@ public class ManagePlayersForm {
         simple.setContent(
                 "玩家="+target.getName()+" XUID="+target.getLoginChainData().getXUID()+"\n"
                 +"UUID="+target.getLoginChainData().getClientUUID()+"\n"
-                +"设备系统="+ PlayerDeviceInfo.getDeviceOS(target.getLoginChainData().getDeviceOS())+" 设备型号="+target.getLoginChainData().getDeviceModel()+"\n"
+                +"设备系统="+ PlayerDeviceInfoUtil.getDeviceOS(target.getLoginChainData().getDeviceOS())+" 设备型号="+target.getLoginChainData().getDeviceModel()+"\n"
                 +"设备ID="+target.getLoginChainData().getDeviceId()+"\n"
-                +"操作方式="+PlayerDeviceInfo.getDeviceControls(target.getLoginChainData().getCurrentInputMode())+ " UI="+PlayerDeviceInfo.getPlayerUi(target.getLoginChainData().getUIProfile())+ " 客户端版本="+target.getLoginChainData().getGameVersion()+"\n"
+                +"操作方式="+ PlayerDeviceInfoUtil.getDeviceControls(target.getLoginChainData().getCurrentInputMode())+ " UI="+ PlayerDeviceInfoUtil.getPlayerUi(target.getLoginChainData().getUIProfile())+ " 客户端版本="+target.getLoginChainData().getGameVersion()+"\n"
                 +"使用语言="+target.getLoginChainData().getLanguageCode()+"\n"
                 +"链接IP="+target.getLoginChainData().getServerAddress()+"\n"
                 +"登录Ip="+target.getAddress()+":"+target.getPort()+" 延迟="+target.getPing()+"\n"

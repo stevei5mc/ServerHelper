@@ -1,6 +1,6 @@
 package cn.stevei5mc.serverhelper.common.utils;
 
-public class PlayerDeviceInfo {
+public class PlayerDeviceInfoUtil {
 
     public static String getDeviceOS(int os) {
         switch (os) {

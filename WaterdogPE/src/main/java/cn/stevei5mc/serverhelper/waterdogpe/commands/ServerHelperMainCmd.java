@@ -11,6 +11,7 @@ public class ServerHelperMainCmd extends CommandBase {
 
     @Override
     public boolean onExecute(CommandSender sender, String s, String[] args) {
+        String msgPrefix = main.getMessagePrefix();
         if (checkPermission(sender, getPermission())) {
             if (args.length > 0) {
                 String p = args[0];
@@ -25,7 +26,7 @@ public class ServerHelperMainCmd extends CommandBase {
                     case "reload":
                         if (checkPermission(sender, BaseInfo.reloadPermission)) {
                             main.loadConfig();
-                            sender.sendMessage("§a配置文件重载成功");
+                            sender.sendMessage(msgPrefix+"§a配置文件重载成功");
                         }
                         break;
                     default:
