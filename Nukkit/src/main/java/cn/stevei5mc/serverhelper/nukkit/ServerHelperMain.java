@@ -87,7 +87,7 @@ public class ServerHelperMain extends PluginBase {
         return config;
     }
 
-    /*public String getMessagePrefix() {
+    public String getMessagePrefix() {
         return config.getString("message_prefix","§b§ServerHelper §r§7>> ");
-    }*/
+    }
 }

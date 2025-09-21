@@ -1,10 +1,12 @@
 package cn.stevei5mc.serverhelper.nukkit.commands.base;
 
+import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
 import cn.stevei5mc.serverhelper.nukkit.ServerHelperMain;
+import cn.stevei5mc.serverhelper.nukkit.utils.PluginI18n;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +37,7 @@ public abstract class BaseCommand extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String s, String[] args) {
-//        Language lang = main.getBaseLang(sender);
+        Language lang = PluginI18n.getBaseLang(sender);
         if(hasPermission(sender)) {
             if(args.length > 0) {
                 String subCommand = args[0].toLowerCase();
@@ -44,11 +46,9 @@ public abstract class BaseCommand extends Command {
                     if (command.canUser(sender)) {
                         return command.execute(sender, s, args);
                     }else if (sender.isPlayer()) {
-                        //sender.sendMessage(main.getMessagePrefix() +lang.translateString("command_not_permission"));
-                        sender.sendMessage("§c你没有权限使用此命令！");
+                        sender.sendMessage(main.getMessagePrefix() +lang.translateString("command-message-notPermission"));
                     }else {
-                        //sender.sendMessage(main.getMessagePrefix() +lang.translateString("command_in_game_run"));
-                        sender.sendMessage("§c请在游戏内使用此命令！");
+                        sender.sendMessage(main.getMessagePrefix() +lang.translateString("command-message-inGameRun"));
                     }
                 }else {
                     this.sendHelp(sender);
@@ -62,8 +62,7 @@ public abstract class BaseCommand extends Command {
             }
             return true;
         }
-        //sender.sendMessage(main.getMessagePrefix() +lang.translateString("command_not_permission"));
-        sender.sendMessage("§c你没有权限使用此命令！");
+        sender.sendMessage(main.getMessagePrefix() +lang.translateString("command-message-notPermission"));
         return true;
     }
 

@@ -54,5 +54,6 @@ form-managerServer-button-restart: 重启管理
 
 message-minPlayer: §c没有足够的在线玩家，至少需要两名玩家在线！
 message-targetPlayer-isOffline: §c无法找到目标玩家 §e%1%§c ，请确保目标玩家处于在线状态后再试！
+message-configReload-success: §a配置文件重载成功
 
 teleport-to-player: 你已传送至玩家： %1%

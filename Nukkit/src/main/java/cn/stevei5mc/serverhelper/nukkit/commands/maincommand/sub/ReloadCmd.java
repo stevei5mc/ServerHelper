@@ -4,6 +4,7 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
 import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
 import cn.stevei5mc.serverhelper.nukkit.commands.base.BaseSubCommand;
+import cn.stevei5mc.serverhelper.nukkit.utils.PluginI18n;
 
 public class ReloadCmd extends BaseSubCommand {
     public ReloadCmd(String name) {
@@ -23,7 +24,7 @@ public class ReloadCmd extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         main.loadConfig();
-        sender.sendMessage("§a配置文件重载成功");
+        sender.sendMessage(main.getMessagePrefix() + PluginI18n.getBaseLang().translateString("message-configReload-success"));
         return true;
     }
 
