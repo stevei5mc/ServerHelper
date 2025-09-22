@@ -25,6 +25,9 @@ commands:
   unmute: unmute
   warn: warn
 
+# Staff 聊天系统
 staffChat:
+  #发送前缀 （在消息的前面加上所填写的前缀即可在staff聊天系统发送信息）
   sendPrefix: "!staff"
+  # 消息格式
   message: "§d§l[§cStaff Chat§d] §f<%player%> §7>> %message%"

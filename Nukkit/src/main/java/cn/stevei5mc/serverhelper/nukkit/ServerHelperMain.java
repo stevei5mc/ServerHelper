@@ -15,6 +15,7 @@ public class ServerHelperMain extends PluginBase {
     private Config config;
     @Getter
     private Config privateConfig;
+    public final int privateConfigVersion = 1;
 //    private Config banSetting;
 //    private Config kickSetting;
     @Getter
