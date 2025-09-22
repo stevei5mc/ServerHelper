@@ -12,6 +12,7 @@ env:
 jobs:
   Initialize:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     outputs:
       version: ${{ steps.get_info.outputs.version }}
       repo_name: ${{ steps.get_info.outputs.repoNmae }}
@@ -37,6 +38,7 @@ jobs:
     name: Build and release plugin
     needs: Initialize
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       java-version: "17"
     steps:
@@ -80,13 +82,14 @@ jobs:
   build-Docusaurus:
     name: Build and deploy docusaurus
     needs: [Initialize,build-plugin]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       pages: write
       id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     steps:
     - name: Clone repository
       uses: actions/checkout@v4

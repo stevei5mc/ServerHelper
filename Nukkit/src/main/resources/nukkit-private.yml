@@ -1,0 +1,3 @@
+version: 1
+#如果使用了 waterdogPE 就需要开启 waterdogPE-mode
+waterdogPE-mode: false

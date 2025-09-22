@@ -3,6 +3,7 @@ package cn.stevei5mc.serverhelper.nukkit.listener;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
+import cn.nukkit.event.player.PlayerChatEvent;
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
 import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
 import cn.stevei5mc.serverhelper.nukkit.ServerHelperMain;
@@ -42,6 +43,22 @@ public class PlayerListener implements Listener {
         }
         if (!event.isCancelled()) {
             main.getServer().getLogger().info(player.getName() + ": §c" + message);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerChat(PlayerChatEvent event) {
+        String message = event.getMessage().trim();
+        String sendPrefix = main.getConfig().getString("staffChat.sendPrefix", "!staff");
+        if (!main.getPrivateConfig().getBoolean("waterdogPE-mode",false) && event.getPlayer().hasPermission(BaseInfo.staffChatPermission) && message.startsWith(sendPrefix)) {
+            event.setCancelled(true);
+            String sendMessage = main.getConfig().getString("staffChat.message").replace("%player%", event.getPlayer().getName()).replace("%message%",message.replace(sendPrefix,""));
+            main.getLogger().info(sendMessage);
+            for (Player player : main.getServer().getOnlinePlayers().values()) {
+                if (player.hasPermission(BaseInfo.staffChatPermission)) {
+                    player.sendMessage(sendMessage);
+                }
+            }
         }
     }
 }
