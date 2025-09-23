@@ -1,4 +1,4 @@
-name: PR check
+name: PR CI
 
 on:
   pull_request:
@@ -9,6 +9,7 @@ env:
 jobs:
   Initialize:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     outputs:
       repo_name: ${{ steps.get_info.outputs.repoNmae }}
       targetSha: ${{ env.targetSha }}
@@ -26,6 +27,7 @@ jobs:
     name: Build plugin
     needs: Initialize
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       java-version: "17"
     steps:
@@ -42,7 +44,7 @@ jobs:
         run: |
           classPath=Common/src/main/java/cn/stevei5mc/serverhelper/common/utils/BaseInfo.java
           version=$(grep "version =" "./build.gradle.kts" | sed 's/.*version = "\(.*\)".*/\1/')
-          sed -i 's/{git.commit.id}/${{ needs.Initialize.outputs.targetSha }}/g; s/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g; s/{project.version}/$version/g' $classPath
+          sed -i 's/{git.commit.id}/${{ needs.Initialize.outputs.targetSha }}/g; s/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g; s/{project.version}/'"$version"'/g' $classPath
       - name:  Build project
         run: |
           chmod 777 gradlew && ls -lah

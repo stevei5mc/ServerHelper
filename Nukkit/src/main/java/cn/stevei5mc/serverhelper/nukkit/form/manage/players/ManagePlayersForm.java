@@ -8,7 +8,7 @@ import cn.nukkit.Player;
 import cn.nukkit.form.element.ElementDropdown;
 import cn.nukkit.form.element.ElementInput;
 import cn.nukkit.form.element.ElementLabel;
-import cn.stevei5mc.serverhelper.common.utils.PlayerDeviceInfo;
+import cn.stevei5mc.serverhelper.common.utils.PlayerDeviceInfoUtil;
 import cn.stevei5mc.serverhelper.nukkit.form.MainForm;
 import cn.stevei5mc.serverhelper.nukkit.utils.PlayerUtils;
 import cn.stevei5mc.serverhelper.nukkit.utils.PluginI18n;
@@ -79,9 +79,9 @@ public class ManagePlayersForm {
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(baseLang.translateString("form-managerPlayer-queryInfo-title"));
         simple.setContent(
                 baseLang.translateString("form-managerPlayer-queryInfo-description", target.getName(), target.getLoginChainData().getXUID(), target.getLoginChainData().getClientUUID(),
-                PlayerDeviceInfo.getDeviceOS(target.getLoginChainData().getDeviceOS()), target.getLoginChainData().getDeviceModel(), target.getLoginChainData().getDeviceId(),
+                PlayerDeviceInfoUtil.getDeviceOS(target.getLoginChainData().getDeviceOS()), target.getLoginChainData().getDeviceModel(), target.getLoginChainData().getDeviceId(),
                 target.getAddress()+":"+target.getPort(), target.getLoginChainData().getServerAddress(), target.getPing(),
-                target.getLoginChainData().getGameVersion(), target.getLoginChainData().getLanguageCode(), PlayerDeviceInfo.getPlayerUi(target.getLoginChainData().getUIProfile()), PlayerDeviceInfo.getDeviceControls(target.getLoginChainData().getCurrentInputMode()),
+                target.getLoginChainData().getGameVersion(), target.getLoginChainData().getLanguageCode(), PlayerDeviceInfoUtil.getPlayerUi(target.getLoginChainData().getUIProfile()), PlayerDeviceInfoUtil.getDeviceControls(target.getLoginChainData().getCurrentInputMode()),
                 Math.round(target.getX()), Math.round(target.getY()), Math.round(target.getZ()), target.getLevel().getName()
         ));
         simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-queryInfo-button-update")).onClicked(player -> sendPlayerInfoUi(admin,target)));
