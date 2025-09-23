@@ -12,7 +12,10 @@ import lombok.Getter;
 public class ServerHelperMain extends PluginBase {
 //这里被注释掉的代码都是暂时用不上的
     private static ServerHelperMain instance;
-//    private Config config;
+    private Config config;
+    @Getter
+    private Config privateConfig;
+    public final int privateConfigVersion = 1;
 //    private Config banSetting;
 //    private Config kickSetting;
     @Getter
@@ -56,7 +59,8 @@ public class ServerHelperMain extends PluginBase {
     }
 
     public void saveConfigResources() {
-        //saveDefaultConfig();
+        saveDefaultConfig();
+        saveResource("nukkit-private.yml");
         /*for (String language : BaseInfo.getLanguages()) {
             saveResource(BaseInfo.baseLanguagesFilesPath + language+".yml");
             saveResource(BaseInfo.customLanguagesFilesPath + language+".yml");
@@ -68,24 +72,25 @@ public class ServerHelperMain extends PluginBase {
 
     public void loadConfig() {
     String path = this.getDataFolder() + "/" + BaseInfo.settingsFilesPath;
-//        this.config = new Config(this.getDataFolder()+"/config.yml",Config.YAML);
+        this.config = new Config(this.getDataFolder()+"/config.yml", Config.YAML);
+        this.privateConfig = new Config(this.getDataFolder()+"/nukkit-private.yml", Config.YAML);
+        this.banCommands = new Config(path + "banCommands.yml", Config.YAML);
 //        this.banSetting = new Config(this.getDataFolder()+"/Settings/ban.yml",Config.YAML);
 //        this.kickSetting = new Config(this.getDataFolder()+"/Settings/kick.yml",Config.YAML);
 //        this.warnSetting = new Config(this.getDataFolder()+ "/Settings/warn.yml",Config.YAML);
 //        this.muteSetting = new Config(this.getDataFolder()+"/Settings/mute.yml",Config.YAML);
-        this.banCommands = new Config(path + "banCommands.yml",Config.YAML);
     }
 
     public static ServerHelperMain getInstance() {
         return instance;
     }
 
-    /*@Override
+    @Override
     public Config getConfig() {
         return config;
-    }*/
+    }
 
-    /*public String getMessagePrefix() {
+    public String getMessagePrefix() {
         return config.getString("message_prefix","§b§ServerHelper §r§7>> ");
-    }*/
+    }
 }
