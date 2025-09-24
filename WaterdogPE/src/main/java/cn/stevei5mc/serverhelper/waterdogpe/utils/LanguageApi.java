@@ -34,16 +34,18 @@ public class LanguageApi {
         for (String key : languageKeys) {
             if (newLanguage.getKeys().contains(key)) {
                 cache.put(key, language.getString(key,"§cNo language text! key: "+key));
-            }else {
-                this.language.remove(key);
-                save = true;
             }
+            language.remove(key);
         }
         for (String key : newLanguage.getKeys()) {
-            if(!languageKeys.contains(key)) {
-                this.language.set(key, newLanguage.getString(key,"§cNo language text! key: "+key));
-                save = true;
+            String value;
+            if(languageKeys.contains(key)) {
+                value = cache.get(key);
+            }else {
+                value = newLanguage.getString(key, "§cNo language text! key: "+key);
             }
+            save = true;
+            this.language.set(key, newLanguage.getString(key, value));
         }
         if (save) {
             language.save();
