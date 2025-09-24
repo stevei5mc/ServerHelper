@@ -2,6 +2,9 @@ package cn.stevei5mc.serverhelper.waterdogpe.utils;
 
 import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
 import cn.stevei5mc.serverhelper.waterdogpe.ServerHelperMain;
+import com.google.gson.JsonElement;
+import dev.waterdog.waterdogpe.command.CommandSender;
+import dev.waterdog.waterdogpe.player.ProxiedPlayer;
 import dev.waterdog.waterdogpe.utils.config.Configuration;
 import dev.waterdog.waterdogpe.utils.config.YamlConfig;
 
@@ -28,5 +31,35 @@ public class PluginI18N {
             privateLangFile.load(main.getResourceFile(BaseInfo.privateLanguagesFilesPath + languageName + ".yml"));
             privateLanguagesMap.put(languageName, new LanguageApi(privateLangFile));
         }
+    }
+
+    public static LanguageApi getBaseLang() {
+        return getBaseLang(null);
+    }
+
+    public static LanguageApi getBaseLang(CommandSender sender) {
+        if (sender instanceof ProxiedPlayer) {
+            ProxiedPlayer player = (ProxiedPlayer) sender;
+            String playerLanguage = String.valueOf(player.getLoginData().getClientData().get("LanguageCode")).replace("\"","");
+            if (baseLanguagesMap.containsKey(playerLanguage)) {
+                return baseLanguagesMap.get(playerLanguage);
+            }
+        }
+        return baseLanguagesMap.get(defaultLanguage);
+    }
+
+    public static LanguageApi getPrivateLang() {
+        return getPrivateLang(null);
+    }
+
+    public static LanguageApi getPrivateLang(CommandSender sender) {
+        if (sender instanceof ProxiedPlayer) {
+            ProxiedPlayer player = (ProxiedPlayer) sender;
+            String playerLanguage = String.valueOf(player.getLoginData().getClientData().get("LanguageCode")).replace("\"","");
+            if (baseLanguagesMap.containsKey(playerLanguage)) {
+                return baseLanguagesMap.get(playerLanguage);
+            }
+        }
+        return baseLanguagesMap.get(defaultLanguage);
     }
 }

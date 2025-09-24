@@ -2,6 +2,8 @@ package cn.stevei5mc.serverhelper.waterdogpe.commands;
 
 import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.base.CommandBase;
+import cn.stevei5mc.serverhelper.waterdogpe.utils.LanguageApi;
+import cn.stevei5mc.serverhelper.waterdogpe.utils.PluginI18N;
 import dev.waterdog.waterdogpe.command.CommandSender;
 
 public class ServerHelperMainCmd extends CommandBase {
@@ -12,6 +14,7 @@ public class ServerHelperMainCmd extends CommandBase {
     @Override
     public boolean onExecute(CommandSender sender, String s, String[] args) {
         String msgPrefix = main.getMessagePrefix();
+        LanguageApi baseLang = PluginI18N.getBaseLang(sender);
         if (checkPermission(sender, getPermission())) {
             if (args.length > 0) {
                 switch (args[0]) {
@@ -25,7 +28,7 @@ public class ServerHelperMainCmd extends CommandBase {
                     case "reload":
                         if (checkPermission(sender, BaseInfo.reloadPermission)) {
                             main.loadConfig();
-                            sender.sendMessage(msgPrefix+"§a配置文件重载成功");
+                            sender.sendMessage(msgPrefix + baseLang.translateString("message-configReload-success"));
                         }
                         break;
                     default:
