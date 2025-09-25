@@ -2,7 +2,6 @@ package cn.stevei5mc.serverhelper.waterdogpe.utils;
 
 import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
 import cn.stevei5mc.serverhelper.waterdogpe.ServerHelperMain;
-import com.google.gson.JsonElement;
 import dev.waterdog.waterdogpe.command.CommandSender;
 import dev.waterdog.waterdogpe.player.ProxiedPlayer;
 import dev.waterdog.waterdogpe.utils.config.Configuration;
@@ -10,7 +9,7 @@ import dev.waterdog.waterdogpe.utils.config.YamlConfig;
 
 import java.util.HashMap;
 
-public class PluginI18N {
+public class PluginI18n {
     private static final HashMap<String, LanguageApi> baseLanguagesMap = new HashMap<>();
     private static final HashMap<String, LanguageApi> privateLanguagesMap = new HashMap<>();
     private static final ServerHelperMain main = ServerHelperMain.getInstance();
@@ -56,10 +55,10 @@ public class PluginI18N {
         if (sender instanceof ProxiedPlayer) {
             ProxiedPlayer player = (ProxiedPlayer) sender;
             String playerLanguage = String.valueOf(player.getLoginData().getClientData().get("LanguageCode")).replace("\"","");
-            if (baseLanguagesMap.containsKey(playerLanguage)) {
-                return baseLanguagesMap.get(playerLanguage);
+            if (privateLanguagesMap.containsKey(playerLanguage)) {
+                return privateLanguagesMap.get(playerLanguage);
             }
         }
-        return baseLanguagesMap.get(defaultLanguage);
+        return privateLanguagesMap.get(defaultLanguage);
     }
 }

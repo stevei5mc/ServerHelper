@@ -1,7 +1,7 @@
 package cn.stevei5mc.serverhelper.waterdogpe;
 
 import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
-import cn.stevei5mc.serverhelper.waterdogpe.utils.PluginI18N;
+import cn.stevei5mc.serverhelper.waterdogpe.utils.PluginI18n;
 import cn.stevei5mc.serverhelper.common.utils.CommonUtils;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.ServerHelperMainCmd;
 import cn.stevei5mc.serverhelper.waterdogpe.listener.PlayerListener;
@@ -47,7 +47,7 @@ public class ServerHelperMain extends Plugin {
     @Override
     public void loadConfig() {
         config = new YamlConfig(this.getDataFolder()+"/config.yml");
-        PluginI18N.loadLanguages();
+        PluginI18n.loadLanguages();
     }
 
     @Override

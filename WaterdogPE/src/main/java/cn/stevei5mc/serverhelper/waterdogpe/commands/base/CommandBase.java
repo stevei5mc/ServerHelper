@@ -1,7 +1,7 @@
 package cn.stevei5mc.serverhelper.waterdogpe.commands.base;
 
 import cn.stevei5mc.serverhelper.waterdogpe.ServerHelperMain;
-import cn.stevei5mc.serverhelper.waterdogpe.utils.PluginI18N;
+import cn.stevei5mc.serverhelper.waterdogpe.utils.PluginI18n;
 import dev.waterdog.waterdogpe.command.Command;
 import dev.waterdog.waterdogpe.command.CommandSender;
 import dev.waterdog.waterdogpe.command.CommandSettings;
@@ -26,7 +26,7 @@ public abstract class CommandBase extends Command {
         if(sender.hasPermission(permission)) {
             return true;
         }else {
-            sender.sendMessage(main.getMessagePrefix() + PluginI18N.getBaseLang(sender).translateString("command-message-notPermission"));
+            sender.sendMessage(main.getMessagePrefix() + PluginI18n.getBaseLang(sender).translateString("command-message-notPermission"));
             return false;
         }
     }
