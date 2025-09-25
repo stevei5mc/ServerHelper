@@ -34,6 +34,8 @@ public class LanguageApi {
         for (String key : languageKeys) {
             if (newLanguage.getKeys().contains(key)) {
                 cache.put(key, language.getString(key,"§cNo language text! key: "+key));
+            }else {
+                save = true;
             }
             language.remove(key);
         }
@@ -43,8 +45,8 @@ public class LanguageApi {
                 value = cache.get(key);
             }else {
                 value = newLanguage.getString(key, "§cNo language text! key: "+key);
+                save = true;
             }
-            save = true;
             this.language.set(key, newLanguage.getString(key, value));
         }
         if (save) {
