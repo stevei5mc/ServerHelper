@@ -26,6 +26,7 @@ public class ServerHelperMain extends Plugin {
         this.getLogger().info(BaseInfo.VERSION);
         this.getLogger().info(BaseInfo.COMMIT_ID);
         this.getLogger().info(BaseInfo.BRANCH);
+        this.getLogger().info("§bPlugin running WaterdogPE");
         this.getLogger().warn("§c警告! §c本插件为免费且开源的，如果您付费获取获取的，则有可能被误导了");
         this.getLogger().info(BaseInfo.GH_URL);
         this.getProxy().getCommandMap().registerCommand(new ServerHelperMainCmd(cmdPrefix+"ServerHelper", "ServerHelper plugin command", BaseInfo.adminMainPermission, CommonUtils.toArray(cmdPrefix+"shr")));

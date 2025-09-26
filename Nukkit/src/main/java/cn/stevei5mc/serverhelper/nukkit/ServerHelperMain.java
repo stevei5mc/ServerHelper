@@ -1,5 +1,6 @@
 package cn.stevei5mc.serverhelper.nukkit;
 
+import cn.lanink.gamecore.utils.NukkitTypeUtils;
 import cn.nukkit.Server;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
@@ -37,6 +38,7 @@ public class ServerHelperMain extends PluginBase {
             this.getLogger().info(BaseInfo.VERSION);
             this.getLogger().info(BaseInfo.COMMIT_ID);
             this.getLogger().info(BaseInfo.BRANCH);
+            this.getLogger().info("§bNukkit type: §a" + NukkitTypeUtils.getNukkitType().name());
             this.getServer().getCommandMap().register("",new ServerHelperMainCommand());
             this.getServer().getCommandMap().register("",new AdminCommand("admin"));
             this.getServer().getPluginManager().registerEvents(new PlayerListener(),this);

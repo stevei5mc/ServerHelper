@@ -20,6 +20,7 @@ public class ServerHelperMainCmd extends CommandBase {
                         sender.sendMessage(BaseInfo.VERSION);
                         sender.sendMessage(BaseInfo.COMMIT_ID);
                         sender.sendMessage(BaseInfo.BRANCH);
+                        sender.sendMessage("§bPlugin running WaterdogPE");
                         sender.sendMessage("§b==================================");
                         break;
                     case "reload":

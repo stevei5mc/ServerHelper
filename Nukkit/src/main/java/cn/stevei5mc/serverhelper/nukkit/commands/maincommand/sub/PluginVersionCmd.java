@@ -1,5 +1,6 @@
 package cn.stevei5mc.serverhelper.nukkit.commands.maincommand.sub;
 
+import cn.lanink.gamecore.utils.NukkitTypeUtils;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
 import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
@@ -26,6 +27,7 @@ public class PluginVersionCmd extends BaseSubCommand {
         sender.sendMessage(BaseInfo.VERSION);
         sender.sendMessage(BaseInfo.COMMIT_ID);
         sender.sendMessage(BaseInfo.BRANCH);
+        sender.sendMessage("§bNukkit type: §a" + NukkitTypeUtils.getNukkitType().name());
         sender.sendMessage("§b==================================");
         return true;
     }
