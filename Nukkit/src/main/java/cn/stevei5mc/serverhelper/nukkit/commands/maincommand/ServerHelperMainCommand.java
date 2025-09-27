@@ -26,4 +26,3 @@ public class ServerHelperMainCommand extends BaseCommand {
     public void sendUI(Player player) {
     }
 }
-

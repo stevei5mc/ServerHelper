@@ -10,10 +10,7 @@ public class BaseInfo {
 
     // 版本信息
     public static String getVersionInfo() {
-        return
-           "§bVersion§7:§a {project.version}" +
-           "\n§bBranch§7:§a {git.branch}" +
-           "\n§bCommit id§7:§a {git.commit.id}";
+        return "§bVersion§7:§a {project.version}\n§bBranch§7:§a {git.branch}\n§bCommit id§7:§a {git.commit.id}";
     }
     public static final String COMMIT_ID = "";
     public static final String BRANCH = "";
