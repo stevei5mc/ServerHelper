@@ -8,25 +8,20 @@ import dev.waterdog.waterdogpe.event.defaults.PlayerChatEvent;
 import dev.waterdog.waterdogpe.plugin.Plugin;
 import dev.waterdog.waterdogpe.utils.config.Configuration;
 import dev.waterdog.waterdogpe.utils.config.YamlConfig;
+import lombok.Getter;
 
 public class ServerHelperMain extends Plugin {
+    @Getter
     private static ServerHelperMain instance;
     private final String cmdPrefix = "wd";
     private YamlConfig config;
-    
-    public static ServerHelperMain getInstance() {
-        return instance;
-    }
 
     @Override
     public void onEnable() {
         instance = this;
         saveConfigResources();
         loadConfig();
-        this.getLogger().info(BaseInfo.VERSION);
-        this.getLogger().info(BaseInfo.COMMIT_ID);
-        this.getLogger().info(BaseInfo.BRANCH);
-        this.getLogger().info("§bPlugin running WaterdogPE");
+        this.getLogger().info(getPluginInfo());
         this.getLogger().warn("§c警告! §c本插件为免费且开源的，如果您付费获取获取的，则有可能被误导了");
         this.getLogger().info(BaseInfo.GH_URL);
         this.getProxy().getCommandMap().registerCommand(new ServerHelperMainCmd(cmdPrefix+"ServerHelper", "ServerHelper plugin command", BaseInfo.adminMainPermission, CommonUtils.toArray(cmdPrefix+"shr")));
@@ -61,5 +56,9 @@ public class ServerHelperMain extends Plugin {
 
     public String getMessagePrefix() {
         return config.getString("message_prefix","§b§ServerHelper §r§7>> ");
+    }
+
+    public String getPluginInfo() {
+        return BaseInfo.getVersionInfo() + "\n§bPlugin running WaterdogPE";
     }
 }

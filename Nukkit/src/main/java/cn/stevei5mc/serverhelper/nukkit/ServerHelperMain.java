@@ -12,6 +12,7 @@ import lombok.Getter;
 
 public class ServerHelperMain extends PluginBase {
 //这里被注释掉的代码都是暂时用不上的
+    @Getter
     private static ServerHelperMain instance;
     private Config config;
     @Getter
@@ -35,10 +36,7 @@ public class ServerHelperMain extends PluginBase {
     @Override
     public void onEnable() {
         if (this.getServer().getPluginManager().getPlugin("MemoriesOfTime-GameCore") != null) {
-            this.getLogger().info(BaseInfo.VERSION);
-            this.getLogger().info(BaseInfo.COMMIT_ID);
-            this.getLogger().info(BaseInfo.BRANCH);
-            this.getLogger().info("§bNukkit type: §a" + NukkitTypeUtils.getNukkitType().name());
+            this.getLogger().info(getPluginInfo());
             this.getServer().getCommandMap().register("",new ServerHelperMainCommand());
             this.getServer().getCommandMap().register("",new AdminCommand("admin"));
             this.getServer().getPluginManager().registerEvents(new PlayerListener(),this);
@@ -83,10 +81,6 @@ public class ServerHelperMain extends PluginBase {
 //        this.muteSetting = new Config(this.getDataFolder()+"/Settings/mute.yml",Config.YAML);
     }
 
-    public static ServerHelperMain getInstance() {
-        return instance;
-    }
-
     @Override
     public Config getConfig() {
         return config;
@@ -94,5 +88,9 @@ public class ServerHelperMain extends PluginBase {
 
     public String getMessagePrefix() {
         return config.getString("message_prefix","§b§ServerHelper §r§7>> ");
+    }
+
+    public String getPluginInfo() {
+        return BaseInfo.getVersionInfo() + "\n" + NukkitTypeUtils.getNukkitType().name();
     }
 }

@@ -17,10 +17,7 @@ public class ServerHelperMainCmd extends CommandBase {
                 switch (args[0]) {
                     case "version":
                         sender.sendMessage("§b=== ServerHelper VERSION info ===");
-                        sender.sendMessage(BaseInfo.VERSION);
-                        sender.sendMessage(BaseInfo.COMMIT_ID);
-                        sender.sendMessage(BaseInfo.BRANCH);
-                        sender.sendMessage("§bPlugin running WaterdogPE");
+                        sender.sendMessage(main.getPluginInfo());
                         sender.sendMessage("§b==================================");
                         break;
                     case "reload":
