@@ -15,6 +15,7 @@ public class ServerHelperMainCmd extends CommandBase {
         if (checkPermission(sender, getPermission())) {
             if (args.length > 0) {
                 switch (args[0]) {
+                    case "ver":
                     case "version":
                         sender.sendMessage("§b=== ServerHelper VERSION info ===");
                         sender.sendMessage(main.getPluginInfo());
