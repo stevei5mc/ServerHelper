@@ -91,6 +91,6 @@ public class ServerHelperMain extends PluginBase {
     }
 
     public String getPluginInfo() {
-        return BaseInfo.getVersionInfo() + "\n" + NukkitTypeUtils.getNukkitType().name();
+        return BaseInfo.getVersionInfo() + "\n§bNukkit type: §a" + NukkitTypeUtils.getNukkitType().name();
     }
 }

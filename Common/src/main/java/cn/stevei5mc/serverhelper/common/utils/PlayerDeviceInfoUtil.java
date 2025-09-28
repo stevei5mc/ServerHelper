@@ -1,7 +1,6 @@
 package cn.stevei5mc.serverhelper.common.utils;
 
 public class PlayerDeviceInfoUtil {
-
     public static String getDeviceOS(int os) {
         switch (os) {
             case 1: return"Android";
