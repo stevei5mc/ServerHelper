@@ -4,10 +4,20 @@ public class CommonUtils {
 
     /**
      * String ==> String[]
-     * @param input Input string
+     * @param string Input string
      * @return String[]
      */
-    public static String[] toArray(String input) {
-        return new String[]{input};
+    public static String[] toArray(String string) {
+        return new String[]{string};
+    }
+
+    /**
+     * String ==> String[]
+     * Split lines ( "\n" split )
+     * @param string Input string
+     * @return String[]
+     */
+    public static String[] splitLines(String string) {
+        return string.split("\n");
     }
 }

@@ -12,9 +12,6 @@ public class BaseInfo {
     public static String getVersionInfo() {
         return "§bVersion§7:§a {project.version}\n§bBranch§7:§a {git.branch}\n§bCommit id§7:§a {git.commit.id}";
     }
-    public static final String COMMIT_ID = "";
-    public static final String BRANCH = "";
-    public static final String VERSION = "}";
 
     // 配置文件信息
     public static final int configFileVersion = 1;
