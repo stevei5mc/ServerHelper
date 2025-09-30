@@ -28,12 +28,12 @@ public class LanguageApi {
     }
 
     public void update(Configuration newLanguage) {
-        boolean save = false;
         int currentVersion = language.getInt("version", 0);
         int latestVersion = newLanguage.getInt("version", 0);
         boolean shouldUpdate = (currentVersion > latestVersion || currentVersion < latestVersion) && latestVersion > 0;
         boolean noVersion = currentVersion == 0 && latestVersion == 0;
         if (shouldUpdate || noVersion) {
+            boolean save = false;
             HashMap<String, String> cache = new HashMap<>();
             LinkedList<String> languageKeys = new LinkedList<>(language.getKeys());
 
@@ -64,6 +64,8 @@ public class LanguageApi {
             if (save) {
                 language.save();
             }
+        }else if(currentVersion > 0 && latestVersion <= 0){
+            throw new IllegalStateException("Current version = " + currentVersion + " , Latest version = " + latestVersion);
         }
     }
 }
