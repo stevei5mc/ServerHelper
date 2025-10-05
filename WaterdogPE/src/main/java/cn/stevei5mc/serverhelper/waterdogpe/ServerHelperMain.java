@@ -21,10 +21,7 @@ public class ServerHelperMain extends Plugin {
         instance = this;
         saveConfigResources();
         loadConfig();
-        String[] s = CommonUtils.splitLines(getPluginInfo());
-        for (int i = 0; i <= s.length -1; i++) {
-            this.getLogger().info(s[i]);
-        }
+        this.getLogger().info(getPluginInfo().replace("\n", " §f| "));
         this.getLogger().warn("§c警告! §c本插件为免费且开源的，如果您付费获取获取的，则有可能被误导了");
         this.getLogger().info(BaseInfo.GH_URL);
         this.getProxy().getCommandMap().registerCommand(new ServerHelperMainCmd(cmdPrefix+"ServerHelper", "ServerHelper plugin command", BaseInfo.adminMainPermission, CommonUtils.toArray(cmdPrefix+"shr")));
