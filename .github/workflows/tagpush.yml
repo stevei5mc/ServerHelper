@@ -21,7 +21,7 @@ jobs:
       preRrelease: ${{ steps.releaseInfo.outputs.preRrelease }}
     steps:
     - name: 拉取代码
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: 获取信息
       id: get_info
       uses: ./.github/actions/getProjectInfo
@@ -43,9 +43,9 @@ jobs:
       java-version: "17"
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Setup java ${{ env.java-version }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.java-version }}
           distribution: 'temurin'
@@ -54,7 +54,7 @@ jobs:
       - name: Replace info
         run: |
           classPath=Common/src/main/java/cn/stevei5mc/serverhelper/common/utils/BaseInfo.java
-          sed -i "s/\(version = \)\"[^\"]*\"/\1\"${{ needs.Initialize.outputs.version }}\"/" ./build.gradle.kts
+          sed -i "s|project.version=*|project.version=${{ needs.Initialize.outputs.version }}|g" ./gradle.properties
           sed -i 's/{git.commit.id}/${{ needs.Initialize.outputs.targetSha }}/g; s/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g; s/{project.version}/${{ needs.Initialize.outputs.version }}/g' $classPath
       - name:  Build project
         run: |
@@ -70,7 +70,7 @@ jobs:
           name: ${{ needs.Initialize.outputs.repo_name }}-Release-${{ needs.Initialize.outputs.version }}
           path: ./staging
       - name: Release to github
-        uses: ncipollo/release-action@v1.14.0
+        uses: ncipollo/release-action@v1
         with:
           tag: ${{ needs.Initialize.outputs.version }}
           name: ${{ needs.Initialize.outputs.version }}
@@ -92,9 +92,9 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
     - name: Clone repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: Setup nodejs 18
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
         node-version: 18
     - name: 构建
@@ -104,7 +104,7 @@ jobs:
         yarn build
         cd ../
     - name: 上传构建
-      uses: actions/upload-pages-artifact@v3
+      uses: actions/upload-pages-artifact@v4
       with:
         path: Docusaurus/build
     - name: Deploy GitHub Pages

@@ -12,7 +12,7 @@ public class ServerHelperMainCmd extends CommandBase {
     @Override
     public boolean onExecute(CommandSender sender, String s, String[] args) {
         String msgPrefix = main.getMessagePrefix();
-        if (checkPermission(sender, getPermission())) {
+        if (hasPermission(sender, getPermission())) {
             if (args.length > 0) {
                 switch (args[0]) {
                     case "ver":
@@ -22,7 +22,7 @@ public class ServerHelperMainCmd extends CommandBase {
                         sender.sendMessage("§b==================================");
                         break;
                     case "reload":
-                        if (checkPermission(sender, BaseInfo.reloadPermission)) {
+                        if (hasPermission(sender, BaseInfo.reloadPermission)) {
                             main.loadConfig();
                             sender.sendMessage(msgPrefix+"§a配置文件重载成功");
                         }

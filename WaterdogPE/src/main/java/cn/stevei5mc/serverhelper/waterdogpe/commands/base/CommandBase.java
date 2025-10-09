@@ -1,10 +1,10 @@
 package cn.stevei5mc.serverhelper.waterdogpe.commands.base;
 
-import cn.stevei5mc.serverhelper.common.utils.CommonUtils;
 import cn.stevei5mc.serverhelper.waterdogpe.ServerHelperMain;
 import dev.waterdog.waterdogpe.command.Command;
 import dev.waterdog.waterdogpe.command.CommandSender;
 import dev.waterdog.waterdogpe.command.CommandSettings;
+import org.cloudburstmc.protocol.bedrock.data.command.CommandOverloadData;
 
 public abstract class CommandBase extends Command {
     protected ServerHelperMain main = ServerHelperMain.getInstance();
@@ -22,7 +22,7 @@ public abstract class CommandBase extends Command {
         return false;
     }
 
-    public boolean checkPermission(CommandSender sender,String permission) {
+    public boolean hasPermission(CommandSender sender, String permission) {
         if(sender.hasPermission(permission)) {
             return true;
         }else {

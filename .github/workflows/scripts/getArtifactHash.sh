@@ -1,7 +1,7 @@
 #!/bin/bash
 pwd
 oldDir="$(pwd)"
-version=$(grep "version =" "./build.gradle.kts" | sed 's/.*version = "\(.*\)".*/\1/')
+version=$(grep "project.version=" "./gradle.properties" | sed 's/project.version=//')
 rm -rf ./Common/target/ServerHelper-Common-$version.jar   #删除掉无用文件，因为这个文件是存放着通用的代码的（已在编译时一起打包进其他的jar里）
 for edition in Common Nukkit WaterdogPE
 do
