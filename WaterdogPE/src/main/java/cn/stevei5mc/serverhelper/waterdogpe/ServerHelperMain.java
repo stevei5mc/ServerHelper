@@ -1,6 +1,6 @@
 package cn.stevei5mc.serverhelper.waterdogpe;
 
-import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
+import cn.stevei5mc.serverhelper.common.BaseInfo;
 import cn.stevei5mc.serverhelper.common.utils.CommonUtils;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.ServerHelperMainCmd;
 import cn.stevei5mc.serverhelper.waterdogpe.listener.PlayerListener;

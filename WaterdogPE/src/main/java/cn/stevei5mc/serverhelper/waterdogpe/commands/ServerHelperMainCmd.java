@@ -1,6 +1,6 @@
 package cn.stevei5mc.serverhelper.waterdogpe.commands;
 
-import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
+import cn.stevei5mc.serverhelper.common.BaseInfo;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.base.CommandBase;
 import dev.waterdog.waterdogpe.command.CommandSender;
 

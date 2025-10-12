@@ -1,6 +1,6 @@
 package cn.stevei5mc.serverhelper.waterdogpe.listener;
 
-import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
+import cn.stevei5mc.serverhelper.common.BaseInfo;
 import cn.stevei5mc.serverhelper.waterdogpe.ServerHelperMain;
 import dev.waterdog.waterdogpe.event.defaults.PlayerChatEvent;
 import dev.waterdog.waterdogpe.player.ProxiedPlayer;

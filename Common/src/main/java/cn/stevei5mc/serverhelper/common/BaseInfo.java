@@ -1,4 +1,4 @@
-package cn.stevei5mc.serverhelper.common.utils;
+package cn.stevei5mc.serverhelper.common;
 
 import lombok.Getter;
 

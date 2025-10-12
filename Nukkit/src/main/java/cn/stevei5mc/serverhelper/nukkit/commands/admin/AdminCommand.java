@@ -2,7 +2,7 @@ package cn.stevei5mc.serverhelper.nukkit.commands.admin;
 
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
-import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
+import cn.stevei5mc.serverhelper.common.BaseInfo;
 import cn.stevei5mc.serverhelper.nukkit.commands.base.BaseCommand;
 import cn.stevei5mc.serverhelper.nukkit.form.MainForm;
 
