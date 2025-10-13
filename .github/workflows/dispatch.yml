@@ -80,7 +80,7 @@ jobs:
       uses: ./.github/actions/cacheGradle
     - name: Replace info
       run: |
-        classPath=Common/src/main/java/cn/stevei5mc/serverhelper/common/utils/BaseInfo.java
+        classPath=Common/src/main/java/cn/stevei5mc/serverhelper/common/BaseInfo.java
         version=$(grep "project.version=" "./gradle.properties" | sed 's/project.version=//')
         sed -i 's/{git.commit.id}/${{ needs.Initialize.outputs.targetSha }}/g; s/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g; s/{project.version}/'"$version"'/g' $classPath
     - name:  Build project
