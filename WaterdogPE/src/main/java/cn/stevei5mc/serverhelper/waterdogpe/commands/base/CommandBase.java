@@ -10,11 +10,11 @@ public abstract class CommandBase extends Command {
     protected ServerHelperMain main = ServerHelperMain.getInstance();
 
     public CommandBase(String name, String description, String permission) {
-        super(name,CommandSettings.builder().setDescription(description).setPermission(permission).build());
+        super(name.toLowerCase(), CommandSettings.builder().setDescription(description).setPermission(permission).build());
     }
 
     public CommandBase(String name, String description, String permission, String[] aliases) {
-        super(name,CommandSettings.builder().setDescription(description).setPermission(permission).setAliases(aliases).build());
+        super(name.toLowerCase(), CommandSettings.builder().setDescription(description).setPermission(permission).setAliases(aliases).build());
     }
 
     @Override

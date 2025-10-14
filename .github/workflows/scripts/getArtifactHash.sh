@@ -13,3 +13,4 @@ do
   ls -lah
   cd $oldDir
 done
+echo "--------------------"
