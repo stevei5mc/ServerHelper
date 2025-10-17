@@ -14,10 +14,21 @@ public abstract class CommandBase extends Command {
     private final ArrayList<SubCommandBase> subCmdList = new ArrayList<>();
     private final ConcurrentHashMap<String, Integer> subCmdMap = new ConcurrentHashMap<>();
 
+    /**
+     * @param name Command name
+     * @param description Command description
+     * @param permission Command permission
+     */
     public CommandBase(String name, String description, String permission) {
         super(name.toLowerCase(), CommandSettings.builder().setDescription(description).setPermission(permission).build());
     }
 
+    /**
+     * @param name Command name
+     * @param description Command description
+     * @param permission Command permission
+     * @param aliases Command aliases
+     */
     public CommandBase(String name, String description, String permission, String[] aliases) {
         super(name.toLowerCase(), CommandSettings.builder().setDescription(description).setPermission(permission).setAliases(aliases).build());
     }
@@ -50,13 +61,13 @@ public abstract class CommandBase extends Command {
     protected CommandOverloadData[] buildCommandOverloads() {
         List<CommandOverloadData> overloadData = new ArrayList<>();
         for (SubCommandBase subCmd : subCmdList) {
-            Map<String, Set<CommandEnumConstraint>> map1 = new LinkedHashMap<>();
-            map1.put(subCmd.getName().toLowerCase(), EnumSet.of(CommandEnumConstraint.ALLOW_ALIASES));
+            Map<String, Set<CommandEnumConstraint>> map = new LinkedHashMap<>();
+            map.put(subCmd.getName().toLowerCase(), EnumSet.of(CommandEnumConstraint.ALLOW_ALIASES));
             CommandParamData baseParam = new CommandParamData();
             baseParam.setName(subCmd.getName().toLowerCase());
             baseParam.setOptional(false);
             baseParam.setType(CommandParam.TEXT);
-            baseParam.setEnumData(new CommandEnumData(subCmd.getName().toLowerCase(), map1, false));
+            baseParam.setEnumData(new CommandEnumData(subCmd.getName().toLowerCase(), map, false));
 
             LinkedList<CommandParamData> paramData = new LinkedList<>();
             paramData.add(baseParam);
@@ -66,12 +77,24 @@ public abstract class CommandBase extends Command {
         return overloadData.toArray(new CommandOverloadData[0]);
     }
 
+    /**
+     * Check sender permission
+     * @param sender CommandSender
+     * @return Sender permission state
+     */
     public boolean checkPermission(CommandSender sender) {
         return sender.hasPermission(getPermission());
     }
 
+    /**
+     * Send command help
+     * @param sender CommandSender
+     */
     public abstract void sendHelp(CommandSender sender);
 
+    /**
+     * @param subCmd SubCommand
+     */
     protected void addSubCommand(SubCommandBase subCmd) {
         subCmdList.add(subCmd);
         int subCmdId = subCmdList.size() - 1;

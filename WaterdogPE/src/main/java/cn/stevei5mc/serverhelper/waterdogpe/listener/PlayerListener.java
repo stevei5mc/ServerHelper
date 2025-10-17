@@ -2,6 +2,7 @@ package cn.stevei5mc.serverhelper.waterdogpe.listener;
 
 import cn.stevei5mc.serverhelper.common.BaseInfo;
 import cn.stevei5mc.serverhelper.waterdogpe.ServerHelperMain;
+import dev.waterdog.waterdogpe.event.defaults.DispatchCommandEvent;
 import dev.waterdog.waterdogpe.event.defaults.PlayerChatEvent;
 import dev.waterdog.waterdogpe.player.ProxiedPlayer;
 
@@ -20,6 +21,13 @@ public class PlayerListener {
                     player.sendMessage(sendMessage);
                 }
             }
+        }
+    }
+
+    public static void onDispatchCommand(DispatchCommandEvent event) {
+        String cmd = event.getCommand().trim();
+        if (event.getSender().isPlayer()) {
+            main.getLogger().info(event.getSender().getName() + ": §c/" + cmd);
         }
     }
 }

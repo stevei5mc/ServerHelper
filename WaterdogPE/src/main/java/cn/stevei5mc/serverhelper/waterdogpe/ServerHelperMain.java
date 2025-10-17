@@ -4,6 +4,7 @@ import cn.stevei5mc.serverhelper.common.BaseInfo;
 import cn.stevei5mc.serverhelper.common.utils.CommonUtils;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.maimcmd.ServerHelperMainCmd;
 import cn.stevei5mc.serverhelper.waterdogpe.listener.PlayerListener;
+import dev.waterdog.waterdogpe.event.defaults.DispatchCommandEvent;
 import dev.waterdog.waterdogpe.event.defaults.PlayerChatEvent;
 import dev.waterdog.waterdogpe.plugin.Plugin;
 import dev.waterdog.waterdogpe.utils.config.Configuration;
@@ -26,6 +27,7 @@ public class ServerHelperMain extends Plugin {
         this.getLogger().info(BaseInfo.GH_URL);
         this.getProxy().getCommandMap().registerCommand(new ServerHelperMainCmd(cmdPrefix+"serverhelper", "ServerHelper plugin command", BaseInfo.adminMainPermission, CommonUtils.toArray(cmdPrefix+"shr")));
         this.getProxy().getEventManager().subscribe(PlayerChatEvent.class, PlayerListener::onPlayerChat);
+        this.getProxy().getEventManager().subscribe(DispatchCommandEvent.class, PlayerListener::onDispatchCommand);
     }
 
     public void saveConfigResources() {
