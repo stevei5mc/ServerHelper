@@ -9,7 +9,14 @@ import org.cloudburstmc.protocol.bedrock.data.command.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * 下列方法有修改的需要再进行重写，只需重写不在列表之内的方法即可正常使用。<br>
+ * The following methods need to be overridden only if modifications are required. Simply override methods not in this list for normal usage.
+ *
+ * <br><br> onExecute <br> buildCommandOverloads <br> addSubCommand <br> checkPermission <br>
+ */
 public abstract class CommandBase extends Command {
+
     protected ServerHelperMain main = ServerHelperMain.getInstance();
     private final ArrayList<SubCommandBase> subCmdList = new ArrayList<>();
     private final ConcurrentHashMap<String, Integer> subCmdMap = new ConcurrentHashMap<>();
@@ -72,13 +79,14 @@ public abstract class CommandBase extends Command {
             LinkedList<CommandParamData> paramData = new LinkedList<>();
             paramData.add(baseParam);
             paramData.addAll(Arrays.asList(subCmd.getCommandParamData()));
+
             overloadData.add(new CommandOverloadData(false, paramData.toArray(new CommandParamData[0])));
         }
         return overloadData.toArray(new CommandOverloadData[0]);
     }
 
     /**
-     * Check sender permission
+     * Check command sender permission
      * @param sender CommandSender
      * @return Sender permission state
      */

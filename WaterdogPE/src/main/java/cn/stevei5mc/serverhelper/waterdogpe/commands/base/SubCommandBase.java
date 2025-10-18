@@ -17,7 +17,10 @@ public abstract class SubCommandBase {
     }
 
     /**
-     * @return Get subCommand name
+     * Get subCommand name
+     * 注： 该方法有修改的需要再进行重写！
+     * Note: This method only needs to be overridden if modifications are required!
+     * @return SubCommand name
      */
     public String getName() {
         return name.toLowerCase();
@@ -30,7 +33,7 @@ public abstract class SubCommandBase {
     public abstract String[] getAliases();
 
     /**
-     * SubCommand permission
+     * Get subCommand permission
      * @param sender CommandSender
      * @return Permission state
      */
