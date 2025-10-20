@@ -25,7 +25,7 @@ public class BaseInfo {
             "ja_JP","ko_KR","nb_NO","nl_NL","pl_PL","pt_BR","pt_PT","ru_RU","sk_SK","sv_SE","tr_TR","uk_UA","zh_CN","zh_TW"*/
     );
     @Getter
-    private static final List<String> settings = Arrays.asList(/*"ban","kick","mute",*/"banCommands","warn");
+    private static final List<String> settings = Arrays.asList(/*"ban","kick","mute","warn"*/"banCommands");
 
     // 权限信息
     public static final String adminMainPermission = "serverhelper.admin";

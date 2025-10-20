@@ -6,6 +6,8 @@ import dev.waterdog.waterdogpe.event.defaults.DispatchCommandEvent;
 import dev.waterdog.waterdogpe.event.defaults.PlayerChatEvent;
 import dev.waterdog.waterdogpe.player.ProxiedPlayer;
 
+import java.util.ArrayList;
+
 public class PlayerListener {
     private static final ServerHelperMain main = ServerHelperMain.getInstance();
 
@@ -25,8 +27,16 @@ public class PlayerListener {
     }
 
     public static void onDispatchCommand(DispatchCommandEvent event) {
-        String cmd = event.getCommand().trim();
-        if (event.getSender().isPlayer()) {
+        if (main.getConfig().getBoolean("commands.usageLog.enable", true) && event.getSender().isPlayer()) {
+            String cmd = event.getCommand().trim().toLowerCase();
+            ArrayList<String> secretsCmd = new ArrayList<>(main.getConfig().getStringList("commands.usageLog.secretsList"));
+            if (!secretsCmd.isEmpty()) {
+                for (String secrets : secretsCmd) {
+                    if (cmd.startsWith(secrets)) {
+                        cmd = secrets + "***";
+                    }
+                }
+            }
             main.getLogger().info(event.getSender().getName() + ": §c/" + cmd);
         }
     }

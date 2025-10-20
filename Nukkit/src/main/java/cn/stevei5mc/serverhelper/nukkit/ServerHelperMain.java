@@ -38,7 +38,7 @@ public class ServerHelperMain extends PluginBase {
         if (this.getServer().getPluginManager().getPlugin("MemoriesOfTime-GameCore") != null) {
             this.getLogger().info(getPluginInfo().replace("\n", " §f| "));
             this.getServer().getCommandMap().register("",new ServerHelperMainCommand());
-            this.getServer().getCommandMap().register("",new AdminCommand("admin"));
+            this.getServer().getCommandMap().register("",new AdminCommand(config.getString("commands.name.admin", "admin")));
             this.getServer().getPluginManager().registerEvents(new PlayerListener(),this);
             Server.getInstance().getScheduler().scheduleDelayedTask(this, () -> {
                 this.getLogger().warning("§c警告! §c本插件为免费且开源的，如果您付费获取获取的，则有可能被误导了");
