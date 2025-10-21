@@ -37,7 +37,7 @@ public class PlayerListener {
                     }
                 }
             }
-            main.getLogger().info(event.getSender().getName() + ": §c/" + cmd);
+            main.getLogger().info(event.getSender().getName() + ": " + cmd);
         }
     }
 }
