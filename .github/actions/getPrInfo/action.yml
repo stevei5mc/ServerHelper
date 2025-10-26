@@ -46,7 +46,7 @@ runs:
     with:
       script: |
         core.info('Check current pull request state');
-        if (${{ steps.getPrInfo.outputs.prState }} != 'open') {
+        if ('${{ steps.getPrInfo.outputs.prState }}' != 'open') {
           core.setFailed('Pull request state is ${{ steps.getPrInfo.outputs.prState }}');
         }else {
           core.info('Pull request state is ${{ steps.getPrInfo.outputs.prState }}');
