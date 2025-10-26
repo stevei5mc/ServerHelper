@@ -45,9 +45,10 @@ runs:
     uses: actions/github-script@v8
     with:
       script: |
+        const prState = "${{ steps.getPrInfo.outputs.prState }}";
         core.info('Check current pull request state');
-        if ('${{ steps.getPrInfo.outputs.prState }}' != 'open') {
-          core.setFailed('Pull request state is ${{ steps.getPrInfo.outputs.prState }}');
+        if (${prState} != 'open') {
+          core.setFailed('Pull request state is ${prState}');
         }else {
-          core.info('Pull request state is ${{ steps.getPrInfo.outputs.prState }}');
+          core.info('Pull request state is open');
         }
