@@ -5,8 +5,8 @@ import cn.nukkit.Server;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.stevei5mc.serverhelper.common.BaseInfo;
-import cn.stevei5mc.serverhelper.nukkit.commands.admin.AdminCommand;
-import cn.stevei5mc.serverhelper.nukkit.commands.maincommand.ServerHelperMainCommand;
+import cn.stevei5mc.serverhelper.nukkit.commands.admin.AdminCmd;
+import cn.stevei5mc.serverhelper.nukkit.commands.maincmd.ServerHelperMainCommand;
 import cn.stevei5mc.serverhelper.nukkit.listener.PlayerListener;
 import lombok.Getter;
 
@@ -38,7 +38,7 @@ public class ServerHelperMain extends PluginBase {
         if (this.getServer().getPluginManager().getPlugin("MemoriesOfTime-GameCore") != null) {
             this.getLogger().info(getPluginInfo().replace("\n", " §f| "));
             this.getServer().getCommandMap().register("",new ServerHelperMainCommand());
-            this.getServer().getCommandMap().register("",new AdminCommand(config.getString("commands.name.admin", "admin")));
+            this.getServer().getCommandMap().register("",new AdminCmd(config.getString("commands.name.admin", "admin")));
             this.getServer().getPluginManager().registerEvents(new PlayerListener(),this);
             Server.getInstance().getScheduler().scheduleDelayedTask(this, () -> {
                 this.getLogger().warning("§c警告! §c本插件为免费且开源的，如果您付费获取获取的，则有可能被误导了");

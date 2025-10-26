@@ -43,12 +43,12 @@ runs:
       cat $templateFile >> $GITHUB_STEP_SUMMARY
   - name: Pull request status check
     uses: actions/github-script@v8
+    if: inputs.prApprove == 'true'
     with:
       script: |
-        const prState = "${{ steps.getPrInfo.outputs.prState }}";
         core.info('Check current pull request state');
-        if (prState != 'open') {
-          core.setFailed('Pull request state is ${prState}');
+        if ('${{ steps.getPrInfo.outputs.prState }}' != 'open') {
+          core.setFailed('Pull request state is ${{ steps.getPrInfo.outputs.prState }}');
         }else {
-          core.info('Pull request state is open');
+          core.info('Pull request state is ${{ steps.getPrInfo.outputs.prState }}');
         }

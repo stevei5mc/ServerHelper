@@ -1,29 +1,31 @@
-package cn.stevei5mc.serverhelper.nukkit.commands.maincommand.sub;
+package cn.stevei5mc.serverhelper.nukkit.commands.maincmd.sub;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
 import cn.stevei5mc.serverhelper.common.BaseInfo;
+import cn.stevei5mc.serverhelper.common.utils.CommonUtils;
 import cn.stevei5mc.serverhelper.nukkit.commands.base.BaseSubCommand;
 
-public class ReloadCmd extends BaseSubCommand {
-    public ReloadCmd(String name) {
+public class VersionCmd extends BaseSubCommand {
+    public VersionCmd(String name){
         super(name);
     }
 
     @Override
     public boolean canUser(CommandSender sender) {
-        return sender.hasPermission(BaseInfo.reloadPermission);
+        return sender.hasPermission(BaseInfo.adminMainPermission);
     }
 
     @Override
     public String[] getAliases() {
-        return new String[0];
+        return CommonUtils.toArray("ver");
     }
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        main.loadConfig();
-        sender.sendMessage(main.getMessagePrefix()+"§a配置文件重载成功");
+        sender.sendMessage("§b=== ServerHelper VERSION info ===");
+        sender.sendMessage(main.getPluginInfo());
+        sender.sendMessage("§b==================================");
         return true;
     }
 
