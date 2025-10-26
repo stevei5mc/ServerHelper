@@ -47,7 +47,7 @@ runs:
       script: |
         const prState = "${{ steps.getPrInfo.outputs.prState }}";
         core.info('Check current pull request state');
-        if (${prState} != 'open') {
+        if (prState != 'open') {
           core.setFailed('Pull request state is ${prState}');
         }else {
           core.info('Pull request state is open');
