@@ -84,9 +84,9 @@ public class ManagePlayersForm {
                 target.getLoginChainData().getGameVersion(), target.getLoginChainData().getLanguageCode(), PlayerDeviceInfoUtil.getPlayerUi(target.getLoginChainData().getUIProfile()), PlayerDeviceInfoUtil.getDeviceControls(target.getLoginChainData().getCurrentInputMode()),
                 Math.round(target.getX()), Math.round(target.getY()), Math.round(target.getZ()), target.getLevel().getName()
         ));
-        simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-queryInfo-button-update")).onClicked(player -> sendPlayerInfoUi(admin,target)));
+        simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-queryInfo-button-update")).onClicked(player -> queryPlayerInfoUi(admin,target)));
         // TODO: 到时候查询玩家背包的入口放在这里
-        simple.addButton(new ResponseElementButton(baseLang.translateString("form-button-back")).onClicked(player -> sendManageTargetPlayerSystem(admin,target)));
+        simple.addButton(new ResponseElementButton(baseLang.translateString("form-button-back")).onClicked(player -> manageFeatureList(admin,target)));
         admin.showFormWindow(simple);
     }
 }

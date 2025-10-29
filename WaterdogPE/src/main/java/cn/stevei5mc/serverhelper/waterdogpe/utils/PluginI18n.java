@@ -1,6 +1,6 @@
 package cn.stevei5mc.serverhelper.waterdogpe.utils;
 
-import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
+import cn.stevei5mc.serverhelper.common.BaseInfo;
 import cn.stevei5mc.serverhelper.waterdogpe.ServerHelperMain;
 import dev.waterdog.waterdogpe.command.CommandSender;
 import dev.waterdog.waterdogpe.player.ProxiedPlayer;

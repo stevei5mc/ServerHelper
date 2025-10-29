@@ -4,7 +4,7 @@ import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.utils.Config;
-import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
+import cn.stevei5mc.serverhelper.common.BaseInfo;
 import cn.stevei5mc.serverhelper.nukkit.ServerHelperMain;
 
 import java.util.HashMap;
