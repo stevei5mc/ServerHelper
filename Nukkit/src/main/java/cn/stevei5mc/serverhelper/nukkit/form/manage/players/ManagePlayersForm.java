@@ -16,7 +16,7 @@ public class ManagePlayersForm {
     public static void sendManagePlayersSystemUi(@NotNull Player admin){
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理玩家");
         simple.addButton(new ResponseElementButton("选择玩家").onClicked(ManagePlayersForm::sendSelectPlayerUi));
-        simple.addButton(new ResponseElementButton("功能快捷通道").onClicked(ManagePlayersForm::sendManageFeatureList));
+        simple.addButton(new ResponseElementButton("功能快捷通道").onClicked(ManagePlayersForm::shortcutManageFeatureList));
         simple.addButton(new ResponseElementButton("返回").onClicked(MainForm::mainMenu));
         admin.showFormWindow(simple);
     }
@@ -28,23 +28,23 @@ public class ManagePlayersForm {
         custom.addElement(new ElementDropdown("选择玩家",PlayerUtils.getOnlinePlayers(admin,true)));
         custom.addElement(new ElementInput("输入指定玩家名称"));
         custom.onClosed(ManagePlayersForm::sendManagePlayersSystemUi);
-        custom.onResponded((formResponseCustom, player1) -> {
+        custom.onResponded((form, player1) -> {
             String target;
-            if (!formResponseCustom.getInputResponse(2).equals("")) {
-                target = formResponseCustom.getInputResponse(2);
+            if (!form.getInputResponse(2).equals("")) {
+                target = form.getInputResponse(2);
             }else {
-                target = formResponseCustom.getDropdownResponse(1).getElementContent();
+                target = form.getDropdownResponse(1).getElementContent();
             }
             if (!target.equals("§c§lPlayer not found")) {
                 Player targetPlayer = PlayerUtils.getPlayer(target);
-                sendManageTargetPlayerSystem(player1,targetPlayer);
+                manageFeatureList(player1, targetPlayer);
             }
         });
         admin.showFormWindow(custom);
     }
 
     // 快捷功能菜单
-    public static void sendManageFeatureList(@NotNull Player admin) {
+    public static void shortcutManageFeatureList(@NotNull Player admin) {
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理功能");
         simple.addButton(new ResponseElementButton("巡查系统").onClicked(PlayerPatrolSystemForm::sendSelectPatrolPlayerUi));
         // TODO: 到时候这里放置查询玩家背包的快捷入口
@@ -53,7 +53,7 @@ public class ManagePlayersForm {
     }
 
     // 玩家管理功能菜单
-    public static void sendManageTargetPlayerSystem(@NotNull Player admin, Player target) {
+    public static void manageFeatureList(@NotNull Player admin, Player target) {
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理目标玩家","目标玩家： "+target.getName());
         simple.addButton(new ResponseElementButton("封禁"));
         simple.addButton(new ResponseElementButton("禁言"));
@@ -61,14 +61,14 @@ public class ManagePlayersForm {
             simple.addButton(new ResponseElementButton("踢出"));
             simple.addButton(new ResponseElementButton("警告"));
             simple.addButton(new ResponseElementButton("巡查").onClicked(p -> PlayerPatrolSystemForm.confirmTargetPlayerMenu(admin,target)));
-            simple.addButton(new ResponseElementButton("查询该玩家信息").onClicked(p -> sendPlayerInfoUi(admin,target)));
+            simple.addButton(new ResponseElementButton("查询该玩家信息").onClicked(p -> queryPlayerInfoUi(admin,target)));
         }
         simple.addButton(new ResponseElementButton("返回").onClicked(ManagePlayersForm::sendSelectPlayerUi));
         admin.showFormWindow(simple);
     }
 
     // 显示目标玩家的信息
-    public static void sendPlayerInfoUi(@NotNull Player admin, Player target) {
+    public static void queryPlayerInfoUi(@NotNull Player admin, Player target) {
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理系统");
         simple.setContent(
                 "玩家="+target.getName()+" XUID="+target.getLoginChainData().getXUID()+"\n"
@@ -81,9 +81,9 @@ public class ManagePlayersForm {
                 +"登录Ip="+target.getAddress()+":"+target.getPort()+" 延迟="+target.getPing()+"\n"
                 +"所在位置=(X="+Math.round(target.getX())+" Y="+Math.round(target.getY())+" Z="+Math.round(target.getZ())+" Level="+target.getLevel().getName()+")\n"
         );
-        simple.addButton(new ResponseElementButton("刷新").onClicked(player -> sendPlayerInfoUi(admin,target)));
+        simple.addButton(new ResponseElementButton("刷新").onClicked(player -> queryPlayerInfoUi(admin,target)));
         // TODO: 到时候查询玩家背包的入口放在这里
-        simple.addButton(new ResponseElementButton("返回").onClicked(player -> sendManageTargetPlayerSystem(admin,target)));
+        simple.addButton(new ResponseElementButton("返回").onClicked(player -> manageFeatureList(admin,target)));
         admin.showFormWindow(simple);
     }
 }

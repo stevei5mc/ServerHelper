@@ -1,16 +1,18 @@
 package cn.stevei5mc.serverhelper.nukkit;
 
+import cn.lanink.gamecore.utils.NukkitTypeUtils;
 import cn.nukkit.Server;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
-import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
-import cn.stevei5mc.serverhelper.nukkit.commands.admin.AdminCommand;
-import cn.stevei5mc.serverhelper.nukkit.commands.maincommand.ServerHelperMainCommand;
+import cn.stevei5mc.serverhelper.common.BaseInfo;
+import cn.stevei5mc.serverhelper.nukkit.commands.admin.AdminCmd;
+import cn.stevei5mc.serverhelper.nukkit.commands.maincmd.ServerHelperMainCommand;
 import cn.stevei5mc.serverhelper.nukkit.listener.PlayerListener;
 import lombok.Getter;
 
 public class ServerHelperMain extends PluginBase {
 //这里被注释掉的代码都是暂时用不上的
+    @Getter
     private static ServerHelperMain instance;
     private Config config;
     @Getter
@@ -34,11 +36,9 @@ public class ServerHelperMain extends PluginBase {
     @Override
     public void onEnable() {
         if (this.getServer().getPluginManager().getPlugin("MemoriesOfTime-GameCore") != null) {
-            this.getLogger().info(BaseInfo.VERSION);
-            this.getLogger().info(BaseInfo.COMMIT_ID);
-            this.getLogger().info(BaseInfo.BRANCH);
+            this.getLogger().info(getPluginInfo().replace("\n", " §f| "));
             this.getServer().getCommandMap().register("",new ServerHelperMainCommand());
-            this.getServer().getCommandMap().register("",new AdminCommand("admin"));
+            this.getServer().getCommandMap().register("",new AdminCmd(config.getString("commands.name.admin", "admin")));
             this.getServer().getPluginManager().registerEvents(new PlayerListener(),this);
             Server.getInstance().getScheduler().scheduleDelayedTask(this, () -> {
                 this.getLogger().warning("§c警告! §c本插件为免费且开源的，如果您付费获取获取的，则有可能被误导了");
@@ -81,16 +81,16 @@ public class ServerHelperMain extends PluginBase {
 //        this.muteSetting = new Config(this.getDataFolder()+"/Settings/mute.yml",Config.YAML);
     }
 
-    public static ServerHelperMain getInstance() {
-        return instance;
-    }
-
     @Override
     public Config getConfig() {
         return config;
     }
 
     public String getMessagePrefix() {
-        return config.getString("message_prefix","§b§ServerHelper §r§7>> ");
+        return config.getString("message_prefix","§b§lServerHelper §r§7>> ");
+    }
+
+    public String getPluginInfo() {
+        return BaseInfo.getVersionInfo() + "\n§bNukkit type: §a" + NukkitTypeUtils.getNukkitType().name();
     }
 }

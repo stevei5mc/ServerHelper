@@ -1,4 +1,4 @@
-package cn.stevei5mc.serverhelper.common.utils;
+package cn.stevei5mc.serverhelper.common;
 
 import lombok.Getter;
 
@@ -9,9 +9,9 @@ public class BaseInfo {
     public static final String GH_URL = "[GITHUB] https://github.com/stevei5mc/ServerHelper";
 
     // 版本信息
-    public static final String COMMIT_ID = "§bCommit id§7:§a {git.commit.id}";
-    public static final String BRANCH = "§bBranch§7:§a {git.branch}";
-    public static final String VERSION = "§bVersion§7:§a {project.version}";
+    public static String getVersionInfo() {
+        return "§bVersion§7:§a {project.version}\n§bBranch§7:§a {git.branch}\n§bCommit id§7:§a {git.commit.id}";
+    }
 
     // 配置文件信息
     public static final int configFileVersion = 1;
@@ -25,7 +25,7 @@ public class BaseInfo {
             "ja_JP","ko_KR","nb_NO","nl_NL","pl_PL","pt_BR","pt_PT","ru_RU","sk_SK","sv_SE","tr_TR","uk_UA","zh_CN","zh_TW"*/
     );
     @Getter
-    private static final List<String> settings = Arrays.asList(/*"ban","kick","mute",*/"banCommands","warn");
+    private static final List<String> settings = Arrays.asList(/*"ban","kick","mute","warn"*/"banCommands");
 
     // 权限信息
     public static final String adminMainPermission = "serverhelper.admin";

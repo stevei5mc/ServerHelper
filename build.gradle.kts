@@ -6,7 +6,7 @@ plugins {
 
 subprojects {
     group = "cn.stevei5mc.serverhelper"
-    version = "1.0.0-beta1-SNAPSHOT"
+    version = property("project.version").toString()
 
     apply(plugin = "java")
     apply(plugin = "java-library")

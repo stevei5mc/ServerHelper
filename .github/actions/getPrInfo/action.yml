@@ -32,32 +32,23 @@ runs:
       echo "prUrl=$(echo ${{ steps.getPrInfo.outputs.htmlUrl }} | sed 's/\//\\\//g')" >> $GITHUB_ENV
   - name: Pull request summary
     shell: bash
-    env:
-      summaryTemplateFilePath: .github/template/pr-summary.md
     run: |
-      sed -i 's|{1A}|${{ inputs.prId }}|g; s|{1B}|${{ env.prUrl }}|g' ${{ env.summaryTemplateFilePath }}
-      sed -i 's|{2}|${{ steps.getPrInfo.outputs.commits }}|g; s|{3}|${{ steps.getPrInfo.outputs.prState }}|g' ${{ env.summaryTemplateFilePath }}
-      sed -i 's|{4}|${{ steps.getPrInfo.outputs.additions }}|g; s|{5}|${{ steps.getPrInfo.outputs.deletions }}|g; s|{6}|${{ steps.getPrInfo.outputs.changedFiles }}|g' ${{ env.summaryTemplateFilePath }}
-      sed -i 's|{7}|${{ steps.getPrInfo.outputs.requestUser }}|g' ${{ env.summaryTemplateFilePath }}
-      sed -i 's|{8A}|${{ env.headlabel }}|g; s|{8B}|${{ env.headUrl }}|g; s|{8C}|${{ env.targetSha }}|g' ${{ env.summaryTemplateFilePath }}
-      sed -i 's|{9A}|${{ env.baselabel }}|g; s|{9B}|${{ env.baseUrl }}|g; s|{9C}|${{ env.baseSha }}|g' ${{ env.summaryTemplateFilePath }}
-      cat ${{ env.summaryTemplateFilePath }} >> $GITHUB_STEP_SUMMARY
+      templateFile=.github/template/pr-summary.md
+      sed -i 's|{1A}|${{ inputs.prId }}|g; s|{1B}|${{ env.prUrl }}|g' $templateFile
+      sed -i 's|{2}|${{ steps.getPrInfo.outputs.commits }}|g; s|{3}|${{ steps.getPrInfo.outputs.prState }}|g' $templateFile
+      sed -i 's|{4}|${{ steps.getPrInfo.outputs.additions }}|g; s|{5}|${{ steps.getPrInfo.outputs.deletions }}|g; s|{6}|${{ steps.getPrInfo.outputs.changedFiles }}|g' $templateFile
+      sed -i 's|{7}|${{ steps.getPrInfo.outputs.requestUser }}|g' $templateFile
+      sed -i 's|{8A}|${{ env.headlabel }}|g; s|{8B}|${{ env.headUrl }}|g; s|{8C}|${{ env.targetSha }}|g' $templateFile
+      sed -i 's|{9A}|${{ env.baselabel }}|g; s|{9B}|${{ env.baseUrl }}|g; s|{9C}|${{ env.baseSha }}|g' $templateFile
+      cat $templateFile >> $GITHUB_STEP_SUMMARY
   - name: Pull request status check
+    uses: actions/github-script@v8
     if: inputs.prApprove == 'true'
-    shell: bash
-    run: |
-      if [ '${{ steps.getPrInfo.outputs.prState }}' = 'closed' ]; then
-        echo "prState=closed" >> $GITHUB_ENV
-        echo "::error::The pull request state is closed state"
-        exit 1
-      elif [ '${{ steps.getPrInfo.outputs.prLockedState }}' = 'true' ]; then
-        echo "prState=locked" >> $GITHUB_ENV
-        echo "::error::The pull request state is locked state"
-        exit 1
-      elif [ '${{ steps.getPrInfo.outputs.prDraftState }}' = 'true' ]; then
-        echo "prState=draft" >> $GITHUB_ENV
-        echo "::error::The pull request state is draft state"
-        exit 1
-      else
-        echo "prState=open" >> $GITHUB_ENV
-      fi
+    with:
+      script: |
+        core.info('Check current pull request state');
+        if ('${{ steps.getPrInfo.outputs.prState }}' != 'open') {
+          core.setFailed('Pull request state is ${{ steps.getPrInfo.outputs.prState }}');
+        }else {
+          core.info('Pull request state is ${{ steps.getPrInfo.outputs.prState }}');
+        }

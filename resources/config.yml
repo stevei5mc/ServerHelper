@@ -1,6 +1,6 @@
 # 配置文件版本
 version: 1
-message_prefix: "§b§ServerHelper §r§7>> "
+message_prefix: "§b§lServerHelper §r§7>> "
 enable-multlanguage: false
 default_language: "zh_CN"
 
@@ -8,22 +8,31 @@ default_language: "zh_CN"
 data_type: sqlite
 
 sqlite:
-  #数据类型
+  # 数据类型
   # local 存储在对应的插件的文件夹中
   # system 存储在一个指定的目录中
   type: local
   # 选择system类型该配置项才会生效
   path: C:\data\
 
-# 命令名（配置对应功能的命令名）
+# 命令配置
 commands:
-  admin: admin
-  ban: ban
-  unban: unban
-  kick: kick
-  mute: mute
-  unmute: unmute
-  warn: warn
+  # 命令名（配置对应功能的命令名）
+  name:
+    admin: admin
+    ban: ban
+    unban: unban
+    kick: kick
+    mute: mute
+    unmute: unmute
+    warn: warn
+  # 命令使用记录
+  usageLog:
+    enable: true
+    # 在下列列表中的命令仅会记录个大概 (建议将会带有密码之类的命令添加到列表之中)
+    secretsList:
+      - login
+      - register
 
 # Staff 聊天系统
 staffChat:

@@ -16,7 +16,7 @@ jobs:
       targetRef: ${{ env.targetRef }}
     steps:
     - name: 拉取代码
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: 获取信息
       id: get_info
       uses: ./.github/actions/getProjectInfo
@@ -32,9 +32,9 @@ jobs:
       java-version: "17"
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Setup java ${{ env.java-version }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.java-version }}
           distribution: 'temurin'
@@ -42,17 +42,17 @@ jobs:
         uses: ./.github/actions/cacheGradle
       - name: Replace info
         run: |
-          classPath=Common/src/main/java/cn/stevei5mc/serverhelper/common/utils/BaseInfo.java
-          version=$(grep "version =" "./build.gradle.kts" | sed 's/.*version = "\(.*\)".*/\1/')
+          classPath=Common/src/main/java/cn/stevei5mc/serverhelper/common/BaseInfo.java
+          version=$(grep "project.version=" "./gradle.properties" | sed 's/project.version=//')
           sed -i 's/{git.commit.id}/${{ needs.Initialize.outputs.targetSha }}/g; s/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g; s/{project.version}/'"$version"'/g' $classPath
       - name:  Build project
         run: |
           chmod 777 gradlew && ls -lah
           ./gradlew shadowJar javadocJar --no-daemon
-      - name: Get artifact hash
-        run: bash .github/workflows/scripts/getArtifactHash.sh
-      - name: Prepare releases files
-        run: bash .github/workflows/scripts/prepareReleasesFiles.sh
+      - name: Get artifact hash and copy files
+        run: |
+          bash .github/workflows/scripts/getArtifactHash.sh
+          bash .github/workflows/scripts/copyFiles.sh
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:

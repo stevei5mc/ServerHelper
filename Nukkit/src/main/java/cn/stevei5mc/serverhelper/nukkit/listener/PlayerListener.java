@@ -5,7 +5,7 @@ import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerChatEvent;
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
-import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
+import cn.stevei5mc.serverhelper.common.BaseInfo;
 import cn.stevei5mc.serverhelper.nukkit.ServerHelperMain;
 
 import java.util.ArrayList;
@@ -18,13 +18,13 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
-        String message = event.getMessage().trim();
-        ArrayList<String> playerCommands = new ArrayList<>(main.getBanCommands().getStringList("ban-commands"));
-        if (!playerCommands.isEmpty() && main.getBanCommands().getBoolean("enable",false)) {
-            for (String cmd : playerCommands) {
+        String message = event.getMessage().trim().toLowerCase();
+        ArrayList<String> banCommands = new ArrayList<>(main.getBanCommands().getStringList("ban-commands"));
+        if (!banCommands.isEmpty() && main.getBanCommands().getBoolean("enable",false)) {
+            for (String cmd : banCommands) {
                 String[] cmd2 = cmd.split("&");
                 String permission = BaseInfo.unbanCommandPermission;
-                if (message.equalsIgnoreCase(cmd2[0].trim())) {
+                if (message.startsWith(cmd2[0].trim().toLowerCase())) {
                     if (cmd2.length >= 2 && !cmd2[1].isEmpty()) {
                         permission = cmd2[1];
                     }
@@ -41,7 +41,16 @@ public class PlayerListener implements Listener {
                 }
             }
         }
-        if (!event.isCancelled()) {
+        if (main.getConfig().getBoolean("commands.usageLog.enable", true) && !event.isCancelled()) {
+            ArrayList<String> secretsCmd = new ArrayList<>(main.getConfig().getStringList("commands.usageLog.secretsList"));
+            if (!secretsCmd.isEmpty()) {
+                for (String secrets : secretsCmd) {
+                    if (message.startsWith(secrets)) {
+                        message = secrets + "***";
+                        break;
+                    }
+                }
+            }
             main.getServer().getLogger().info(player.getName() + ": §c" + message);
         }
     }
