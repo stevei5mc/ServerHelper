@@ -1,6 +1,7 @@
 package cn.stevei5mc.serverhelper.waterdogpe.commands.base;
 
 import cn.stevei5mc.serverhelper.waterdogpe.ServerHelperMain;
+import cn.stevei5mc.serverhelper.waterdogpe.utils.LanguageApi;
 import cn.stevei5mc.serverhelper.waterdogpe.utils.PluginI18n;
 import dev.waterdog.waterdogpe.command.Command;
 import dev.waterdog.waterdogpe.command.CommandSender;
@@ -43,6 +44,7 @@ public abstract class CommandBase extends Command {
 
     @Override
     public boolean onExecute(CommandSender sender, String s, String[] args) {
+        LanguageApi baseLang = PluginI18n.getBaseLang(sender);
         if (checkPermission(sender)) {
             if (args.length > 0) {
                 String subCmdName = args[0].toLowerCase();
@@ -51,9 +53,9 @@ public abstract class CommandBase extends Command {
                     if (subCmd.getPermission(sender)) {
                         return subCmd.execute(sender, s, args);
                     }else if (sender.isPlayer()) {
-                        sender.sendMessage(main.getMessagePrefix() + "§c你没有权限使用此命令！");
+                        sender.sendMessage(main.getMessagePrefix() + baseLang.translateString("command-message-notPermission"));
                     }else {
-                        sender.sendMessage(main.getMessagePrefix() + "§c请在游戏内使用此命令！");
+                        sender.sendMessage(main.getMessagePrefix() + baseLang.translateString("command-message-inGameRun"));
                     }
                     return true;
                 }
@@ -61,7 +63,7 @@ public abstract class CommandBase extends Command {
             sendHelp(sender);
             return true;
         }
-        sender.sendMessage(main.getMessagePrefix() + "§c你没有权限使用此命令！");
+        sender.sendMessage(main.getMessagePrefix() + baseLang.translateString("command-message-notPermission"));
         return true;
     }
 
