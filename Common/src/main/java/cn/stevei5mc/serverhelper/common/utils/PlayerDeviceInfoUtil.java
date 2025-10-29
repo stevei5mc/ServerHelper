@@ -2,6 +2,10 @@ package cn.stevei5mc.serverhelper.common.utils;
 
 public class PlayerDeviceInfoUtil {
 
+    /**
+     * @param os OS id
+     * @return OS name
+     */
     public static String getDeviceOS(int os) {
         switch (os) {
             case 1: return"Android";
@@ -22,6 +26,10 @@ public class PlayerDeviceInfoUtil {
         }
     }
 
+    /**
+     * @param ui UI type id
+     * @return UI type name
+     */
     public static String getPlayerUi(int ui) {
         switch (ui) {
             case 0: return "classic";
@@ -30,6 +38,10 @@ public class PlayerDeviceInfoUtil {
         }
     }
 
+    /**
+     * @param ctrl Control type id
+     * @return  Control type name
+     */
     public static String getDeviceControls(int ctrl) {
         switch (ctrl) {
             case 1: return "Keyboard";

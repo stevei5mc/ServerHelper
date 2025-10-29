@@ -19,7 +19,7 @@ public class ManagePlayersForm {
         Language baseLang = PluginI18n.getBaseLang(admin);
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(baseLang.translateString("form-managerPlayer-title"));
         simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-button-selectPlayer")).onClicked(ManagePlayersForm::sendSelectPlayerUi));
-        simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-button-shortcutFeature")).onClicked(ManagePlayersForm::sendManageFeatureList));
+        simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-button-shortcutFeature")).onClicked(ManagePlayersForm::shortcutManageFeatureList));
         simple.addButton(new ResponseElementButton(baseLang.translateString("form-button-back")).onClicked(MainForm::mainMenu));
         admin.showFormWindow(simple);
     }
@@ -32,23 +32,23 @@ public class ManagePlayersForm {
         custom.addElement(new ElementDropdown(baseLang.translateString("form-managerPlayer-selectPlayer-dropdown"), PlayerUtils.getOnlinePlayers(admin,true)));
         custom.addElement(new ElementInput(baseLang.translateString("form-managerPlayer-selectPlayer-input")));
         custom.onClosed(ManagePlayersForm::sendManagePlayersSystemUi);
-        custom.onResponded((formResponseCustom, player1) -> {
+        custom.onResponded((form, player1) -> {
             String target;
-            if (!formResponseCustom.getInputResponse(2).equals("")) {
-                target = formResponseCustom.getInputResponse(2);
+            if (!form.getInputResponse(2).equals("")) {
+                target = form.getInputResponse(2);
             }else {
-                target = formResponseCustom.getDropdownResponse(1).getElementContent();
+                target = form.getDropdownResponse(1).getElementContent();
             }
             if (!target.equals("§c§lPlayer not found")) {
                 Player targetPlayer = PlayerUtils.getPlayer(target);
-                sendManageTargetPlayerSystem(player1,targetPlayer);
+                manageFeatureList(player1, targetPlayer);
             }
         });
         admin.showFormWindow(custom);
     }
 
     // 快捷功能菜单
-    public static void sendManageFeatureList(@NotNull Player admin) {
+    public static void shortcutManageFeatureList(@NotNull Player admin) {
         Language baseLang = PluginI18n.getBaseLang(admin);
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(baseLang.translateString("form-managerPlayer-shortcutFeature-title"));
         simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeature-button-patrol")).onClicked(PlayerPatrolSystemForm::sendSelectPatrolPlayerUi));
@@ -58,7 +58,7 @@ public class ManagePlayersForm {
     }
 
     // 玩家管理功能菜单
-    public static void sendManageTargetPlayerSystem(@NotNull Player admin, Player target) {
+    public static void manageFeatureList(@NotNull Player admin, Player target) {
         Language baseLang = PluginI18n.getBaseLang(admin);
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(baseLang.translateString("form-managerPlayer-fullFeature-title"), baseLang.translateString("form-managerPlayer-description-targetPlayer", target.getName()));
         simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeature-button-ban")));
@@ -67,14 +67,14 @@ public class ManagePlayersForm {
             simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeature-button-kick")));
             simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeature-button-warn")));
             simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeature-button-patrol")).onClicked(p -> PlayerPatrolSystemForm.confirmTargetPlayerMenu(admin,target)));
-            simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeature-button-queryInfo")).onClicked(p -> sendPlayerInfoUi(admin,target)));
+            simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-fullFeature-button-queryInfo")).onClicked(p -> queryPlayerInfoUi(admin,target)));
         }
         simple.addButton(new ResponseElementButton(baseLang.translateString("form-button-back")).onClicked(ManagePlayersForm::sendSelectPlayerUi));
         admin.showFormWindow(simple);
     }
 
     // 显示目标玩家的信息
-    public static void sendPlayerInfoUi(@NotNull Player admin, Player target) {
+    public static void queryPlayerInfoUi(@NotNull Player admin, Player target) {
         Language baseLang = PluginI18n.getBaseLang(admin);
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(baseLang.translateString("form-managerPlayer-queryInfo-title"));
         simple.setContent(

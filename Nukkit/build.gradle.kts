@@ -5,7 +5,7 @@ plugins {
 dependencies {
     api(project(":ServerHelper-Common"))
     compileOnly("cn.nukkit:nukkit:1.0-SNAPSHOT")
-    compileOnly("com.github.stevei5mc:AutoRestart:1.0.0")
+    compileOnly("com.github.stevei5mc:AutoRestart:1.0.1")
     compileOnly("cn.lanink:MemoriesOfTime-GameCore:1.6.13")
 }
 

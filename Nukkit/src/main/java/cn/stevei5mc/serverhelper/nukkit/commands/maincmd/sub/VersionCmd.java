@@ -1,12 +1,13 @@
-package cn.stevei5mc.serverhelper.nukkit.commands.maincommand.sub;
+package cn.stevei5mc.serverhelper.nukkit.commands.maincmd.sub;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
-import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
+import cn.stevei5mc.serverhelper.common.BaseInfo;
+import cn.stevei5mc.serverhelper.common.utils.CommonUtils;
 import cn.stevei5mc.serverhelper.nukkit.commands.base.BaseSubCommand;
 
-public class PluginVersionCmd extends BaseSubCommand {
-    public PluginVersionCmd(String name){
+public class VersionCmd extends BaseSubCommand {
+    public VersionCmd(String name){
         super(name);
     }
 
@@ -17,15 +18,13 @@ public class PluginVersionCmd extends BaseSubCommand {
 
     @Override
     public String[] getAliases() {
-        return new String[0];
+        return CommonUtils.toArray("ver");
     }
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         sender.sendMessage("§b=== ServerHelper VERSION info ===");
-        sender.sendMessage(BaseInfo.VERSION);
-        sender.sendMessage(BaseInfo.COMMIT_ID);
-        sender.sendMessage(BaseInfo.BRANCH);
+        sender.sendMessage(main.getPluginInfo());
         sender.sendMessage("§b==================================");
         return true;
     }
