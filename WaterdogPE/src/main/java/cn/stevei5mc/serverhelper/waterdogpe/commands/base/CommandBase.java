@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 下列方法有修改的需要再进行重写，只需重写不在列表之内的方法即可正常使用。<br>
  * The following methods need to be overridden only if modifications are required. Simply override methods not in this list for normal usage.
  *
- * <br><br> onExecute <br> buildCommandOverloads <br> addSubCommand <br> checkPermission <br>
+ * <br>列表 ( List ) : <br>- onExecute <br>- buildCommandOverloads <br>- addSubCommand <br>- checkPermission <br>- getAliasesArray
  */
 public abstract class CommandBase extends Command {
 
@@ -53,9 +53,9 @@ public abstract class CommandBase extends Command {
                     if (subCmd.getPermission(sender)) {
                         return subCmd.execute(sender, s, args);
                     }else if (sender.isPlayer()) {
-                        sender.sendMessage(main.getMessagePrefix() + baseLang.translateString("command-message-notPermission"));
+                        sender.sendMessage(main.getMessagePrefix() + baseLang.translateString("command-tipMessage-notPermission"));
                     }else {
-                        sender.sendMessage(main.getMessagePrefix() + baseLang.translateString("command-message-inGameRun"));
+                        sender.sendMessage(main.getMessagePrefix() + baseLang.translateString("command-tipMessage-inGameRun"));
                     }
                     return true;
                 }
@@ -63,7 +63,7 @@ public abstract class CommandBase extends Command {
             sendHelp(sender);
             return true;
         }
-        sender.sendMessage(main.getMessagePrefix() + baseLang.translateString("command-message-notPermission"));
+        sender.sendMessage(main.getMessagePrefix() + baseLang.translateString("command-tipMessage-notPermission"));
         return true;
     }
 
@@ -86,6 +86,14 @@ public abstract class CommandBase extends Command {
             overloadData.add(new CommandOverloadData(false, paramData.toArray(new CommandParamData[0])));
         }
         return overloadData.toArray(new CommandOverloadData[0]);
+    }
+
+    /**
+     * Get command aliases
+     * @return Command aliases
+     */
+    public String[] getAliasesArray() {
+        return getAliases().toArray(new String[0]);
     }
 
     /**

@@ -1,5 +1,6 @@
 package cn.stevei5mc.serverhelper.nukkit.commands.maincmd;
 
+import cn.lanink.gamecore.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.stevei5mc.serverhelper.common.BaseInfo;
@@ -7,6 +8,7 @@ import cn.stevei5mc.serverhelper.common.utils.CommonUtils;
 import cn.stevei5mc.serverhelper.nukkit.commands.base.BaseCommand;
 import cn.stevei5mc.serverhelper.nukkit.commands.maincmd.sub.VersionCmd;
 import cn.stevei5mc.serverhelper.nukkit.commands.maincmd.sub.ReloadCmd;
+import cn.stevei5mc.serverhelper.nukkit.utils.PluginI18n;
 
 public class ServerHelperMainCommand extends BaseCommand {
 
@@ -20,6 +22,10 @@ public class ServerHelperMainCommand extends BaseCommand {
 
     @Override
     public void sendHelp(CommandSender sender) {
+        Language baseLang = PluginI18n.getBaseLang(sender);
+        String cmdName = "/" + getAliases()[0];
+        sender.sendMessage(cmdName + " reload " + baseLang.translateString("command-helpMessage-main-reload"));
+        sender.sendMessage(cmdName + " version " + baseLang.translateString("command-helpMessage-main-version"));
     }
 
     @Override

@@ -46,9 +46,9 @@ public abstract class BaseCommand extends Command {
                     if (command.canUser(sender)) {
                         return command.execute(sender, s, args);
                     }else if (sender.isPlayer()) {
-                        sender.sendMessage(main.getMessagePrefix() +lang.translateString("command-message-notPermission"));
+                        sender.sendMessage(main.getMessagePrefix() +lang.translateString("command-tipMessage-notPermission"));
                     }else {
-                        sender.sendMessage(main.getMessagePrefix() +lang.translateString("command-message-inGameRun"));
+                        sender.sendMessage(main.getMessagePrefix() +lang.translateString("command-tipMessage-inGameRun"));
                     }
                 }else {
                     this.sendHelp(sender);
@@ -62,7 +62,7 @@ public abstract class BaseCommand extends Command {
             }
             return true;
         }
-        sender.sendMessage(main.getMessagePrefix() +lang.translateString("command-message-notPermission"));
+        sender.sendMessage(main.getMessagePrefix() +lang.translateString("command-tipMessage-notPermission"));
         return true;
     }
 

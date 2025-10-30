@@ -35,7 +35,7 @@ public class PlayerListener implements Listener {
                         isBanCmdWorld = worldBanCmdList.contains(player.getLevel().getFolderName());
                     }
                     if (!player.hasPermission(permission) && isBanCmdWorld) {
-                        player.sendMessage(PluginI18n.getBaseLang(player).translateString("command-message-isBanCommandList",message));
+                        player.sendMessage(PluginI18n.getBaseLang(player).translateString("command-tipMessage-isBanCommandList",message));
                         event.setCancelled(true);
                         break;
                     }
