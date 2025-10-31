@@ -8,10 +8,10 @@ import cn.stevei5mc.serverhelper.nukkit.form.manage.server.ManageServerForm;
 import org.jetbrains.annotations.NotNull;
 
 public class MainForm {
-    public static void mainMenu(@NotNull Player player) {
+    public static void mainMenu(@NotNull Player admin) {
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("ServerHelper","ServerHelper");
         simple.addButton(new ResponseElementButton("管理玩家").onClicked(ManagePlayersForm::sendManagePlayersSystemUi));
         simple.addButton(new ResponseElementButton("管理服务器").onClicked(ManageServerForm::sendManageServerUi));
-        player.showFormWindow(simple);
+        admin.showFormWindow(simple);
     }
 }
