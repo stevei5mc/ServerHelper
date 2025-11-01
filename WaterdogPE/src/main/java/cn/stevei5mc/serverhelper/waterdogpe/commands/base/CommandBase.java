@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 下列方法有修改的需要再进行重写，只需重写不在列表之内的方法即可正常使用。<br>
  * The following methods need to be overridden only if modifications are required. Simply override methods not in this list for normal usage.
  *
- * <br>列表 ( List ) : <br>- onExecute <br>- buildCommandOverloads <br>- addSubCommand <br>- checkPermission
+ * <br>列表 ( List ) : <br>- onExecute <br>- buildCommandOverloads <br>- addSubCommand <br>- checkPermission <br>- getAliasesArray
  */
 public abstract class CommandBase extends Command {
 
