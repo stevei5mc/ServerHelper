@@ -7,6 +7,7 @@ import dev.waterdog.waterdogpe.event.defaults.PlayerChatEvent;
 import dev.waterdog.waterdogpe.player.ProxiedPlayer;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class PlayerListener {
     private static final ServerHelperMain main = ServerHelperMain.getInstance();
@@ -29,7 +30,8 @@ public class PlayerListener {
     public static void onDispatchCommand(DispatchCommandEvent event) {
         if (main.getConfig().getBoolean("commands.usageLog.enable", true) && event.getSender().isPlayer()) {
             String cmd = event.getCommand().trim().toLowerCase();
-            ArrayList<String> secretsCmd = new ArrayList<>(main.getConfig().getStringList("commands.usageLog.secretsList"));
+            ArrayList<String> secretsCmd = Optional.ofNullable(main.getConfig().getStringList("commands.usageLog.secretsList"))
+                .map(ArrayList::new).orElse(new ArrayList<>());
             if (!secretsCmd.isEmpty()) {
                 for (String secrets : secretsCmd) {
                     if (cmd.startsWith(secrets)) {
