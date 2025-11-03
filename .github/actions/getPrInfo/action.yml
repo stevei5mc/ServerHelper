@@ -15,7 +15,7 @@ runs:
   using: "composite"
   steps:
   - name: Get pr info
-    uses: stevei5mc/Get-PR-info-action@main
+    uses: stevei5mc/Get-PR-info-action@v1
     id: getPrInfo
     with:
       prId: '${{ inputs.prId }}'
