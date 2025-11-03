@@ -56,9 +56,9 @@ jobs:
         |:-:|:-:|:-:|
         EOF
         if [ '${{ inputs.additionalFunctions }}' == 'Build PR' ]; then
-          echo "|===|===|${{ inputs.artifactSaveDays }}|" >> $GITHUB_ENV
+          echo "|===|===|${{ inputs.artifactSaveDays }}|" >> $GITHUB_STEP_SUMMARY
         else
-          echo "|${{ env.targetRef }}|${{ env.targetSha }}|${{ inputs.artifactSaveDays }}|" >> $GITHUB_ENV
+          echo "|${{ env.targetRef }}|${{ env.targetSha }}|${{ inputs.artifactSaveDays }}|" >> $GITHUB_STEP_SUMMARY
         fi
     - name: Get and summary PR info
       uses: ./.github/actions/getPrInfo
