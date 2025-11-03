@@ -6,7 +6,7 @@ import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.stevei5mc.serverhelper.common.BaseInfo;
 import cn.stevei5mc.serverhelper.nukkit.commands.admin.AdminCmd;
-import cn.stevei5mc.serverhelper.nukkit.commands.maincmd.ServerHelperMainCommand;
+import cn.stevei5mc.serverhelper.nukkit.commands.maincmd.ServerHelperMainCmd;
 import cn.stevei5mc.serverhelper.nukkit.listener.PlayerListener;
 import lombok.Getter;
 
@@ -37,7 +37,7 @@ public class ServerHelperMain extends PluginBase {
     public void onEnable() {
         if (this.getServer().getPluginManager().getPlugin("MemoriesOfTime-GameCore") != null) {
             this.getLogger().info(getPluginInfo().replace("\n", " §f| "));
-            this.getServer().getCommandMap().register("",new ServerHelperMainCommand());
+            this.getServer().getCommandMap().register("",new ServerHelperMainCmd());
             this.getServer().getCommandMap().register("",new AdminCmd(config.getString("commands.name.admin", "admin")));
             this.getServer().getPluginManager().registerEvents(new PlayerListener(),this);
             Server.getInstance().getScheduler().scheduleDelayedTask(this, () -> {
