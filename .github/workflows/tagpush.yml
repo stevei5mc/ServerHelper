@@ -59,7 +59,7 @@ jobs:
       - name:  Build project
         run: |
           chmod 777 gradlew && ls -lah
-          echo ">->->---"
+          echo ">>>: Build project"
           ./gradlew shadowJar javadocJar --no-daemon
       - name: Get artifact hash
         run: bash .github/workflows/scripts/getArtifactHash.sh

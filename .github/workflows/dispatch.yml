@@ -61,6 +61,7 @@ jobs:
           echo "|${{ env.targetRef }}|${{ env.targetSha }}|${{ inputs.artifactSaveDays }}|" >> $GITHUB_STEP_SUMMARY
         fi
     - name: Get and summary PR info
+      if: inputs.additionalFunctions == 'Build PR'
       uses: ./.github/actions/getPrInfo
       with:
         prId: ${{ inputs.PR_ID }}
@@ -95,7 +96,7 @@ jobs:
     - name:  Build project
       run: |
         chmod 777 gradlew && ls -lah
-        echo ">->->---"
+        echo ">>>: Build project"
         ./gradlew shadowJar javadocJar --no-daemon ${{ inputs.gradleExpandParameters }}
     - name: Get artifact hash and copy files
       run: |
