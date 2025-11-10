@@ -11,13 +11,13 @@ import cn.stevei5mc.serverhelper.nukkit.utils.PluginI18n;
 import org.jetbrains.annotations.NotNull;
 
 public class ManageServerForm {
-    public static void sendManageServerUi(@NotNull Player player) {
-        Language baseLang = PluginI18n.getBaseLang(player);
+    public static void sendManageServerUi(@NotNull Player admin) {
+        Language baseLang = PluginI18n.getBaseLang(admin);
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(baseLang.translateString("form-managerServer-title"));
         if (Server.getInstance().getPluginManager().getPlugin("AutoRestart") != null) {
             simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerServer-button-restart")).onClicked(Admin::sendMain));
         }
         simple.addButton(new ResponseElementButton(baseLang.translateString("form-button-back")).onClicked(MainForm::mainMenu));
-        player.showFormWindow(simple);
+        admin.showFormWindow(simple);
     }
 }

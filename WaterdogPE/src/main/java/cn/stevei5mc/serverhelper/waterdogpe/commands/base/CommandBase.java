@@ -12,9 +12,11 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 下列方法有修改的需要再进行重写，只需重写不在列表之内的方法即可正常使用。<br>
- * The following methods need to be overridden only if modifications are required. Simply override methods not in this list for normal usage.
- *
+ * 在下方列表之中的方法是有修改的需求时再进行重写修改，一般情况下不需要进行重写也可以正常使用的。<br>
+ * 而不在下方列表中的方法是必须进行重写的。
+ * <br>
+ * The methods listed below only need to be overridden when modification is required; under normal circumstances, they can function properly without being rewritten. <br>
+ * In contrast, methods not listed below must be overridden.
  * <br>列表 ( List ) : <br>- onExecute <br>- buildCommandOverloads <br>- addSubCommand <br>- checkPermission <br>- getAliasesArray
  */
 public abstract class CommandBase extends Command {

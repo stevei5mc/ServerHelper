@@ -6,9 +6,9 @@ on:
       buildMode:
         description: 'Build mode'
         required: false
-        default: 'Build plugin'
+        default: 'Build'
         type: choice
-        options: ['Build plugin','Build docusaurus','Build plugin and docusaurus']
+        options: ['Plugin','All']
       gradleExpandParameters:
         description: 'Gradle build expand parameters'
         required: false
@@ -17,7 +17,7 @@ on:
         required: false
         default: 'Not used'
         type: choice
-        options: ['Not used','PR Approve','Deploy gitHub pages']
+        options: ['Not used','Build PR']
       PR_ID:
         description: 'PR Approve ID'
         required: false
@@ -49,27 +49,37 @@ jobs:
       id: get_info
       uses: ./.github/actions/getProjectInfo
     - name: Summary base info
-      uses: johngeorgewright/summary-action@v1.0.0
+      run: |
+        cat << EOF >> $GITHUB_STEP_SUMMARY
+        # BUILD INFO
+        |Tatget ref|Target sha|Artifact save days|
+        |:-:|:-:|:-:|
+        EOF
+        if [ '${{ inputs.additionalFunctions }}' == 'Build PR' ]; then
+          echo "|===|===|${{ inputs.artifactSaveDays }}|" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "|${{ env.targetRef }}|${{ env.targetSha }}|${{ inputs.artifactSaveDays }}|" >> $GITHUB_STEP_SUMMARY
+        fi
+    - name: Get and summary PR info
+      if: inputs.additionalFunctions == 'Build PR'
+      uses: ./.github/actions/getPrInfo
       with:
-        summary: |
-          # BUILD INFO
-          |Tatget ref|Target sha|Artifact save days|
-          |:-:|:-:|:-:|
-          | ${{ env.targetRef }}|${{ env.targetSha }}|${{ inputs.artifactSaveDays }}|
+        prId: ${{ inputs.PR_ID }}
+        prApprove: true
 
   build-plugin:
-    if: (inputs.buildMode == 'Build plugin' || inputs.buildMode == 'Build plugin and docusaurus') || inputs.additionalFunctions == 'PR Approve'
+    if: inputs.buildMode == 'Plugin' || inputs.buildMode == 'All' || inputs.additionalFunctions == 'Build PR'
     name: Build plugin
     needs: Initialize
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     env:
       java-version: "17"
     steps:
     - name: 拉取代码
       uses: actions/checkout@v5
     - name: 拉取 PR 代码
-      if: inputs.additionalFunctions == 'PR Approve'
+      if: inputs.additionalFunctions == 'Build PR'
       run: gh pr checkout ${{ inputs.PR_ID }} && ls -la
     - name: Setup java ${{ env.java-version }}
       uses: actions/setup-java@v5
@@ -86,6 +96,7 @@ jobs:
     - name:  Build project
       run: |
         chmod 777 gradlew && ls -lah
+        echo ">>>: Build project"
         ./gradlew shadowJar javadocJar --no-daemon ${{ inputs.gradleExpandParameters }}
     - name: Get artifact hash and copy files
       run: |
@@ -99,7 +110,7 @@ jobs:
         path: ./staging
 
 #  build-Docusaurus:
-#    if: inputs.buildMode == 'Build docusaurus' || inputs.buildMode == 'Build plugin and docusaurus'
+#    if: inputs.buildMode == 'Build docusaurus' || inputs.buildMode == 'All'
 #    name: Build docusaurus
 #    needs: Initialize
 #    runs-on: ubuntu-latest

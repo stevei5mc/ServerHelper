@@ -10,9 +10,9 @@ import cn.stevei5mc.serverhelper.nukkit.commands.maincmd.sub.VersionCmd;
 import cn.stevei5mc.serverhelper.nukkit.commands.maincmd.sub.ReloadCmd;
 import cn.stevei5mc.serverhelper.nukkit.utils.PluginI18n;
 
-public class ServerHelperMainCommand extends BaseCommand {
+public class ServerHelperMainCmd extends BaseCommand {
 
-    public ServerHelperMainCommand() {
+    public ServerHelperMainCmd() {
         super("serverhelper", "ServerHelper plugin command");
         this.setPermission(BaseInfo.adminMainPermission);
         this.setAliases(CommonUtils.toArray("shr"));

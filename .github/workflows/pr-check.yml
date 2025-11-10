@@ -20,14 +20,14 @@ jobs:
     - name: 获取信息
       id: get_info
       uses: ./.github/actions/getProjectInfo
-    - name: Summary PR info
+    - name: Get and summary PR info
       uses: ./.github/actions/getPrInfo
 
   build-plugin:
     name: Build plugin
     needs: Initialize
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     env:
       java-version: "17"
     steps:
@@ -48,6 +48,7 @@ jobs:
       - name:  Build project
         run: |
           chmod 777 gradlew && ls -lah
+          echo ">>>: Build project"
           ./gradlew shadowJar javadocJar --no-daemon
       - name: Get artifact hash and copy files
         run: |

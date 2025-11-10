@@ -10,11 +10,12 @@ import cn.stevei5mc.serverhelper.nukkit.utils.PluginI18n;
 import org.jetbrains.annotations.NotNull;
 
 public class MainForm {
-    public static void mainMenu(@NotNull Player player) {
-        Language baseLang = PluginI18n.getBaseLang(player);
+    public static void mainMenu(@NotNull Player admin) {
+        Language baseLang = PluginI18n.getBaseLang(admin);
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(baseLang.translateString("form-main-title"));
         simple.addButton(new ResponseElementButton(baseLang.translateString("form-main-button-managerPlayer")).onClicked(ManagePlayersForm::sendManagePlayersSystemUi));
         simple.addButton(new ResponseElementButton(baseLang.translateString("form-main-button-managerServer")).onClicked(ManageServerForm::sendManageServerUi));
-        player.showFormWindow(simple);
+        admin.showFormWindow(simple);
+        admin.showFormWindow(simple);
     }
 }
