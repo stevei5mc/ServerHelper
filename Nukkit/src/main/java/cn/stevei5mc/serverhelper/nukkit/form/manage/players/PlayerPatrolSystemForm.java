@@ -16,7 +16,7 @@ public class PlayerPatrolSystemForm {
     private static final ServerHelperMain main = ServerHelperMain.getInstance();
 
     // 选择需要巡查的玩家 （快捷菜单使用）
-    public static void sendSelectPatrolPlayerUi(@NotNull Player player) {
+    public static void sendSelectPatrolPlayerUi(@NotNull Player admin) {
         // 获取全部加载的世界名
         ArrayList<String> mapName = new ArrayList<>();
         for (Level level : main.getServer().getLevels().values()) {
@@ -26,7 +26,7 @@ public class PlayerPatrolSystemForm {
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("巡查系统");
         custom.addElement(new ElementStepSlider("搜索模式",Arrays.asList("指定搜索","随机搜索")));
         custom.addElement(new ElementLabel("选择一名玩家进行巡查或在输入框中填写玩家名，如果在输入框中输入玩家名称则选择框自动失效，但如果选择随机模式则两者都失效"));
-        custom.addElement(new ElementDropdown("选择玩家",PlayerUtils.getOnlinePlayers(player,true)));
+        custom.addElement(new ElementDropdown("选择玩家",PlayerUtils.getOnlinePlayers(admin,true)));
         custom.addElement(new ElementInput("输入指定玩家的名称"));
         custom.addElement(new ElementStepSlider("随机模式", Arrays.asList("全部世界", "当前世界", "指定世界")));
         custom.addElement(new ElementDropdown("选择世界",mapName));
@@ -61,7 +61,7 @@ public class PlayerPatrolSystemForm {
                 player1.sendMessage("没有足够的在线玩家，至少需要两名玩家在线");
             }
         });
-        player.showFormWindow(custom);
+        admin.showFormWindow(custom);
     }
 
     // 确认目标玩家菜单

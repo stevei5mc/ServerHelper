@@ -30,15 +30,15 @@ jobs:
       with:
         summary: |
           # BUILD INFO
-          |Tatget ref|Target sha|Artifact retention days|Release version|Release type|
+          |Tatget ref|Target sha|Release version|Release type|
           |:-:|:-:|:-:|
-          | ${{ env.targetRef }}|${{ env.targetSha }}|${{ inputs.artifactRetentionDays }}|${{ steps.get_info.outputs.version }}|${{ steps.releaseInfo.outputs.releaseType }}|
+          | ${{ env.targetRef }}|${{ env.targetSha }}|${{ steps.get_info.outputs.version }}|${{ steps.get_info.outputs.releaseType }}|
 
   build-plugin:
     name: Build and release plugin
     needs: Initialize
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     env:
       java-version: "17"
     steps:
@@ -59,6 +59,7 @@ jobs:
       - name:  Build project
         run: |
           chmod 777 gradlew && ls -lah
+          echo ">>>: Build project"
           ./gradlew shadowJar javadocJar --no-daemon
       - name: Get artifact hash
         run: bash .github/workflows/scripts/getArtifactHash.sh
