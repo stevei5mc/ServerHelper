@@ -47,13 +47,16 @@ jobs:
           sed -i 's/{git.commit.id}/${{ needs.Initialize.outputs.targetSha }}/g; s/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g; s/{project.version}/'"$version"'/g' $classPath
       - name:  Build project
         run: |
-          chmod 777 gradlew && ls -lah
-          echo ">>>: Build project"
-          ./gradlew shadowJar javadocJar --no-daemon
-      - name: Get artifact hash and copy files
-        run: |
-          bash .github/workflows/scripts/getArtifactHash.sh
-          bash .github/workflows/scripts/copyFiles.sh
+        echo ::group::Set gradlew 777 permission
+        chmod 777 gradlew && ls -lah
+        echo ::endgroup::
+        echo ::group::Build
+        ./gradlew shadowJar javadocJar --no-daemon ${{ inputs.gradleExpandParameters }}
+        echo ::endgroup::
+      - name: Get artifact hash
+        run: bash .github/workflows/scripts/getArtifactHash.sh
+      - name: Copy files
+        run:  bash .github/workflows/scripts/copyFiles.sh
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
