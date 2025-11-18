@@ -33,7 +33,7 @@ env:
 
 jobs:
   Initialize:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     timeout-minutes: 5
     outputs:
       PR_ID: ${{ steps.get_info.outputs.PR_ID }}
