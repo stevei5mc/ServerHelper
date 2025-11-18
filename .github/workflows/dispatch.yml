@@ -26,7 +26,7 @@ on:
         required: false
         default: '90'
         type: choice
-        options: ['1','7','14','30','60','90']    
+        options: ['0','1','7','14','30','60','90']
 
 env:
   GH_TOKEN: ${{ github.token }}
@@ -106,6 +106,7 @@ jobs:
     - name: Copy files
       run:  bash .github/workflows/scripts/copyFiles.sh
     - name: Upload artifact
+      if: inputs.artifactSaveDays >= 1
       uses: actions/upload-artifact@v4
       with:
         name: ${{ needs.Initialize.outputs.repo_name }}-Dispatch-Build_${{ github.run_number }}
