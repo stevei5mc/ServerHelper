@@ -51,7 +51,7 @@ jobs:
           chmod 777 gradlew && ls -lah
           echo ::endgroup::
           echo ::group::Build
-          ./gradlew shadowJar javadocJar --no-daemon ${{ inputs.gradleExpandParameters }}
+          ./gradlew shadowJar javadocJar --no-daemon --parallel ${{ inputs.gradleExpandParameters }}
           echo ::endgroup::
       - name: Get artifact hash
         run: bash .github/workflows/scripts/getArtifactHash.sh

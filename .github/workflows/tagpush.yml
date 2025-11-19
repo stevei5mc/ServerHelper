@@ -11,7 +11,7 @@ env:
 
 jobs:
   Initialize:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     timeout-minutes: 5
     outputs:
       version: ${{ steps.get_info.outputs.version }}
@@ -58,12 +58,12 @@ jobs:
           sed -i 's/{git.commit.id}/${{ needs.Initialize.outputs.targetSha }}/g; s/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g; s/{project.version}/${{ needs.Initialize.outputs.version }}/g' $classPath
       - name:  Build project
         run: |
-        echo ::group::Set gradlew 777 permission
-        chmod 777 gradlew && ls -lah
-        echo ::endgroup::
-        echo ::group::Build
-        ./gradlew shadowJar javadocJar --no-daemon ${{ inputs.gradleExpandParameters }}
-        echo ::endgroup::
+          echo ::group::Set gradlew 777 permission
+          chmod 777 gradlew && ls -lah
+          echo ::endgroup::
+          echo ::group::Build
+          ./gradlew shadowJar javadocJar --no-daemon --parallel ${{ inputs.gradleExpandParameters }}
+          echo ::endgroup::
       - name: Get artifact hash
         run: bash .github/workflows/scripts/getArtifactHash.sh
       - name: Prepare releases files

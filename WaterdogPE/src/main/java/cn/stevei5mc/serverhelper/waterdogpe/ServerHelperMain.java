@@ -67,10 +67,10 @@ public class ServerHelperMain extends Plugin {
     }
 
     public void setHandler() {
-        if (privateConfig.getBoolean("handler.join", true)) {
+        if (privateConfig.getBoolean("handler.enable.join", true)) {
             this.getProxy().setJoinHandler(new JoinHandler());
         }
-        if (privateConfig.getBoolean("handler.reconnect", true)) {
+        if (privateConfig.getBoolean("handler.enable.reconnect", true)) {
             this.getProxy().setReconnectHandler(new ReconnectHandler());
         }
     }

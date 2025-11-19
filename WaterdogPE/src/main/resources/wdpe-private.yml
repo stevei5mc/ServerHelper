@@ -1,5 +1,6 @@
 version: 1
 
 handler:
-  join: true
-  reconnect: true
+  enable:
+    join: true
+    reconnect: true

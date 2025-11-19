@@ -6,7 +6,7 @@ on:
       buildMode:
         description: 'Build mode'
         required: false
-        default: 'Build'
+        default: 'Plugin'
         type: choice
         options: ['Plugin','All']
       gradleExpandParameters:
@@ -44,6 +44,7 @@ jobs:
       repo_name: ${{ steps.get_info.outputs.repoNmae }}
     steps:
     - name: 拉取代码
+      if: inputs.additionalFunctions == 'Build PR'
       uses: actions/checkout@v5
     - name: 获取信息
       id: get_info
@@ -99,7 +100,7 @@ jobs:
         chmod 777 gradlew && ls -lah
         echo ::endgroup::
         echo ::group::Build
-        ./gradlew shadowJar javadocJar --no-daemon ${{ inputs.gradleExpandParameters }}
+        ./gradlew shadowJar javadocJar --no-daemon --parallel ${{ inputs.gradleExpandParameters }}
         echo ::endgroup::
     - name: Get artifact hash
       run: bash .github/workflows/scripts/getArtifactHash.sh
