@@ -44,7 +44,6 @@ jobs:
       repo_name: ${{ steps.get_info.outputs.repoNmae }}
     steps:
     - name: 拉取代码
-      if: inputs.additionalFunctions == 'Build PR'
       uses: actions/checkout@v5
     - name: 获取信息
       id: get_info
@@ -103,8 +102,10 @@ jobs:
         ./gradlew shadowJar javadocJar --no-daemon --parallel ${{ inputs.gradleExpandParameters }}
         echo ::endgroup::
     - name: Get artifact hash
+      if: inputs.artifactSaveDays >= 1
       run: bash .github/workflows/scripts/getArtifactHash.sh
     - name: Copy files
+      if: inputs.artifactSaveDays >= 1
       run:  bash .github/workflows/scripts/copyFiles.sh
     - name: Upload artifact
       if: inputs.artifactSaveDays >= 1
