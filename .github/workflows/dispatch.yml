@@ -93,14 +93,10 @@ jobs:
         classPath=Common/src/main/java/cn/stevei5mc/serverhelper/common/BaseInfo.java
         version=$(grep "project.version=" "./gradle.properties" | sed 's/project.version=//')
         sed -i 's/{git.commit.id}/${{ needs.Initialize.outputs.targetSha }}/g; s/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g; s/{project.version}/'"$version"'/g' $classPath
+    - name: Set gradlew 777 permission
+      run: chmod 777 gradlew && ls -lah
     - name:  Build project
-      run: |
-        echo ::group::Set gradlew 777 permission
-        chmod 777 gradlew && ls -lah
-        echo ::endgroup::
-        echo ::group::Build
-        ./gradlew shadowJar javadocJar --no-daemon --parallel ${{ inputs.gradleExpandParameters }}
-        echo ::endgroup::
+      run: ./gradlew shadowJar javadocJar --no-daemon --parallel ${{ inputs.gradleExpandParameters }}
     - name: Get artifact hash
       if: inputs.artifactSaveDays >= 1
       run: bash .github/workflows/scripts/getArtifactHash.sh
