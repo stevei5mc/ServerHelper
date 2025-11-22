@@ -27,8 +27,8 @@ subprojects {
 
     dependencies {
         compileOnly("org.jetbrains:annotations:24.0.1")
-        compileOnly("org.projectlombok:lombok:1.18.30")
-        annotationProcessor("org.projectlombok:lombok:1.18.30")
+        compileOnly(rootProject.libs.lombok)
+        annotationProcessor(rootProject.libs.lombok)
     }
 
     tasks {
