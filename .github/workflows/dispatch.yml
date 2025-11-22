@@ -37,7 +37,7 @@ jobs:
     timeout-minutes: 5
     outputs:
       PR_ID: ${{ steps.get_info.outputs.PR_ID }}
-      url: ${{ steps.get_info.outputs.url }}
+      actionUrl: ${{ steps.get_info.outputs.actionUrl }}
       targetSha: ${{ env.targetSha }}
       targetRef: ${{ env.targetRef }}
       prState: ${{ env.prState }}
