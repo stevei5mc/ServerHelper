@@ -6,8 +6,11 @@ import cn.stevei5mc.serverhelper.waterdogpe.commands.maimcmd.ServerHelperMainCmd
 import cn.stevei5mc.serverhelper.waterdogpe.handler.JoinHandler;
 import cn.stevei5mc.serverhelper.waterdogpe.handler.ReconnectHandler;
 import cn.stevei5mc.serverhelper.waterdogpe.listener.PlayerListener;
+import cn.stevei5mc.serverhelper.waterdogpe.listener.ServerListener;
+import dev.waterdog.waterdogpe.event.EventManager;
 import dev.waterdog.waterdogpe.event.defaults.DispatchCommandEvent;
 import dev.waterdog.waterdogpe.event.defaults.PlayerChatEvent;
+import dev.waterdog.waterdogpe.event.defaults.ServerTransferEvent;
 import dev.waterdog.waterdogpe.plugin.Plugin;
 import dev.waterdog.waterdogpe.utils.config.YamlConfig;
 import lombok.Getter;
@@ -30,8 +33,7 @@ public class ServerHelperMain extends Plugin {
         this.getLogger().warn("§c警告! §c本插件为免费且开源的，如果您付费获取获取的，则有可能被误导了");
         this.getLogger().info(BaseInfo.GH_URL);
         this.getProxy().getCommandMap().registerCommand(new ServerHelperMainCmd(cmdPrefix+"serverhelper", "ServerHelper plugin command", BaseInfo.adminMainPermission, CommonUtils.toArray(cmdPrefix+"shr")));
-        this.getProxy().getEventManager().subscribe(PlayerChatEvent.class, PlayerListener::onPlayerChat);
-        this.getProxy().getEventManager().subscribe(DispatchCommandEvent.class, PlayerListener::onDispatchCommand);
+        registerEventListeners();
         setHandler();
     }
 
@@ -73,5 +75,12 @@ public class ServerHelperMain extends Plugin {
         if (privateConfig.getBoolean("handler.enable.reconnect", true)) {
             this.getProxy().setReconnectHandler(new ReconnectHandler());
         }
+    }
+
+    public void registerEventListeners() {
+        EventManager em = this.getProxy().getEventManager();
+        em.subscribe(PlayerChatEvent.class, PlayerListener::onPlayerChat);
+        em.subscribe(DispatchCommandEvent.class, PlayerListener::onDispatchCommand);
+        em.subscribe(ServerTransferEvent.class, ServerListener::onServerTransfer);
     }
 }
