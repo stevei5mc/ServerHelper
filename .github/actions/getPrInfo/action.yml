@@ -11,6 +11,11 @@ inputs:
     required: true
     default: 'false'
 
+outputs:
+  prState:
+    description: "Pr state"
+    value: ${{ steps.getPrInfo.outputs.prState }}
+
 runs:
   using: "composite"
   steps:
@@ -19,7 +24,7 @@ runs:
     id: getPrInfo
     with:
       prId: '${{ inputs.prId }}'
-  - name: Set pull request env info
+  - name: Set current pull request info
     shell: bash
     run: |
       echo "targetRef=$(echo pull/${{ inputs.prId }}/merge | sed 's/\//\\\//g')" >> $GITHUB_ENV
@@ -30,7 +35,7 @@ runs:
       echo "headUrl=$(echo ${{ steps.getPrInfo.outputs.headRepoUrl }} | sed 's/\//\\\//g')" >> $GITHUB_ENV
       echo "headlabel=$(echo ${{ steps.getPrInfo.outputs.headLabel }} | sed 's/\//\\\//g')" >> $GITHUB_ENV
       echo "prUrl=$(echo ${{ steps.getPrInfo.outputs.htmlUrl }} | sed 's/\//\\\//g')" >> $GITHUB_ENV
-  - name: Pull request summary
+  - name: Summary current pull request info
     shell: bash
     run: |
       templateFile=.github/template/pr-summary.md

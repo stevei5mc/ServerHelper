@@ -12,6 +12,12 @@ on:
       gradleExpandParameters:
         description: 'Gradle build expand parameters'
         required: false
+      artifactSaveDays:
+        description: "Artifact retention days"
+        required: false
+        default: '90'
+        type: choice
+        options: ['0','1','7','14','30','60','90']
       additionalFunctions:
         description: "Additional functions"
         required: false
@@ -21,12 +27,6 @@ on:
       PR_ID:
         description: 'PR Approve ID'
         required: false
-      artifactSaveDays:
-        description: "Artifact retention days"
-        required: false
-        default: '90'
-        type: choice
-        options: ['0','1','7','14','30','60','90']
 
 env:
   GH_TOKEN: ${{ github.token }}
@@ -36,11 +36,10 @@ jobs:
     runs-on: ubuntu-slim
     timeout-minutes: 5
     outputs:
-      PR_ID: ${{ steps.get_info.outputs.PR_ID }}
       actionUrl: ${{ steps.get_info.outputs.actionUrl }}
       targetSha: ${{ env.targetSha }}
       targetRef: ${{ env.targetRef }}
-      prState: ${{ env.prState }}
+      prState: ${{ steps.prInfo.outputs.prState }}
       repo_name: ${{ steps.get_info.outputs.repoNmae }}
     steps:
     - name: 拉取代码
@@ -62,6 +61,7 @@ jobs:
         fi
     - name: Get and summary PR info
       if: inputs.additionalFunctions == 'Build PR'
+      id: prInfo
       uses: ./.github/actions/getPrInfo
       with:
         prId: ${{ inputs.PR_ID }}
