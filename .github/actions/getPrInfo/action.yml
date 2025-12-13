@@ -47,8 +47,8 @@ runs:
       sed -i 's|{9A}|${{ env.baselabel }}|g; s|{9B}|${{ env.baseUrl }}|g; s|{9C}|${{ env.baseSha }}|g' $templateFile
       cat $templateFile >> $GITHUB_STEP_SUMMARY
   - name: Pull request status check
-    uses: actions/github-script@v8
     if: inputs.prApprove == 'true'
+    uses: actions/github-script@v8
     with:
       script: |
         const prState = "${{ steps.getPrInfo.outputs.prState }}";

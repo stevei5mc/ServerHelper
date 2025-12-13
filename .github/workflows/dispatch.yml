@@ -25,7 +25,7 @@ on:
         type: choice
         options: ['Not used','Build PR']
       PR_ID:
-        description: 'PR Approve ID'
+        description: 'PR number'
         required: false
 
 env:
@@ -44,6 +44,24 @@ jobs:
     steps:
     - name: 拉取代码
       uses: actions/checkout@v5
+    - name: 处理和检查输入的参数
+      uses: actions/github-script@v8
+      with:
+        script: |
+          const additionalFunctions = "${{ inputs.additionalFunctions }}";
+          if (additionalFunctions == 'Build PR') {
+            core.info("Check input pr number");
+            const PR_ID = "${{ inputs.PR_ID }}";
+            if (!PR_ID || PR_ID.trim() === '') {
+              core.setFailed('❌ PR number cannot be empty when building PR');
+            }
+            if (!/^\d+$/.test(PR_ID.trim())) {
+              core.setFailed(`❌ PR number must be a positive integer, got: "${PR_ID}"`);
+            }
+            if (prNumber <= 0) {
+              core.setFailed(`❌ PR number must be greater than 0, got: "${PR_ID}"`);
+            }
+          }
     - name: 获取信息
       id: get_info
       uses: ./.github/actions/getProjectInfo
