@@ -53,13 +53,13 @@ jobs:
             core.info("Check input pr number");
             const PR_ID = "${{ inputs.PR_ID }}";
             if (!PR_ID || PR_ID.trim() === '') {
-              core.setFailed('❌ PR number cannot be empty when building PR');
+              core.setFailed('PR number cannot be empty when building PR');
             }
             if (!/^\d+$/.test(PR_ID.trim())) {
-              core.setFailed(`❌ PR number must be a positive integer, got: "${PR_ID}"`);
+              core.setFailed(`PR number must be a positive integer, got: "${PR_ID}"`);
             }
             if (prNumber <= 0) {
-              core.setFailed(`❌ PR number must be greater than 0, got: "${PR_ID}"`);
+              core.setFailed(`PR number must be greater than 0, got: "${PR_ID}"`);
             }
           }
     - name: 获取信息
