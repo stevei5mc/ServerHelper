@@ -52,7 +52,7 @@ jobs:
           if (additionalFunctions == 'Build PR') {
             const PR_ID = "${{ inputs.PR_ID }}";
             core.info("Check input pr number");
-            if (!PR_ID || PR_ID.trim() === '' && !/^\d+$/.test(PR_ID.trim()) && prNumber <= 0) {
+            if (!PR_ID || PR_ID.trim() === '' || !/^\d+$/.test(PR_ID.trim()) || prNumber <= 0) {
               core.setFailed(`The format of the PR number entered is incorrect. The input value is: {PR_ID}`);
             }else {
               core.info("The check is passed. The format of the entered PR number is correct.");
