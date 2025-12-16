@@ -16,7 +16,7 @@ jobs:
       targetRef: ${{ env.targetRef }}
     steps:
     - name: 拉取代码
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: 获取信息
       id: get_info
       uses: ./.github/actions/getProjectInfo
@@ -32,7 +32,7 @@ jobs:
       java-version: "17"
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Setup java ${{ env.java-version }}
         uses: actions/setup-java@v5
         with:
@@ -54,7 +54,7 @@ jobs:
       - name: Copy files
         run:  bash .github/workflows/scripts/copyFiles.sh
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ needs.Initialize.outputs.repo_name }}-PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
           path: ./staging

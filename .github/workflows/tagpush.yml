@@ -21,7 +21,7 @@ jobs:
       preRrelease: ${{ steps.releaseInfo.outputs.preRrelease }}
     steps:
     - name: 拉取代码
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: 获取信息
       id: get_info
       uses: ./.github/actions/getProjectInfo
@@ -43,7 +43,7 @@ jobs:
       java-version: "17"
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Setup java ${{ env.java-version }}
         uses: actions/setup-java@v5
         with:
@@ -65,7 +65,7 @@ jobs:
       - name: Prepare releases files
         run: bash .github/workflows/scripts/prepareReleasesFiles.sh
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ needs.Initialize.outputs.repo_name }}-Release-${{ needs.Initialize.outputs.version }}
           path: ./staging
