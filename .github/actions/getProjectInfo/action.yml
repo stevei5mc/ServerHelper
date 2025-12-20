@@ -14,40 +14,55 @@ inputs:
 outputs:
   repoNmae:
     description: "Repo name"
-    value: ${{ steps.getProjectBaseInfo.outputs.repo_name }}
+    value: ${{ steps.getProjectInfo.outputs.repoName }}
   actionUrl:
     description: "Action url"
-    value: ${{ steps.getProjectBaseInfo.outputs.actionUrl }}
+    value: ${{ steps.getProjectInfo.outputs.actionUrl }}
   releaseType:
     description: "Release type"
-    value: ${{ steps.getProjectReleaseInfo.outputs.releaseType }}
+    value: ${{ steps.getProjectnfo.outputs.releaseType }}
   prerelease:
     description: "Prerelease state"
-    value: ${{ steps.getProjectReleaseInfo.outputs.preRrelease }}
+    value: ${{ steps.getProjectInfo.outputs.preRrelease }}
 
 runs:
   using: "composite"
   steps:
-  - name: Get project base info
-    id: getProjectBaseInfo
-    shell: bash
-    run: |
-      echo "repo_name=${GITHUB_REPOSITORY/${{ github.repository_owner }}\//}" >> $GITHUB_OUTPUT
-      echo "actionUrl=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_OUTPUT
-      echo "targetSha=$(echo ${{ inputs.targetSha }} | cut -c 1-7)" >> $GITHUB_ENV
-      echo "targetRef=$(echo ${{ inputs.targetRef }} | sed 's/refs\///g' | sed 's/heads\///g' | sed 's/\//\\\//g')" >> $GITHUB_ENV
-  - name: Get project release info
-    if: contains('inputs.targetRef', 'refs/tags/')
-    id: getProjectReleaseInfo
-    shell: bash
-    run: |
-      echo "version=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
-      if echo ${GITHUB_REF/refs\/tags\//} | grep -q "*-beta*"; then
-        echo "Release version is beta version"
-        echo "releaseType=beta" >> $GITHUB_OUTPUT
-        echo "prerelease=true" >> $GITHUB_OUTPUT
-      else
-        echo "Release version is latest version"
-        echo "releaseType=latest" >> $GITHUB_OUTPUT
-        echo "prerelease=false" >> $GITHUB_OUTPUT
-      fi
+  - name: Get project info
+    id: getProjectInfo
+    uses: actions/github-script@v8
+    with:
+      script: |
+        let repoName = "${{ github.repository }}";
+        let refName = "${{ inputs.targetRef }}";
+        const commitId = "${{ inputs.targetSha }}";
+
+        core.setOutput('actionUrl', "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}");
+
+        repoName = repoName.replace("${{ github.repository_owner }}/", "");
+        core.info(`Repo name: ${repoName}`);
+        core.setOutput('repoName', repoName);
+
+        const targetBranch = refName.replace("refs/", "").replace("heads/", "");
+        const commitIdShort = commitId.substring(0, 7);
+        core.exportVariable('targetBranch', targetBranch);
+        core.exportVariable('targetCommitId', commitIdShort);
+
+        if (refName.startsWith("refs/tags/")) {
+          const version = refName.replace("refs/tags/", "");
+          core.log(`Tag version: ${version}`);
+          let releaseType = "";
+          let preRelease = true;
+          if(/^[0-9]+.[0-9]+.[0-9]+-beta[0-9]+$/.test(version)) {
+            releaseType = "beta";
+          }else if(/^[0-9]+.[0-9]+.[0-9]+$/.test(version)){
+            releaseType = "stable";
+            preRelease = false;
+          }else {
+            core.setFailed('Unknown release info!!!');
+          }
+          core.info(`Release version type: ${releaseType}`);
+          core.info(`Release version is preRelease: ${preRelease}`);
+          core.setOutput('releaseType', releaseType);
+          core.setOutput('preRelease', preRelease);
+        }
