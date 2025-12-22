@@ -43,7 +43,7 @@ runs:
         core.info(`Repo name: ${repoName}`);
         core.setOutput('repoName', repoName);
 
-        const targetBranch = refName.replace("refs/", "").replace("heads/", "");
+        const targetBranch = refName.replace("refs/", "").replace("heads/", "").replace("/", "\\/");
         const commitIdShort = commitId.substring(0, 7);
         core.exportVariable('targetBranch', targetBranch);
         core.exportVariable('targetCommitId', commitIdShort);
