@@ -8,20 +8,20 @@ env:
 
 jobs:
   Initialize:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     timeout-minutes: 5
     outputs:
       repo_name: ${{ steps.get_info.outputs.repoNmae }}
-      targetSha: ${{ env.targetSha }}
-      targetRef: ${{ env.targetRef }}
+      targetCommitId: ${{ env.targetCommitId }}
+      targetBranch: ${{ env.targetBranch }}
     steps:
-    - name: 拉取代码
-      uses: actions/checkout@v5
-    - name: 获取信息
-      id: get_info
-      uses: ./.github/actions/getProjectInfo
-    - name: Get and summary PR info
-      uses: ./.github/actions/getPrInfo
+      - name: 拉取代码
+        uses: actions/checkout@v6
+      - name: 获取信息
+        id: get_info
+        uses: ./.github/actions/getProjectInfo
+      - name: Get and summary PR info
+        uses: ./.github/actions/getPrInfo
 
   build-plugin:
     name: Build plugin
@@ -32,7 +32,7 @@ jobs:
       java-version: "17"
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Setup java ${{ env.java-version }}
         uses: actions/setup-java@v5
         with:
@@ -44,39 +44,17 @@ jobs:
         run: |
           classPath=Common/src/main/java/cn/stevei5mc/serverhelper/common/BaseInfo.java
           version=$(grep "project.version=" "./gradle.properties" | sed 's/project.version=//')
-          sed -i 's/{git.commit.id}/${{ needs.Initialize.outputs.targetSha }}/g; s/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g; s/{project.version}/'"$version"'/g' $classPath
+          sed -i 's|{git.commit.id}|${{ needs.Initialize.outputs.targetCommitId }}|g; s|{git.branch}|${{ needs.Initialize.outputs.targetBranch }}|g; s|{project.version}|'"$version"'|g' $classPath
+      - name: Set gradlew 777 permission
+        run: chmod 777 gradlew && ls -lah
       - name:  Build project
-        run: |
-          chmod 777 gradlew && ls -lah
-          echo ">>>: Build project"
-          ./gradlew shadowJar javadocJar --no-daemon
-      - name: Get artifact hash and copy files
-        run: |
-          bash .github/workflows/scripts/getArtifactHash.sh
-          bash .github/workflows/scripts/copyFiles.sh
+        run: ./gradlew shadowJar javadocJar --no-daemon --parallel ${{ inputs.gradleExpandParameters }}
+      - name: Get artifact hash
+        run: bash .github/workflows/scripts/getArtifactHash.sh
+      - name: Copy files
+        run:  bash .github/workflows/scripts/copyFiles.sh
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ needs.Initialize.outputs.repo_name }}-PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
           path: ./staging
-
-#  build-Docusaurus:
-#    name: Build docusaurus
-#    needs: Initialize
-#    runs-on: ubuntu-latest
-#    steps:
-#    - name: 拉取代码
-#      uses: actions/checkout@v4
-#    - uses: actions/setup-node@v4
-#      with:
-#        node-version: 18
-#    - name: 构建
-#      run: |
-#        cd Docusaurus
-#        yarn install --frozen-lockfile
-#        yarn build
-#        cd ../
-#    - name: 上传构建
-#      uses: actions/upload-pages-artifact@v3
-#      with:
-#        path: Docusaurus/build

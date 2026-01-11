@@ -1,0 +1,34 @@
+name: "Get project info"
+description: "Get project info"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get project info
+      id: getProjectInfo
+      uses: actions/github-script@v8
+      with:
+        script: |
+          let repoName = "${{ github.repository }}";
+          let refName = "${{ inputs.targetRef }}";
+
+          if (refName.startsWith("refs/tags/")) {
+            const version = refName.replace("refs/tags/", "");
+            core.log(`Tag version: ${version}`);
+            let releaseType = "";
+            let preRelease = true;
+            if(/^[0-9]+.[0-9]+.[0-9]+-beta[0-9]+$/.test(version)) {
+              releaseType = "beta";
+            }else if(/^[0-9]+.[0-9]+.[0-9]+$/.test(version)){
+              releaseType = "stable";
+              preRelease = false;
+            }else {
+              core.setFailed('Unknown release info!!!');
+            }
+            core.info(`Release version type: ${releaseType}`);
+            core.info(`Release version is preRelease: ${preRelease}`);
+            core.setOutput('releaseType', releaseType);
+            core.setOutput('preRelease', preRelease);
+          }else {
+            core.setFailed('Unknown release version')
+          }
