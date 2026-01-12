@@ -1,11 +1,11 @@
-name: "Get project info"
-description: "Get project info"
+name: "Get release info"
+description: "Get release info"
 
 runs:
   using: "composite"
   steps:
-    - name: Get project info
-      id: getProjectInfo
+    - name: Get release info
+      id: getReleaseInfo
       uses: actions/github-script@v8
       with:
         script: |

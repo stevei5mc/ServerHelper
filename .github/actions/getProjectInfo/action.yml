@@ -1,16 +1,6 @@
 name: "Get project info"
 description: "Get project info"
 
-inputs:
-  targetSha:
-    description: "Target sha"
-    required: true
-    default: ${{ github.sha }}
-  targetRef:
-    description: "Target ref"
-    required: true
-    default: ${{ github.ref }}
-
 outputs:
   repoNmae:
     description: "Repo name"
@@ -18,18 +8,12 @@ outputs:
   actionUrl:
     description: "Action url"
     value: ${{ steps.getProjectBaseInfo.outputs.actionUrl }}
-  releaseType:
-    description: "Release type"
-    value: ${{ steps.getProjectReleaseInfo.outputs.releaseType }}
-  prerelease:
-    description: "Prerelease state"
-    value: ${{ steps.getProjectReleaseInfo.outputs.preRrelease }}
 
 runs:
   using: "composite"
   steps:
-  - name: Get project base info
-    id: getProjectBaseInfo
+  - name: Get project info
+    id: getProjectInfo
     shell: bash
     run: |
       echo "repo_name=${GITHUB_REPOSITORY/${{ github.repository_owner }}\//}" >> $GITHUB_OUTPUT
