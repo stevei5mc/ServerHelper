@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-slim
     timeout-minutes: 5
     outputs:
-      version: ${{ steps.getProjectInfo.outputs.version }}
+      version: ${{ steps.getReleaseInfo.outputs.version }}
       repo_name: ${{ steps.getProjectInfo.outputs.repoNmae }}
       targetCommitId: ${{ env.targetCommitId }}
       targetBranch: ${{ env.targetBranch }}
@@ -33,7 +33,7 @@ jobs:
             # BUILD INFO
             |Tatget ref|Target sha|Release version|Release type|
             |:-:|:-:|:-:|
-            | ${{ env.targetBranch }}|${{ env.targetCommitId }}|${{ steps.getProjectInfo.outputs.version }}|${{ steps.getProjectInfo.outputs.releaseType }}|
+            | ${{ env.targetBranch }}|${{ env.targetCommitId }}|${{ steps.getReleaseInfo.outputs.version }}|${{ steps.getReleaseInfo.outputs.releaseType }}|
 
   build-plugin:
     name: Build and release plugin
