@@ -17,9 +17,9 @@ runs:
             core.info(`Tag version: ${version}`);
             let releaseType = "";
             let preRelease = true;
-            if(/^[0-9]+.[0-9]+.[0-9]+-beta[0-9]+$/.test(version)) {
+            if(/^[0-9]+\.[0-9]+\.[0-9]+-beta[0-9]+$/.test(version)) {
               releaseType = "beta";
-            }else if(/^[0-9]+.[0-9]+.[0-9]+$/.test(version)){
+            }else if(/^[0-9]+\.[0-9]+\.[0-9]+$/.test(version)){
               releaseType = "stable";
               preRelease = false;
             }else {

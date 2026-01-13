@@ -11,14 +11,6 @@ inputs:
     required: true
     default: ${{ github.ref }}
 
-outputs:
-  repoNmae:
-    description: "Repo name"
-    value: ${{ steps.getProjectBaseInfo.outputs.repo_name }}
-  actionUrl:
-    description: "Action url"
-    value: ${{ steps.getProjectBaseInfo.outputs.actionUrl }}
-
 runs:
   using: "composite"
   steps:
@@ -26,7 +18,7 @@ runs:
     id: getProjectInfo
     shell: bash
     run: |
-      echo "repo_name=${GITHUB_REPOSITORY/${{ github.repository_owner }}\//}" >> $GITHUB_OUTPUT
+      echo "repoName=${GITHUB_REPOSITORY/${{ github.repository_owner }}\//}" >> $GITHUB_OUTPUT
       echo "actionUrl=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_OUTPUT
       echo "targetCommitId=$(echo ${{ inputs.targetSha }} | cut -c 1-7)" >> $GITHUB_ENV
       echo "targetBranch=$(echo ${{ inputs.targetRef }} | sed 's/refs\///g' | sed 's/heads\///g' | sed 's/\//\\\//g')" >> $GITHUB_ENV

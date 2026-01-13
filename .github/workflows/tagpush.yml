@@ -18,14 +18,14 @@ jobs:
       repo_name: ${{ steps.getProjectInfo.outputs.repoNmae }}
       targetCommitId: ${{ env.targetCommitId }}
       targetBranch: ${{ env.targetBranch }}
-      preRrelease: ${{ steps.getReleaseInfo.outputs.preRrelease }}
+      preRrelease: ${{ steps.getReleaseInfo.outputs.preRelease }}
     steps:
       - name: 拉取代码
         uses: actions/checkout@v6
       - name: 获取信息
         uses: ./.github/actions/getProjectInfo
       - name: 获取版本发布信息
-        uses: .github/actions/getReleaseInfo
+        uses: ./.github/actions/getReleaseInfo
       - name: Summary base info
         uses: johngeorgewright/summary-action@v1.0.0
         with:
