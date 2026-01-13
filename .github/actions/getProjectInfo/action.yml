@@ -1,6 +1,16 @@
 name: "Get project info"
 description: "Get project info"
 
+inputs:
+  targetSha:
+    description: "Target sha"
+    required: true
+    default: ${{ github.sha }}
+  targetRef:
+    description: "Target ref"
+    required: true
+    default: ${{ github.ref }}
+
 outputs:
   repoNmae:
     description: "Repo name"
@@ -18,5 +28,5 @@ runs:
     run: |
       echo "repo_name=${GITHUB_REPOSITORY/${{ github.repository_owner }}\//}" >> $GITHUB_OUTPUT
       echo "actionUrl=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_OUTPUT
-      echo "targetSha=$(echo ${{ inputs.targetSha }} | cut -c 1-7)" >> $GITHUB_ENV
-      echo "targetRef=$(echo ${{ inputs.targetRef }} | sed 's/refs\///g' | sed 's/heads\///g' | sed 's/\//\\\//g')" >> $GITHUB_ENV
+      echo "targetCommitId=$(echo ${{ inputs.targetSha }} | cut -c 1-7)" >> $GITHUB_ENV
+      echo "targetBranch=$(echo ${{ inputs.targetRef }} | sed 's/refs\///g' | sed 's/heads\///g' | sed 's/\//\\\//g')" >> $GITHUB_ENV

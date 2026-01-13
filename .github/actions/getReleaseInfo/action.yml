@@ -10,11 +10,11 @@ runs:
       with:
         script: |
           let repoName = "${{ github.repository }}";
-          let refName = "${{ inputs.targetRef }}";
+          let refName = "${{ github.ref }}";
 
           if (refName.startsWith("refs/tags/")) {
             const version = refName.replace("refs/tags/", "");
-            core.log(`Tag version: ${version}`);
+            core.info(`Tag version: ${version}`);
             let releaseType = "";
             let preRelease = true;
             if(/^[0-9]+.[0-9]+.[0-9]+-beta[0-9]+$/.test(version)) {
