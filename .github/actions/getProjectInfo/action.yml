@@ -11,6 +11,14 @@ inputs:
     required: true
     default: ${{ github.ref }}
 
+outputs:
+  repoNmae:
+    description: "Repo name"
+    value: ${{ steps.getProjectInfo.outputs.repoName }}
+  actionUrl:
+    description: "Action url"
+    value: ${{ steps.getProjectInfo.outputs.actionUrl }}
+
 runs:
   using: "composite"
   steps:

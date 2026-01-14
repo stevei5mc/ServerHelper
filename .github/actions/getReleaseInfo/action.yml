@@ -1,6 +1,14 @@
 name: "Get release info"
 description: "Get release info"
 
+outputs:
+  releaseType:
+    description: "Release type"
+    value: ${{ steps.getReleaseInfo.outputs.releaseType }}
+  prerelease:
+    description: "Prerelease state"
+    value: ${{ steps.getReleaseInfo.outputs.preRrelease }}
+
 runs:
   using: "composite"
   steps:

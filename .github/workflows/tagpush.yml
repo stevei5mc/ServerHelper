@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 5
     outputs:
       version: ${{ steps.getReleaseInfo.outputs.version }}
-      repo_name: ${{ steps.getProjectInfo.outputs.repoNmae }}
+      repoName: ${{ steps.getProjectInfo.outputs.repoNmae }}
       targetCommitId: ${{ env.targetCommitId }}
       targetBranch: ${{ env.targetBranch }}
       preRrelease: ${{ steps.getReleaseInfo.outputs.preRelease }}
@@ -23,8 +23,10 @@ jobs:
       - name: 拉取代码
         uses: actions/checkout@v6
       - name: 获取信息
+        id: getProjectInfo
         uses: ./.github/actions/getProjectInfo
       - name: 获取版本发布信息
+        id: getReleaseInfo
         uses: ./.github/actions/getReleaseInfo
       - name: Summary base info
         uses: johngeorgewright/summary-action@v1.0.0
@@ -68,7 +70,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v6
         with:
-          name: ${{ needs.Initialize.outputs.repo_name }}-Release-${{ needs.Initialize.outputs.version }}
+          name: ${{ needs.Initialize.outputs.repoName }}-Release-${{ needs.Initialize.outputs.version }}
           path: ./staging
       - name: Release to github
         uses: ncipollo/release-action@v1

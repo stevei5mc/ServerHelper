@@ -11,13 +11,14 @@ jobs:
     runs-on: ubuntu-slim
     timeout-minutes: 5
     outputs:
-      repo_name: ${{ steps.getProjectInfo.outputs.repoNmae }}
+      repoName: ${{ steps.getProjectInfo.outputs.repoNmae }}
       targetCommitId: ${{ env.targetCommitId }}
       targetBranch: ${{ env.targetBranch }}
     steps:
       - name: 拉取代码
         uses: actions/checkout@v6
       - name: 获取信息
+        id: getProjectInfo
         uses: ./.github/actions/getProjectInfo
       - name: Get and summary PR info
         uses: ./.github/actions/getPrInfo
@@ -55,5 +56,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v6
         with:
-          name: ${{ needs.Initialize.outputs.repo_name }}-PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
+          name: ${{ needs.Initialize.outputs.repoName }}-PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
           path: ./staging
