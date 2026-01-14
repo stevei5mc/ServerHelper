@@ -5,9 +5,9 @@ outputs:
   releaseType:
     description: "Release type"
     value: ${{ steps.getReleaseInfo.outputs.releaseType }}
-  prerelease:
-    description: "Prerelease state"
-    value: ${{ steps.getReleaseInfo.outputs.preRrelease }}
+  pre-release:
+    description: "Pre-release state"
+    value: ${{ steps.getReleaseInfo.outputs.pre-release }}
 
 runs:
   using: "composite"
@@ -17,26 +17,28 @@ runs:
       uses: actions/github-script@v8
       with:
         script: |
-          let repoName = "${{ github.repository }}";
           let refName = "${{ github.ref }}";
 
           if (refName.startsWith("refs/tags/")) {
             const version = refName.replace("refs/tags/", "");
             core.info(`Tag version: ${version}`);
             let releaseType = "";
-            let preRelease = true;
+            let pre-release = true;
             if(/^[0-9]+\.[0-9]+\.[0-9]+-beta[0-9]+$/.test(version)) {
               releaseType = "beta";
             }else if(/^[0-9]+\.[0-9]+\.[0-9]+$/.test(version)){
               releaseType = "stable";
-              preRelease = false;
+              pre-release = false;
             }else {
               core.setFailed('Unknown release info!!!');
             }
             core.info(`Release version type: ${releaseType}`);
-            core.info(`Release version is preRelease: ${preRelease}`);
+            if (pre-release) {
+              core.info(`Release version is pre-release state);
+            }
+            core.setOutput('version'. version):
             core.setOutput('releaseType', releaseType);
-            core.setOutput('preRelease', preRelease);
+            core.setOutput('pre-release', pre-release);
           }else {
             core.setFailed('Unknown release version')
           }

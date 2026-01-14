@@ -18,7 +18,7 @@ jobs:
       repoName: ${{ steps.getProjectInfo.outputs.repoNmae }}
       targetCommitId: ${{ env.targetCommitId }}
       targetBranch: ${{ env.targetBranch }}
-      preRrelease: ${{ steps.getReleaseInfo.outputs.preRelease }}
+      preRrelease: ${{ steps.getReleaseInfo.outputs.pre-release }}
     steps:
       - name: 拉取代码
         uses: actions/checkout@v6
@@ -80,4 +80,4 @@ jobs:
           token: ${{ env.GH_TOKEN }}
           bodyFile: ./docs/changelogs/${{ needs.Initialize.outputs.version }}.md
           artifacts: ./staging/*.*
-          prerelease: ${{ needs.Initialize.outputs.preRrelease }}
+          prerelease: ${{ needs.Initialize.outputs.pre-release }}
