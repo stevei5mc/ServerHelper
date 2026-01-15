@@ -18,51 +18,15 @@ outputs:
   actionUrl:
     description: "Action url"
     value: ${{ steps.getProjectInfo.outputs.actionUrl }}
-  releaseType:
-    description: "Release type"
-    value: ${{ steps.getProjectnfo.outputs.releaseType }}
-  prerelease:
-    description: "Prerelease state"
-    value: ${{ steps.getProjectInfo.outputs.preRrelease }}
 
 runs:
   using: "composite"
   steps:
   - name: Get project info
     id: getProjectInfo
-    uses: actions/github-script@v8
-    with:
-      script: |
-        let repoName = "${{ github.repository }}";
-        let refName = "${{ inputs.targetRef }}";
-        const commitId = "${{ inputs.targetSha }}";
-
-        core.setOutput('actionUrl', "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}");
-
-        repoName = repoName.replace("${{ github.repository_owner }}/", "");
-        core.info(`Repo name: ${repoName}`);
-        core.setOutput('repoName', repoName);
-
-        const targetBranch = refName.replace("refs/", "").replace("heads/", "").replaceAll("/", "\\/");
-        const commitIdShort = commitId.substring(0, 7);
-        core.exportVariable('targetBranch', targetBranch);
-        core.exportVariable('targetCommitId', commitIdShort);
-
-        if (refName.startsWith("refs/tags/")) {
-          const version = refName.replace("refs/tags/", "");
-          core.log(`Tag version: ${version}`);
-          let releaseType = "";
-          let preRelease = true;
-          if(/^[0-9]+.[0-9]+.[0-9]+-beta[0-9]+$/.test(version)) {
-            releaseType = "beta";
-          }else if(/^[0-9]+.[0-9]+.[0-9]+$/.test(version)){
-            releaseType = "stable";
-            preRelease = false;
-          }else {
-            core.setFailed('Unknown release info!!!');
-          }
-          core.info(`Release version type: ${releaseType}`);
-          core.info(`Release version is preRelease: ${preRelease}`);
-          core.setOutput('releaseType', releaseType);
-          core.setOutput('preRelease', preRelease);
-        }
+    shell: bash
+    run: |
+      echo "repoName=${GITHUB_REPOSITORY/${{ github.repository_owner }}\//}" >> $GITHUB_OUTPUT
+      echo "actionUrl=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_OUTPUT
+      echo "targetCommitId=$(echo ${{ inputs.targetSha }} | cut -c 1-7)" >> $GITHUB_ENV
+      echo "targetBranch=$(echo ${{ inputs.targetRef }} | sed 's/refs\///g' | sed 's/heads\///g' | sed 's/\//\\\//g')" >> $GITHUB_ENV
