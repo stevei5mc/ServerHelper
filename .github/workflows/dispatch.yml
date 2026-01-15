@@ -6,12 +6,18 @@ on:
       buildMode:
         description: 'Build mode'
         required: false
-        default: 'Build'
+        default: 'Plugin'
         type: choice
         options: ['Plugin','All']
       gradleExpandParameters:
         description: 'Gradle build expand parameters'
         required: false
+      artifactSaveDays:
+        description: "Artifact retention days"
+        required: false
+        default: '90'
+        type: choice
+        options: ['0','1','7','14','30','60','90']
       additionalFunctions:
         description: "Additional functions"
         required: false
@@ -19,53 +25,59 @@ on:
         type: choice
         options: ['Not used','Build PR']
       PR_ID:
-        description: 'PR Approve ID'
+        description: 'PR number'
         required: false
-      artifactSaveDays:
-        description: "Artifact retention days"
-        required: false
-        default: '90'
-        type: choice
-        options: ['1','7','14','30','60','90']    
 
 env:
   GH_TOKEN: ${{ github.token }}
 
 jobs:
   Initialize:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     timeout-minutes: 5
     outputs:
-      PR_ID: ${{ steps.get_info.outputs.PR_ID }}
-      url: ${{ steps.get_info.outputs.url }}
-      targetSha: ${{ env.targetSha }}
-      targetRef: ${{ env.targetRef }}
-      prState: ${{ env.prState }}
-      repo_name: ${{ steps.get_info.outputs.repoNmae }}
+      actionUrl: ${{ steps.getProjectInfo.outputs.actionUrl }}
+      targetCommitId: ${{ env.targetCommitId }}
+      targetBranch: ${{ env.targetBranch }}
+      prState: ${{ steps.prInfo.outputs.prState }}
+      repoName: ${{ steps.getProjectInfo.outputs.repoNmae }}
     steps:
-    - name: 拉取代码
-      uses: actions/checkout@v5
-    - name: 获取信息
-      id: get_info
-      uses: ./.github/actions/getProjectInfo
-    - name: Summary base info
-      run: |
-        cat << EOF >> $GITHUB_STEP_SUMMARY
-        # BUILD INFO
-        |Tatget ref|Target sha|Artifact save days|
-        |:-:|:-:|:-:|
-        EOF
-        if [ '${{ inputs.additionalFunctions }}' == 'Build PR' ]; then
-          echo "|===|===|${{ inputs.artifactSaveDays }}|" >> $GITHUB_STEP_SUMMARY
-        else
-          echo "|${{ env.targetRef }}|${{ env.targetSha }}|${{ inputs.artifactSaveDays }}|" >> $GITHUB_STEP_SUMMARY
-        fi
-    - name: Get and summary PR info
-      if: inputs.additionalFunctions == 'Build PR'
-      uses: ./.github/actions/getPrInfo
-      with:
-        prId: ${{ inputs.PR_ID }}
-        prApprove: true
+      - name: 拉取代码
+        uses: actions/checkout@v6
+      - name: 处理和检查输入的参数
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const additionalFunctions = "${{ inputs.additionalFunctions }}";
+            if (additionalFunctions == 'Build PR') {
+              const PR_ID = "${{ inputs.PR_ID }}";
+              const prNumber = Number(PR_ID.trim());
+              if (!Number.isInteger(prNumber) || prNumber <= 0) {
+                core.setFailed(`The format of the PR number entered is incorrect. The input value is: ${PR_ID}`);
+              }
+            }
+      - name: 获取信息
+        id: getProjectInfo
+        uses: ./.github/actions/getProjectInfo
+      - name: Summary base info
+        run: |
+          cat << EOF >> $GITHUB_STEP_SUMMARY
+          # BUILD INFO
+          |Tatget ref|Target sha|Artifact save days|
+          |:-:|:-:|:-:|
+          EOF
+          if [ '${{ inputs.additionalFunctions }}' == 'Build PR' ]; then
+            echo "|===|===|${{ inputs.artifactSaveDays }}|" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "|${{ env.targetBranch }}|${{ env.targetCommitId }}|${{ inputs.artifactSaveDays }}|" >> $GITHUB_STEP_SUMMARY
+          fi
+      - name: Get and summary PR info
+        if: inputs.additionalFunctions == 'Build PR'
+        id: prInfo
+        uses: ./.github/actions/getPrInfo
+        with:
+          prId: ${{ inputs.PR_ID }}
+          prApprove: true
 
   build-plugin:
     if: inputs.buildMode == 'Plugin' || inputs.buildMode == 'All' || inputs.additionalFunctions == 'Build PR'
@@ -76,91 +88,37 @@ jobs:
     env:
       java-version: "17"
     steps:
-    - name: 拉取代码
-      uses: actions/checkout@v5
-    - name: 拉取 PR 代码
-      if: inputs.additionalFunctions == 'Build PR'
-      run: gh pr checkout ${{ inputs.PR_ID }} && ls -la
-    - name: Setup java ${{ env.java-version }}
-      uses: actions/setup-java@v5
-      with:
-        java-version: ${{ env.java-version }}
-        distribution: 'temurin'
-    - name:  Cache local Gradle wrapper and repository
-      uses: ./.github/actions/cacheGradle
-    - name: Replace info
-      run: |
-        classPath=Common/src/main/java/cn/stevei5mc/serverhelper/common/BaseInfo.java
-        version=$(grep "project.version=" "./gradle.properties" | sed 's/project.version=//')
-        sed -i 's/{git.commit.id}/${{ needs.Initialize.outputs.targetSha }}/g; s/{git.branch}/${{ needs.Initialize.outputs.targetRef }}/g; s/{project.version}/'"$version"'/g' $classPath
-    - name:  Build project
-      run: |
-        chmod 777 gradlew && ls -lah
-        echo ">>>: Build project"
-        ./gradlew shadowJar javadocJar --no-daemon ${{ inputs.gradleExpandParameters }}
-    - name: Get artifact hash and copy files
-      run: |
-        bash .github/workflows/scripts/getArtifactHash.sh
-        bash .github/workflows/scripts/copyFiles.sh
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ needs.Initialize.outputs.repo_name }}-Dispatch-Build_${{ github.run_number }}
-        retention-days: ${{ inputs.artifactSaveDays }}
-        path: ./staging
-
-#  build-Docusaurus:
-#    if: inputs.buildMode == 'Build docusaurus' || inputs.buildMode == 'All'
-#    name: Build docusaurus
-#    needs: Initialize
-#    runs-on: ubuntu-latest
-#    steps:
-#    - name: 拉取代码
-#      uses: actions/checkout@v4
-#    - name: 拉取 PR 代码
-#      if: inputs.additionalFunctions == 'PR Approve'
-#      run: gh pr checkout ${{ inputs.PR_ID }} && ls -la
-#    - uses: actions/setup-node@v4
-#      with:
-#        node-version: 18
-#    - name: 构建
-#      run: |
-#        cd Docusaurus
-#        yarn install --frozen-lockfile
-#        yarn build
-#        cd ../
-#    - name: 上传构建
-#      uses: actions/upload-pages-artifact@v3
-#      with:
-#        path: Docusaurus/build
-#        retention-days: ${{ inputs.artifactSaveDays }}
-
-#  PR-Approve:
-#    if: inputs.additionalFunctions == 'PR Approve' && needs.Initialize.outputs.prState == 'open' && always()
-#    name: PR Approve
-#    needs: [Initialize,build-plugin,build-Docusaurus]
-#    runs-on: ubuntu-latest
-#    permissions:
-#      pull-requests: write
-#    steps:
-#    - name: 拉取代码
-#      uses: actions/checkout@v4
-#    - name: 准备信息模板
-#      run: |
-#        sed -i 's/action_url/${{ needs.Initialize.outputs.url }}/g' .github/template/*.md
-
-#  deploy-gitHub-pages:
-#    if: inputs.additionalFunctions == 'Deploy gitHub pages'
-#    name: Deploy gitHub pages
-#    needs: [build-plugin,build-Docusaurus]
-#    permissions:
-#      pages: write
-#      id-token: write
-#    environment:
-#      name: github-pages
-#      url: ${{ steps.deployment.outputs.page_url }}
-#    runs-on: ubuntu-latest
-#    steps:
-#    - name: 部署到 GitHub Pages
-#      id: deployment
-#      uses: actions/deploy-pages@v4
+      - name: 拉取代码
+        uses: actions/checkout@v6
+      - name: 拉取 PR 代码
+        if: inputs.additionalFunctions == 'Build PR'
+        run: gh pr checkout ${{ inputs.PR_ID }} && ls -la
+      - name: Setup java ${{ env.java-version }}
+        uses: actions/setup-java@v5
+        with:
+          java-version: ${{ env.java-version }}
+          distribution: 'temurin'
+      - name:  Cache local Gradle wrapper and repository
+        uses: ./.github/actions/cacheGradle
+      - name: Replace info
+        run: |
+          classPath=Common/src/main/java/cn/stevei5mc/serverhelper/common/BaseInfo.java
+          version=$(grep "project.version=" "./gradle.properties" | sed 's/project.version=//')
+          sed -i 's|{git.commit.id}|${{ needs.Initialize.outputs.targetCommitId }}|g; s|{git.branch}|${{ needs.Initialize.outputs.targetBranch }}|g; s|{project.version}|'"$version"'|g' $classPath
+      - name: Set gradlew 777 permission
+        run: chmod 777 gradlew && ls -lah
+      - name:  Build project
+        run: ./gradlew shadowJar javadocJar --no-daemon --parallel ${{ inputs.gradleExpandParameters }}
+      - name: Get artifact hash
+        if: inputs.artifactSaveDays >= 1
+        run: bash .github/workflows/scripts/getArtifactHash.sh
+      - name: Copy files
+        if: inputs.artifactSaveDays >= 1
+        run:  bash .github/workflows/scripts/copyFiles.sh
+      - name: Upload artifact
+        if: inputs.artifactSaveDays >= 1
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ needs.Initialize.outputs.repoName }}-Dispatch-Build_${{ github.run_number }}
+          retention-days: ${{ inputs.artifactSaveDays }}
+          path: ./staging
