@@ -1,2 +1,5 @@
+[libraries]
+lombok = { module = "org.projectlombok:lombok", version = "1.18.42" }
+
 [plugins]
 shadow = { id = "com.gradleup.shadow", version = "8.3.9" }

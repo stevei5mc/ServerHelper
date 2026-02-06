@@ -45,9 +45,9 @@ public class PlayerListener implements Listener {
             ArrayList<String> secretsCmd = new ArrayList<>(main.getConfig().getStringList("commands.usageLog.secretsList"));
             if (!secretsCmd.isEmpty()) {
                 for (String secrets : secretsCmd) {
+                    String cmd = secrets.startsWith("/") ? secrets : "/" + secrets;
                     if (message.startsWith(secrets)) {
-                        message = secrets + "***";
-                        break;
+                        message = secrets + " ***";
                     }
                 }
             }
