@@ -23,7 +23,7 @@ on:
         required: false
         default: 'Not used'
         type: choice
-        options: ['Not used','Build PR']
+        options: ['Not used','Build PR','Release snapshot','Delete snapshot']
       PR_ID:
         description: 'PR number'
         required: false
@@ -53,8 +53,11 @@ jobs:
               const PR_ID = "${{ inputs.PR_ID }}";
               const prNumber = Number(PR_ID.trim());
               if (!Number.isInteger(prNumber) || prNumber <= 0) {
-                core.setFailed(`The format of the PR number entered is incorrect. The input value is: ${PR_ID}`);
+                core.setFailed(`输入的PR编号格式不正确。输入值为: ${PR_ID}`);
               }
+            }
+            if (additionalFunctions == 'Release snapshot' && ${{ inputs.artifactSaveDays }} < 1) {
+              core.setFailed(`构建后的 artifact 保存天数为 ${{ inputs.artifactSaveDays }}，必须 >= 1，否则无法正常发布快照版本`);
             }
       - name: 获取信息
         id: getProjectInfo
@@ -80,7 +83,7 @@ jobs:
           prApprove: true
 
   build-plugin:
-    if: inputs.buildMode == 'Plugin' || inputs.buildMode == 'All' || inputs.additionalFunctions == 'Build PR'
+    if: ((inputs.buildMode == 'Plugin' || inputs.buildMode == 'All') && inputs.additionalFunctions != 'Delete snapshot') || inputs.additionalFunctions == 'Build PR' || inputs.additionalFunctions == 'Release snapshot'
     name: Build plugin
     needs: Initialize
     runs-on: ubuntu-latest
@@ -122,3 +125,35 @@ jobs:
           name: ${{ needs.Initialize.outputs.repoName }}-Dispatch-Build_${{ github.run_number }}
           retention-days: ${{ inputs.artifactSaveDays }}
           path: ./staging
+
+  post-processing:
+    if: inputs.additionalFunctions != 'Not used' && inputs.additionalFunctions != 'Build PR' && (inputs.additionalFunctions == 'Release snapshot' || inputs.additionalFunctions == 'Delete snapshot' && always())
+    needs: [Initialize, build-plugin]
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v6
+      - name: 删除快照
+        if: inputs.additionalFunctions == 'Release snapshot' || inputs.additionalFunctions == 'Delete snapshot'
+        run: |
+          if gh release view snapshot-version >/dev/null 2>&1; then
+            echo "正在删除快照版本"
+            gh release delete snapshot-version --yes --cleanup-tag
+          fi
+      - name: 下载发布需要的文件
+        if: inputs.additionalFunctions == 'Release snapshot'
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.Initialize.outputs.repoName }}-Dispatch-Build_${{ github.run_number }}
+          path: staging
+      - name: 发布快照版本
+        if: inputs.additionalFunctions == 'Release snapshot'
+        run: |
+          ls -lah ./staging
+          gh release create snapshot-version ./staging/*.* --prerelease --target "${{ needs.Initialize.outputs.targetBranch }}" \
+            --title "Snapshot version" \
+            --notes "> [!NOTE]
+            > **该版本为快照版本，仅供体验测试使用，若在生产环境中使用需谨慎考虑！！！**
+            > **快照版本对应分支为 `"${{ needs.Initialize.outputs.targetBranch }}`"**
+          gh release view snapshot-version
