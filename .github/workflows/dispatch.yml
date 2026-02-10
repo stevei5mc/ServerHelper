@@ -127,10 +127,12 @@ jobs:
           path: ./staging
 
   post-processing:
-    if: inputs.additionalFunctions != 'Not used' && inputs.additionalFunctions != 'Build PR' && (inputs.additionalFunctions == 'Release snapshot' || (inputs.additionalFunctions == 'Delete snapshot' && always()))
+    if: inputs.additionalFunctions != 'Not used' && inputs.additionalFunctions != 'Build PR' && ((inputs.additionalFunctions == 'Release snapshot') || (inputs.additionalFunctions == 'Delete snapshot' && always()))
     needs: [Initialize, build-plugin]
     runs-on: ubuntu-slim
     timeout-minutes: 5
+    permissions:
+      contents: write
     steps:
       - name: 拉取代码
         uses: actions/checkout@v6
@@ -155,5 +157,5 @@ jobs:
             --title "Snapshot version" \
             --notes "> [!NOTE]
             > **该版本为快照版本，仅供体验测试使用，若在生产环境中使用需谨慎考虑！！！**
-            > **快照版本对应分支为 `"${{ needs.Initialize.outputs.targetBranch }}`"**
+            > **快照版本对应分支为 `"${{ needs.Initialize.outputs.targetBranch }}`**"
           gh release view snapshot-version
