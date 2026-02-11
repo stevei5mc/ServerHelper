@@ -153,6 +153,7 @@ jobs:
         if: inputs.additionalFunctions == 'Release snapshot'
         run: |
           ls -lah ./staging
-          gh release create snapshot-version ./staging/*.* --prerelease --target "$(echo ${{ needs.Initialize.outputs.targetBranch }})" --title "Snapshot version" \
-            --notes "> [!NOTE]\n> **该版本为快照版本，仅供体验测试使用，若在生产环境中使用需谨慎考虑！！！**\n> **快照版本对应分支为 `${{ needs.Initialize.outputs.targetBranch }}`**"
+          branch=$(echo ${{ needs.Initialize.outputs.targetBranch }})
+          gh release create snapshot-version ./staging/*.* --prerelease --target "$branch" --title "Snapshot version" \
+            --notes "> [!NOTE]\n> **该版本为快照版本，仅供体验测试使用，若在生产环境中使用需谨慎考虑！！！**\n> **快照版本对应分支为 `$branch`**"
           gh release view snapshot-version
