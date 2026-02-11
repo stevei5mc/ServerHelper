@@ -127,7 +127,7 @@ jobs:
           path: ./staging
 
   post-processing:
-    if: inputs.additionalFunctions != 'Not used' && inputs.additionalFunctions != 'Build PR' && ((inputs.additionalFunctions == 'Release snapshot') || (inputs.additionalFunctions == 'Delete snapshot'))
+    if: inputs.additionalFunctions == 'Release snapshot' || (inputs.additionalFunctions == 'Delete snapshot' && needs.Initialize.result == 'success')
     needs: [Initialize, build-plugin]
     runs-on: ubuntu-slim
     timeout-minutes: 5
