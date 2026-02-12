@@ -134,7 +134,7 @@ jobs:
           path: ./staging
 
   post-processing:
-    if: inputs.additionalFunctions == 'Release snapshot' && needs.build-plugin.result == 'success')
+    if: inputs.additionalFunctions == 'Release snapshot' && needs.build-plugin.result == 'success'
     needs: [Initialize, build-plugin]
     runs-on: ubuntu-slim
     timeout-minutes: 5
