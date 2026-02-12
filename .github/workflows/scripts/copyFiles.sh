@@ -1,5 +1,6 @@
 #!/bin/bash
 pwd
+oldDir="$(pwd)"
 mkdir -vp staging
 echo "--------------------"
 version=$(grep "project.version=" "./gradle.properties" | sed 's/project.version=//')
@@ -10,6 +11,7 @@ do
     echo "--------------------"
 done
 cd ./staging
-cat ServerHelper-*-$version.sha256 >> ServerHelper-$version.sha256
+cat ServerHelper-*-$version.sha256 >> ServerHelper-$version-all.sha256
+rm -rf ./ServerHelper-*-$version.sha256
 ls -lah
 cd ../
