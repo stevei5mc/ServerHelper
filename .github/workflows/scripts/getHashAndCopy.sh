@@ -22,6 +22,6 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 echo "$hashSha256File 校验成功。"
-rm -f ./"ServerHelper-$edition-$version.sha256" # 删除临时的哈希记录文件
+rm -f ./"ServerHelper-*-$version.sha256" # 删除临时的哈希记录文件
 ls -lah
 cd ../
