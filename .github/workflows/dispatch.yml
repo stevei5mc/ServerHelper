@@ -150,8 +150,9 @@ jobs:
         if: inputs.additionalFunctions == 'Release snapshot'
         run: |
           ls -lah ./staging
-          bash .github/workflows/scripts/verifyHash.sh "./staging" "ServerHelper-*-all_files.sha256"
-          rm -f ./staging/ServerHelper-*-all.sha256
+          version=$(grep "project.version=" "./gradle.properties" | sed 's/project.version=//')
+          bash .github/workflows/scripts/verifyHash.sh "./staging" "ServerHelper-$version-all_files.sha256"
+          rm -f ./staging/ServerHelper-$version-all_files.sha256
           cat > ./release_notes.md << 'EOF'
           > [!NOTE]
           该版本为快照版本，仅供体验测试使用，若在生产环境中使用需谨慎考虑！！！
