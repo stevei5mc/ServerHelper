@@ -16,7 +16,7 @@ cd ./staging
 cat ServerHelper-*-$version.sha256 >> ServerHelper-$version-all_files.sha256 # 合并哈希记录到一个文件上
 ls -lah
 # 在上传之前先校验文件一遍以防出在复制时出现问题
-sha256sum -c "ServerHelper-$version-all-files.sha256"
+sha256sum -c "ServerHelper-$version-all_files.sha256"
 if [ $? -ne 0 ]; then
     echo "$hashSha256File 校验失败"
     exit 1
