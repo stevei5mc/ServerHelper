@@ -9,7 +9,7 @@ do
     sha256sum "ServerHelper-$edition"-*.jar >> "ServerHelper-$edition-$version.sha256"
     ls -lah
     cd $oldDir
-    cp ./*.* $oldDir/staging
+    cp ./$edition/target/*.* ./staging
 done
 cd ./staging
 ls -lah
