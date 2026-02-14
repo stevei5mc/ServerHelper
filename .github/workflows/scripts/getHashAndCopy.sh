@@ -5,13 +5,15 @@ version=$(grep "project.version=" "./gradle.properties" | sed 's/project.version
 rm -rf ./Common/target/ServerHelper-Common-$version.jar   # 删除掉无用文件，因为这个文件是存放着通用的代码的（已在编译时一起打包进其他的jar里）
 for edition in Common Nukkit WaterdogPE
 do
+    cd ./$edition/target/
     sha256sum "ServerHelper-$edition"-*.jar >> "ServerHelper-$edition-$version.sha256"
-    ls -lah ./$edition/target/
-    cp ./$edition/target/*.* ./staging
+    ls -lah
+    cd $oldDir
+    cp ./*.* $oldDir/staging
 done
 cd ./staging
 ls -lah
-cat "ServerHelper-*-$version.sha256" >> "ServerHelper-$version-all-files.sha256" # 合并哈希记录到一个文件上
+cat "ServerHelper-*-$version.sha256" | tee "ServerHelper-$version-all-files.sha256" # 合并哈希记录到一个文件上
 # 在上传之前先校验文件一遍以防出在复制时出现问题
 sha256sum -c "ServerHelper-$version-all-files.sha256"
 if [ $? -ne 0 ]; then
