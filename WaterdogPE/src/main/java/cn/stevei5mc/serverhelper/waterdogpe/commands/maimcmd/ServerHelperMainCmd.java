@@ -14,6 +14,6 @@ public class ServerHelperMainCmd extends CommandBase {
 
     @Override
     public void sendHelp(CommandSender sender) {
-        sender.sendMessage("/wdshr [version | reload]");
+        sender.sendMessage(this.getAliasesArray()[0] +" [version | reload]");
     }
 }
