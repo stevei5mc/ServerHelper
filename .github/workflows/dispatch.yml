@@ -90,7 +90,7 @@ jobs:
           fi
 
   build-plugin:
-    if: (inputs.buildMode == 'Plugin' || inputs.buildMode == 'All') || inputs.additionalFunctions == 'Build PR' || inputs.additionalFunctions == 'Release snapshot'
+    if: ((inputs.buildMode == 'Plugin' || inputs.buildMode == 'All') && inputs.additionalFunctions != 'Delete snapshot') || inputs.additionalFunctions == 'Build PR' || inputs.additionalFunctions == 'Release snapshot'
     name: Build plugin
     needs: Initialize
     runs-on: ubuntu-latest
