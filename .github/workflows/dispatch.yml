@@ -162,5 +162,5 @@ jobs:
           该版本为快照版本，仅供体验测试使用，若在生产环境中使用需谨慎考虑！！！
           快照版本对应分支为 `${{ env.branch }}`
           EOF
-          gh release create snapshot-version ./staging/*.* --prerelease --target "${{ env.branch }}" --title "Snapshot version" --notes-file ./release_notes.md --generate-notes
+          gh release create snapshot-version ./staging/*.* --prerelease --target "${{ env.branch }}" --title "Snapshot version" --notes-file ./release_notes.md
           gh release view snapshot-version
