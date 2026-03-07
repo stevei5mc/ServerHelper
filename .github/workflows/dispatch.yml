@@ -144,7 +144,7 @@ jobs:
     steps:
       - name: 拉取代码
         uses: actions/checkout@v6
-      - nmae: 发布快照版本
+      - name: 发布快照版本
         if: inputs.additionalFunctions == 'Release snapshot'
         uses: .github/actions/releaseSnapshot
         with:
