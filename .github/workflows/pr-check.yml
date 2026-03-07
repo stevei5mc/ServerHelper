@@ -2,6 +2,11 @@ name: PR CI
 
 on:
   pull_request:
+    paths-ignore:
+      - ".github/actions/getReleaseInfo/action.yml"
+      - ".github/actions/releaseSnapshot/action.yml"
+      - ".github/workflows/dispatch.yml"
+      - ".github/workflows/tagpush.yml"
 
 env:
   GH_TOKEN: ${{ github.token }}
