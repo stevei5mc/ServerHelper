@@ -43,7 +43,6 @@ jobs:
       repoName: ${{ steps.getProjectInfo.outputs.repoNmae }}
     steps:
       - name: 拉取代码
-        if: inputs.additionalFunctions != 'Delete snapshot'
         uses: actions/checkout@v6
       - name: 处理和检查输入的参数
         if: inputs.additionalFunctions != 'Delete snapshot'
