@@ -2,7 +2,7 @@ package cn.stevei5mc.serverhelper.nukkit.commands.maincmd.sub;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
-import cn.stevei5mc.serverhelper.common.BaseInfo;
+import cn.stevei5mc.serverhelper.common.baseinfo.PermissionsInfo;
 import cn.stevei5mc.serverhelper.nukkit.commands.base.BaseSubCommand;
 
 public class ReloadCmd extends BaseSubCommand {
@@ -12,7 +12,7 @@ public class ReloadCmd extends BaseSubCommand {
 
     @Override
     public boolean canUser(CommandSender sender) {
-        return sender.hasPermission(BaseInfo.reloadPermission);
+        return sender.hasPermission(PermissionsInfo.ADMIN_RELOAD.getPermission());
     }
 
     @Override
