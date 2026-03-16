@@ -48,8 +48,8 @@ public class PlayerListener implements Listener {
             if (!secretsCommands.isEmpty()) {
                 for (String secrets : secretsCommands) {
                     String cmd = secrets.startsWith("/") ? secrets : "/" + secrets;
-                    if (message.startsWith(cmd)) {
-                        message = secrets + " ***";
+                    if (message.startsWith(cmd.toLowerCase().trim())) {
+                        message = cmd + " ***";
                     }
                 }
             }

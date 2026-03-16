@@ -16,9 +16,7 @@ public class BaseInfo {
     // 配置文件信息
     public static final int configFileVersion = 1;
     public static final int languageFilesVersion = 1;
-    public static final String settingsFilesPath = "Settings/";
-    public static final String baseLanguagesFilesPath = "languages/base/";
-    public static final String customLanguagesFilesPath = "languages/custom/";
+
     @Getter
     private static final List<String> languages = Arrays.asList(
             /*"bg_BG", "cs_CZ","da_DK","de_DE","el_GR","en_GB","en_US","es_ES","es_MX","fi_FI","fr_CA","fr_FR","hu_HU","id_ID","it_IT",

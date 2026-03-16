@@ -7,7 +7,7 @@ import dev.waterdog.waterdogpe.event.defaults.PlayerChatEvent;
 import dev.waterdog.waterdogpe.player.ProxiedPlayer;
 
 import java.util.ArrayList;
-import java.util.Optional;
+import java.util.List;
 
 public class PlayerListener {
     private static final ServerHelperMain main = ServerHelperMain.getInstance();
@@ -29,18 +29,24 @@ public class PlayerListener {
 
     public static void onDispatchCommand(DispatchCommandEvent event) {
         if (main.getConfig().getBoolean("commands.usageLog.enable", true) && event.getSender().isPlayer()) {
-            StringBuilder cmd = new StringBuilder();
-            cmd.append(event.getCommand());
-            ArrayList<String> secretsCmd = Optional.ofNullable(main.getConfig().getStringList("commands.usageLog.secretsList"))
-                .map(ArrayList::new).orElse(new ArrayList<>());
-            if (!secretsCmd.isEmpty() && secretsCmd.contains(event.getCommand()) && event.getArgs().length >= 1) {
-                cmd.append(" ***");
-            }else if (event.getArgs().length >= 1){
-                for (String param: event.getArgs()) {
-                    cmd.append(" ").append(param);
+            StringBuilder cmdBuilder = new StringBuilder();
+            cmdBuilder.append(event.getCommand());
+            if (event.getArgs().length >= 1) {
+                for (String param : event.getArgs()) {
+                    cmdBuilder.append(" ").append(param);
                 }
             }
-            main.getLogger().info(event.getSender().getName() + ": /" + cmd);
+            String cmd = cmdBuilder.toString().toLowerCase().trim();
+            String cmd2Log = cmd;
+            List<String> secretsCmd = main.getConfig().getStringList("commands.usageLog.secretsList", new ArrayList<>());
+            if (!secretsCmd.isEmpty()) {
+                for (String secretCmd: secretsCmd) {
+                    if (cmd.startsWith(secretCmd.toLowerCase().trim())) {
+                        cmd2Log = secretCmd.toLowerCase().trim() + " ***";
+                    }
+                }
+            }
+            main.getLogger().info(event.getSender().getName() + ": /" + cmd2Log);
         }
     }
 }
