@@ -12,18 +12,19 @@ public enum PermissionsInfo {
     BAN_CMD_BYPASS(Type.OTHER, "banCommands.bypass");
 
 
-    private final String ROOT = "serverhelper.";
+    private static final String ROOT = "serverhelper.";
     @Getter
-    private final String type;
+    private final Type type;
     @Getter
     private final String permission;
 
+
     PermissionsInfo(Type type, String node) {
-        this.type = type.name;
-        if (node == null) {
-            this.permission = ROOT + type.getNode();
+        this.type = type;
+        if (type.equals(Type.NONE)) {
+            this.permission = ROOT + (node != null ? node : "unknown");
         }else {
-            this.permission = ROOT + type.getNode() + "." +node;
+            this.permission = ROOT + type.getNode() + (node != null ? "." + node : "");
         }
     }
 

@@ -1,5 +1,10 @@
 [libraries]
 lombok = { module = "org.projectlombok:lombok", version = "1.18.42" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+
+[versions]
+junit = "5.10.2"
 
 [plugins]
 shadow = { id = "com.gradleup.shadow", version = "8.3.9" }

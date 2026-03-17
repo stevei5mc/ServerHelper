@@ -16,7 +16,7 @@ tasks{
         )}
         from("${rootDir}/resources")
     }
-    shadowJar {
-        archiveClassifier.set("")
-    }
+    shadowJar { archiveClassifier.set("") }
+    testClasses  { enabled = false }
+    test { enabled = false }
 }
