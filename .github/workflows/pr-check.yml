@@ -58,11 +58,11 @@ jobs:
         run: chmod 777 gradlew && ls -lah
       - name:  Build project
         id: build
-        run: ./gradlew shadowJar javadocJar --no-daemon --parallel ${{ inputs.gradleExpandParameters }}
+        run: ./gradlew shadowJar javadocJar --no-daemon --parallel
       - name: Get artifact hash and copy files
         run:  bash .github/workflows/scripts/getHashAndCopy.sh
       - name: 上传测试报告
-        if: steps.build.conclusion == 'failure'
+        if: steps.build.outcome == 'failure'
         uses: ./.github/actions/uploadTestReportFiles
       - name: Upload artifact
         uses: actions/upload-artifact@v7
