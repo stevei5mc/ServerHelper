@@ -121,7 +121,11 @@ jobs:
       - name: Set gradlew 777 permission
         run: chmod 777 gradlew && ls -lah
       - name:  Build project
+        id: build
         run: ./gradlew shadowJar javadocJar --no-daemon --parallel ${{ inputs.gradleExpandParameters }}
+      - name: 上传测试报告
+        if: steps.build.conclusion == 'failure'
+        uses: ./.github/actions/uploadTestReportFiles
       - name: Get artifact hash and copy files
         if: inputs.artifactSaveDays >= 1
         run:  bash .github/workflows/scripts/getHashAndCopy.sh

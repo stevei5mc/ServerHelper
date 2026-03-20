@@ -55,17 +55,17 @@ jobs:
           version=$(grep "project.version=" "./gradle.properties" | sed 's/project.version=//')
           sed -i 's|{git.commit.id}|${{ needs.Initialize.outputs.targetCommitId }}|g; s|{git.branch}|${{ needs.Initialize.outputs.targetBranch }}|g; s|{project.version}|'"$version"'|g' $classPath
       - name: Set gradlew 777 permission
-        id: build
         run: chmod 777 gradlew && ls -lah
       - name:  Build project
+        id: build
         run: ./gradlew shadowJar javadocJar --no-daemon --parallel ${{ inputs.gradleExpandParameters }}
       - name: Get artifact hash and copy files
         run:  bash .github/workflows/scripts/getHashAndCopy.sh
+      - name: 上传测试报告
+        if: steps.build.conclusion == 'failure'
+        uses: ./.github/actions/uploadTestReportFiles
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
           name: ${{ needs.Initialize.outputs.repoName }}-PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
           path: ./staging
-      - name: ff
-        if: steps.build.conclusion == 'failure'
-        uses: ./.github/actions/uploadTestReportFiles
