@@ -1,0 +1,18 @@
+name: "Upload test report files"
+description: "Upload test report files"
+
+runs:
+  using: "composite"
+  steps:
+    - name: 压缩文件
+      shell: bash
+      run: |
+        pwd
+        mkdir test-repot-logs
+        zip -r ./test-repot-logs/ServerHelper-Common-Test_report.zip ./Common/build/reports/test/
+        ls -lah ./test-repot-logs
+    - name: Upload artifact
+      uses: actions/upload-artifact@v7
+      with:
+        name: ${{ needs.Initialize.outputs.repoName }}-Test_report_logs
+        path: ./test-repot-logs/*.zip

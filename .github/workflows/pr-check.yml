@@ -28,9 +28,9 @@ jobs:
         uses: actions/checkout@v6
       - name: 获取信息
         id: getProjectInfo
-        uses: ./.github/actions/getProjectInfo
+        uses: ./.github/actions/getInfo/projectInfo
       - name: Get and summary PR info
-        uses: ./.github/actions/getPrInfo
+        uses: ./.github/actions/getInfo/prInfo
 
   build-plugin:
     name: Build plugin
@@ -55,13 +55,17 @@ jobs:
           version=$(grep "project.version=" "./gradle.properties" | sed 's/project.version=//')
           sed -i 's|{git.commit.id}|${{ needs.Initialize.outputs.targetCommitId }}|g; s|{git.branch}|${{ needs.Initialize.outputs.targetBranch }}|g; s|{project.version}|'"$version"'|g' $classPath
       - name: Set gradlew 777 permission
+        id: build
         run: chmod 777 gradlew && ls -lah
       - name:  Build project
         run: ./gradlew shadowJar javadocJar --no-daemon --parallel ${{ inputs.gradleExpandParameters }}
       - name: Get artifact hash and copy files
         run:  bash .github/workflows/scripts/getHashAndCopy.sh
       - name: Upload artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ needs.Initialize.outputs.repoName }}-PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
           path: ./staging
+      - name: ff
+        if: steps.build.conclusion == 'failure'
+        uses: ./.github/actions/uploadTestReportFiles

@@ -63,7 +63,7 @@ jobs:
       - name: 获取信息
         if: inputs.additionalFunctions != 'Delete snapshot'
         id: getProjectInfo
-        uses: ./.github/actions/getProjectInfo
+        uses: ./.github/actions/getInfo/projectInfo
       - name: Summary base info
         if: inputs.additionalFunctions != 'Delete snapshot'
         run: |
@@ -80,7 +80,7 @@ jobs:
       - name: Get and summary PR info
         if: inputs.additionalFunctions == 'Build PR'
         id: prInfo
-        uses: ./.github/actions/getPrInfo
+        uses: ./.github/actions/getInfo/prInfo
         with:
           prId: ${{ inputs.PR_ID }}
           prApprove: true
@@ -127,7 +127,7 @@ jobs:
         run:  bash .github/workflows/scripts/getHashAndCopy.sh
       - name: Upload artifact
         if: inputs.artifactSaveDays >= 1
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ needs.Initialize.outputs.repoName }}-Dispatch-Build_${{ github.run_number }}
           retention-days: ${{ inputs.artifactSaveDays }}

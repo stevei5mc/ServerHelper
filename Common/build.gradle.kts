@@ -7,4 +7,5 @@ dependencies {
 tasks {
     processResources { enabled = false }
     test { useJUnitPlatform() }
+    jar { dependsOn("test") }
 }
