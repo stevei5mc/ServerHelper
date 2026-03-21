@@ -15,7 +15,7 @@ runs:
       run: |
         pwd
         mkdir test-repot-logs
-        zip -r ./test-repot-logs/ServerHelper-Common-Test_report.zip ./Common/build/reports/test/
+        zip -r ./test-repot-logs/ServerHelper-Common-Test_report.zip ./Common/build/reports/tests/
         ls -lah ./test-repot-logs
     - name: Upload artifact
       uses: actions/upload-artifact@v7
