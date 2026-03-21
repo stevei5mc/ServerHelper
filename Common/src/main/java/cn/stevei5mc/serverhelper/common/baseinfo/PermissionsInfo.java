@@ -7,7 +7,7 @@ public enum PermissionsInfo {
     ADMIN_MAIN(Type.ADMIN, null),
     ADMIN_RELOAD(Type.ADMIN, "reload"),
 
-    STAFF_CHAT(Type.STAFF, "chat."),
+    STAFF_CHAT(Type.STAFF, "chat"),
 
     BAN_CMD_BYPASS(Type.OTHER, "banCommands.bypass");
 
