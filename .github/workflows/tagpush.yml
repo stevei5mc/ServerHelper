@@ -64,13 +64,10 @@ jobs:
       - name:  Build project
         id: build
         run: ./gradlew shadowJar javadocJar --no-daemon --parallel
-      - name: Get artifact hash
-        run: bash .github/workflows/scripts/getArtifactHash.sh
-      - name: Prepare releases files
-        id: build
-        run: bash .github/workflows/scripts/prepareReleasesFiles.sh
+      - name: Get artifact hash and copy files
+        run:  bash .github/workflows/scripts/getHashAndCopy.sh
       - name: 上传测试报告
-        if: steps.build.outcome == 'failure'
+        if: always() && steps.build.outcome == 'failure'
         uses: ./.github/actions/uploadTestReportFiles
       - name: Upload artifact
         uses: actions/upload-artifact@v7
