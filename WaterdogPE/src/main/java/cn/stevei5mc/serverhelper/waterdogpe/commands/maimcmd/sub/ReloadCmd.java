@@ -1,6 +1,6 @@
 package cn.stevei5mc.serverhelper.waterdogpe.commands.maimcmd.sub;
 
-import cn.stevei5mc.serverhelper.common.BaseInfo;
+import cn.stevei5mc.serverhelper.common.baseinfo.PermissionsInfo;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.base.SubCommandBase;
 import dev.waterdog.waterdogpe.command.CommandSender;
 import org.cloudburstmc.protocol.bedrock.data.command.CommandParamData;
@@ -17,7 +17,7 @@ public class ReloadCmd extends SubCommandBase {
 
     @Override
     public boolean getPermission(CommandSender sender) {
-        return sender.hasPermission(BaseInfo.reloadPermission);
+        return sender.hasPermission(PermissionsInfo.ADMIN_RELOAD.getPermission());
     }
 
     @Override

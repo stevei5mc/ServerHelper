@@ -5,6 +5,7 @@ target/
 staging/
 .gradle/
 build/
+out/
 
 pom.xml.tag
 pom.xml.releaseBackup
