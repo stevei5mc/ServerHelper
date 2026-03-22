@@ -79,9 +79,9 @@ public class ManagePlayersForm {
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(baseLang.translateString("form-managerPlayer-queryInfo-title"));
         simple.setContent(
                 baseLang.translateString("form-managerPlayer-queryInfo-description", target.getName(), target.getLoginChainData().getXUID(), target.getLoginChainData().getClientUUID(),
-                PlayerDeviceInfoUtil.getDeviceOS(target.getLoginChainData().getDeviceOS()), target.getLoginChainData().getDeviceModel(), target.getLoginChainData().getDeviceId(),
+                PlayerDeviceInfoUtil.getDeviceOS(target.getLoginChainData().getDeviceOS()).getName(), target.getLoginChainData().getDeviceModel(), target.getLoginChainData().getDeviceId(),
                 target.getAddress()+":"+target.getPort(), target.getLoginChainData().getServerAddress(), target.getPing(),
-                target.getLoginChainData().getGameVersion(), target.getLoginChainData().getLanguageCode(), PlayerDeviceInfoUtil.getPlayerUi(target.getLoginChainData().getUIProfile()), PlayerDeviceInfoUtil.getDeviceControls(target.getLoginChainData().getCurrentInputMode()),
+                target.getLoginChainData().getGameVersion(), target.getLoginChainData().getLanguageCode(), PlayerDeviceInfoUtil.getPlayerUi(target.getLoginChainData().getUIProfile()).getName(), PlayerDeviceInfoUtil.getDeviceControls(target.getLoginChainData().getCurrentInputMode()).getName(),
                 Math.round(target.getX()), Math.round(target.getY()), Math.round(target.getZ()), target.getLevel().getName()
         ));
         simple.addButton(new ResponseElementButton(baseLang.translateString("form-managerPlayer-queryInfo-button-update")).onClicked(player -> queryPlayerInfoUi(admin,target)));

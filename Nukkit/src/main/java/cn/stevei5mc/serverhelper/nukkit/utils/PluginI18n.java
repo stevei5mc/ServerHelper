@@ -5,6 +5,7 @@ import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.utils.Config;
 import cn.stevei5mc.serverhelper.common.BaseInfo;
+import cn.stevei5mc.serverhelper.common.baseinfo.ResourcesPathInfo;
 import cn.stevei5mc.serverhelper.nukkit.ServerHelperMain;
 
 import java.util.HashMap;
@@ -24,10 +25,10 @@ public class PluginI18n {
         main.getLogger().info("Default language " + defaultLanguage);
         for (String languageName : BaseInfo.getLanguages()) {
             Config baseLangFile = new Config(Config.YAML);
-            baseLangFile.load(main.getResource(BaseInfo.baseLanguagesFilesPath + languageName + ".yml"));
+            baseLangFile.load(main.getResource(ResourcesPathInfo.LANGUAGES_BASE_FILES.getResourcesPath() + languageName + ".yml"));
             baseLanguagesMap.put(languageName, new Language(baseLangFile));
             Config privateLangFile = new Config(Config.YAML);
-            privateLangFile.load(main.getResource(BaseInfo.privateLanguagesFilesPath + languageName + ".yml"));
+            privateLangFile.load(main.getResource(ResourcesPathInfo.LANGUAGES_PRIVATE_FILES.getResourcesPath() + languageName + ".yml"));
             privateLanguagesMap.put(languageName,new Language(privateLangFile));
         }
     }
