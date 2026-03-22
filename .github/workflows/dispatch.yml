@@ -12,6 +12,11 @@ on:
       gradleExpandParameters:
         description: 'Gradle build expand parameters'
         required: false
+      uploadTestReport:
+        description: "Upload test report"
+        required: false
+        default: false
+        type: boolean
       artifactSaveDays:
         description: "Artifact retention days"
         required: false
@@ -124,7 +129,7 @@ jobs:
         id: build
         run: ./gradlew shadowJar javadocJar --no-daemon --parallel ${{ inputs.gradleExpandParameters }}
       - name: 上传测试报告
-        if: always() && steps.build.outcome == 'failure'
+        if: always() && (steps.build.outcome == 'failure' || inputs.uploadTestReport)
         uses: ./.github/actions/uploadTestReportFiles
       - name: Get artifact hash and copy files
         if: inputs.artifactSaveDays >= 1

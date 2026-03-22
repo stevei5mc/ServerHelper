@@ -59,11 +59,10 @@ jobs:
       - name:  Build project
         id: build
         run: ./gradlew shadowJar javadocJar --no-daemon --parallel
+      - name: 上传测试报告
+        uses: ./.github/actions/uploadTestReportFiles
       - name: Get artifact hash and copy files
         run:  bash .github/workflows/scripts/getHashAndCopy.sh
-      - name: 上传测试报告
-        if: always() && steps.build.outcome == 'failure'
-        uses: ./.github/actions/uploadTestReportFiles
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
