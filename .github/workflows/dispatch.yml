@@ -12,6 +12,11 @@ on:
       gradleExpandParameters:
         description: 'Gradle build expand parameters'
         required: false
+      uploadTestReport:
+        description: "Upload test report"
+        required: false
+        default: false
+        type: boolean
       artifactSaveDays:
         description: "Artifact retention days"
         required: false
@@ -23,7 +28,7 @@ on:
         required: false
         default: 'Not used'
         type: choice
-        options: ['Not used','Build PR']
+        options: ['Not used','Build PR','Release snapshot','Delete snapshot']
       PR_ID:
         description: 'PR number'
         required: false
@@ -45,6 +50,7 @@ jobs:
       - name: 拉取代码
         uses: actions/checkout@v6
       - name: 处理和检查输入的参数
+        if: inputs.additionalFunctions != 'Delete snapshot'
         uses: actions/github-script@v8
         with:
           script: |
@@ -53,13 +59,18 @@ jobs:
               const PR_ID = "${{ inputs.PR_ID }}";
               const prNumber = Number(PR_ID.trim());
               if (!Number.isInteger(prNumber) || prNumber <= 0) {
-                core.setFailed(`The format of the PR number entered is incorrect. The input value is: ${PR_ID}`);
+                core.setFailed(`输入的PR编号格式不正确。输入值为: ${PR_ID}`);
               }
             }
+            if (additionalFunctions == 'Release snapshot' && ${{ inputs.artifactSaveDays }} < 1) {
+              core.setFailed(`构建后的 artifact 保存天数为 ${{ inputs.artifactSaveDays }}，必须 >= 1，否则无法正常发布快照版本`);
+            }
       - name: 获取信息
+        if: inputs.additionalFunctions != 'Delete snapshot'
         id: getProjectInfo
-        uses: ./.github/actions/getProjectInfo
+        uses: ./.github/actions/getInfo/projectInfo
       - name: Summary base info
+        if: inputs.additionalFunctions != 'Delete snapshot'
         run: |
           cat << EOF >> $GITHUB_STEP_SUMMARY
           # BUILD INFO
@@ -74,13 +85,20 @@ jobs:
       - name: Get and summary PR info
         if: inputs.additionalFunctions == 'Build PR'
         id: prInfo
-        uses: ./.github/actions/getPrInfo
+        uses: ./.github/actions/getInfo/prInfo
         with:
           prId: ${{ inputs.PR_ID }}
           prApprove: true
+      - name: 删除快照
+        if: inputs.additionalFunctions == 'Release snapshot' || inputs.additionalFunctions == 'Delete snapshot'
+        run: |
+          if gh release view snapshot-version >/dev/null 2>&1; then
+            echo "正在删除快照版本"
+            gh release delete snapshot-version --yes --cleanup-tag
+          fi
 
   build-plugin:
-    if: inputs.buildMode == 'Plugin' || inputs.buildMode == 'All' || inputs.additionalFunctions == 'Build PR'
+    if: ((inputs.buildMode == 'Plugin' || inputs.buildMode == 'All') && inputs.additionalFunctions != 'Delete snapshot') || inputs.additionalFunctions == 'Build PR' || inputs.additionalFunctions == 'Release snapshot'
     name: Build plugin
     needs: Initialize
     runs-on: ubuntu-latest
@@ -108,17 +126,35 @@ jobs:
       - name: Set gradlew 777 permission
         run: chmod 777 gradlew && ls -lah
       - name:  Build project
+        id: build
         run: ./gradlew shadowJar javadocJar --no-daemon --parallel ${{ inputs.gradleExpandParameters }}
-      - name: Get artifact hash
+      - name: 上传测试报告
+        if: always() && (steps.build.outcome == 'failure' || inputs.uploadTestReport)
+        uses: ./.github/actions/uploadTestReportFiles
+      - name: Get artifact hash and copy files
         if: inputs.artifactSaveDays >= 1
-        run: bash .github/workflows/scripts/getArtifactHash.sh
-      - name: Copy files
-        if: inputs.artifactSaveDays >= 1
-        run:  bash .github/workflows/scripts/copyFiles.sh
+        run:  bash .github/workflows/scripts/getHashAndCopy.sh
       - name: Upload artifact
         if: inputs.artifactSaveDays >= 1
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ needs.Initialize.outputs.repoName }}-Dispatch-Build_${{ github.run_number }}
           retention-days: ${{ inputs.artifactSaveDays }}
           path: ./staging
+
+  post-processing:
+    if: needs.build-plugin.result == 'success' && inputs.additionalFunctions == 'Release snapshot'
+    needs: [Initialize, build-plugin]
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v6
+      - name: 发布快照版本
+        if: inputs.additionalFunctions == 'Release snapshot'
+        uses: ./.github/actions/releaseSnapshot
+        with:
+          artifactName: ${{ needs.Initialize.outputs.repoName }}-Dispatch-Build_${{ github.run_number }}
+          branchName: ${{ needs.Initialize.outputs.targetBranch }}

@@ -73,9 +73,9 @@ public class ManagePlayersForm {
         simple.setContent(
                 "玩家="+target.getName()+" XUID="+target.getLoginChainData().getXUID()+"\n"
                 +"UUID="+target.getLoginChainData().getClientUUID()+"\n"
-                +"设备系统="+ PlayerDeviceInfoUtil.getDeviceOS(target.getLoginChainData().getDeviceOS())+" 设备型号="+target.getLoginChainData().getDeviceModel()+"\n"
+                +"设备系统="+ PlayerDeviceInfoUtil.getDeviceOS(target.getLoginChainData().getDeviceOS()).getName()+" 设备型号="+target.getLoginChainData().getDeviceModel()+"\n"
                 +"设备ID="+target.getLoginChainData().getDeviceId()+"\n"
-                +"操作方式="+ PlayerDeviceInfoUtil.getDeviceControls(target.getLoginChainData().getCurrentInputMode())+ " UI="+ PlayerDeviceInfoUtil.getPlayerUi(target.getLoginChainData().getUIProfile())+ " 客户端版本="+target.getLoginChainData().getGameVersion()+"\n"
+                +"操作方式="+ PlayerDeviceInfoUtil.getDeviceControls(target.getLoginChainData().getCurrentInputMode()).getName()+ " UI="+ PlayerDeviceInfoUtil.getPlayerUi(target.getLoginChainData().getUIProfile()).getName() + " 客户端版本="+target.getLoginChainData().getGameVersion()+"\n"
                 +"使用语言="+target.getLoginChainData().getLanguageCode()+"\n"
                 +"链接IP="+target.getLoginChainData().getServerAddress()+"\n"
                 +"登录Ip="+target.getAddress()+":"+target.getPort()+" 延迟="+target.getPing()+"\n"

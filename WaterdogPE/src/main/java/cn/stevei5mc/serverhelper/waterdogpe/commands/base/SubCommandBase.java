@@ -7,7 +7,7 @@ import org.cloudburstmc.protocol.bedrock.data.command.CommandParamData;
 public abstract class SubCommandBase {
 
     protected ServerHelperMain main = ServerHelperMain.getInstance();
-    private String name;
+    private final String name;
 
     /**
      * @param name SubCommand name
