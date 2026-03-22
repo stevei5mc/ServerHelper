@@ -17,9 +17,7 @@ public class BaseInfo {
     // 配置文件信息
     public static final int configFileVersion = 1;
     public static final int languageFilesVersion = 1;
-    public static final String settingsFilesPath = "Settings/";
-    public static final String baseLanguagesFilesPath = "languages/base/";
-    public static final String privateLanguagesFilesPath = "languages/private/";
+
     @Getter
     private static final List<String> languages = Arrays.asList(
             "zh_CN"
@@ -28,10 +26,4 @@ public class BaseInfo {
     );
     @Getter
     private static final List<String> settings = Arrays.asList(/*"ban","kick","mute","warn"*/"banCommands");
-
-    // 权限信息
-    public static final String adminMainPermission = "serverhelper.admin";
-    public static final String reloadPermission = "serverhelper.admin.reload";
-    public static final String unbanCommandPermission = "serverhelper.admin.unban.commands";
-    public static final String staffChatPermission = "serverhelper.admin.staffChat";
 }

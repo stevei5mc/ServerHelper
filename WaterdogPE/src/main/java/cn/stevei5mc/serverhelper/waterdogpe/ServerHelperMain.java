@@ -1,7 +1,7 @@
 package cn.stevei5mc.serverhelper.waterdogpe;
 
 import cn.stevei5mc.serverhelper.common.BaseInfo;
-import cn.stevei5mc.serverhelper.common.utils.CommonUtils;
+import cn.stevei5mc.serverhelper.common.baseinfo.PermissionsInfo;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.maimcmd.ServerHelperMainCmd;
 import cn.stevei5mc.serverhelper.waterdogpe.listener.PlayerListener;
 import cn.stevei5mc.serverhelper.waterdogpe.utils.PluginI18n;
@@ -15,7 +15,6 @@ import lombok.Getter;
 public class ServerHelperMain extends Plugin {
     @Getter
     private static ServerHelperMain instance;
-    private final String cmdPrefix = "wd";
     private YamlConfig config;
 
     @Override
@@ -26,7 +25,7 @@ public class ServerHelperMain extends Plugin {
         this.getLogger().info(getPluginInfo().replace("\n", " §f| "));
         this.getLogger().warn("§c警告! §c本插件为免费且开源的，如果您付费获取获取的，则有可能被误导了");
         this.getLogger().info(BaseInfo.GH_URL);
-        this.getProxy().getCommandMap().registerCommand(new ServerHelperMainCmd(cmdPrefix+"serverhelper", "ServerHelper plugin command", BaseInfo.adminMainPermission, CommonUtils.toArray(cmdPrefix+"shr")));
+        this.getProxy().getCommandMap().registerCommand(new ServerHelperMainCmd("serverhelper-wdpe", "ServerHelper plugin command", PermissionsInfo.ADMIN_MAIN.getPermission(), "shr-wdpe"));
         this.getProxy().getEventManager().subscribe(PlayerChatEvent.class, PlayerListener::onPlayerChat);
         this.getProxy().getEventManager().subscribe(DispatchCommandEvent.class, PlayerListener::onDispatchCommand);
     }

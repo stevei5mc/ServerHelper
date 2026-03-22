@@ -1,7 +1,16 @@
 name: PR CI
 
+concurrency:
+  group: PR-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 on:
   pull_request:
+    paths-ignore:
+      - ".github/actions/getReleaseInfo/action.yml"
+      - ".github/actions/releaseSnapshot/action.yml"
+      - ".github/workflows/dispatch.yml"
+      - ".github/workflows/tagpush.yml"
 
 env:
   GH_TOKEN: ${{ github.token }}
@@ -19,9 +28,9 @@ jobs:
         uses: actions/checkout@v6
       - name: 获取信息
         id: getProjectInfo
-        uses: ./.github/actions/getProjectInfo
+        uses: ./.github/actions/getInfo/projectInfo
       - name: Get and summary PR info
-        uses: ./.github/actions/getPrInfo
+        uses: ./.github/actions/getInfo/prInfo
 
   build-plugin:
     name: Build plugin
@@ -48,13 +57,14 @@ jobs:
       - name: Set gradlew 777 permission
         run: chmod 777 gradlew && ls -lah
       - name:  Build project
-        run: ./gradlew shadowJar javadocJar --no-daemon --parallel ${{ inputs.gradleExpandParameters }}
-      - name: Get artifact hash
-        run: bash .github/workflows/scripts/getArtifactHash.sh
-      - name: Copy files
-        run:  bash .github/workflows/scripts/copyFiles.sh
+        id: build
+        run: ./gradlew shadowJar javadocJar --no-daemon --parallel
+      - name: 上传测试报告
+        uses: ./.github/actions/uploadTestReportFiles
+      - name: Get artifact hash and copy files
+        run:  bash .github/workflows/scripts/getHashAndCopy.sh
       - name: Upload artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ needs.Initialize.outputs.repoName }}-PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
           path: ./staging

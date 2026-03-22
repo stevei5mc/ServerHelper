@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
     api(project(":ServerHelper-Common"))
-    compileOnly("dev.waterdog.waterdogpe:waterdog:2.0.3")
+    compileOnly("dev.waterdog.waterdogpe:waterdog:2.0.4-SNAPSHOT")
 }
 
 tasks{
@@ -23,7 +23,7 @@ tasks{
         )}
         from("${rootDir}/resources")
     }
-    shadowJar {
-        archiveClassifier.set("")
-    }
+    shadowJar { archiveClassifier.set("") }
+    testClasses  { enabled = false }
+    test { enabled = false }
 }

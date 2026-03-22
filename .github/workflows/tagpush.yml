@@ -24,10 +24,10 @@ jobs:
         uses: actions/checkout@v6
       - name: 获取信息
         id: getProjectInfo
-        uses: ./.github/actions/getProjectInfo
+        uses: ./.github/actions/getInfo/projectInfo
       - name: 获取版本发布信息
         id: getReleaseInfo
-        uses: ./.github/actions/getReleaseInfo
+        uses: ./.github/actions/getInfo/releaseInfo
       - name: Summary base info
         uses: johngeorgewright/summary-action@v1.0.0
         with:
@@ -62,13 +62,15 @@ jobs:
       - name: Set gradlew 777 permission
         run: chmod 777 gradlew && ls -lah
       - name:  Build project
-        run: ./gradlew shadowJar javadocJar --no-daemon --parallel ${{ inputs.gradleExpandParameters }}
-      - name: Get artifact hash
-        run: bash .github/workflows/scripts/getArtifactHash.sh
-      - name: Prepare releases files
-        run: bash .github/workflows/scripts/prepareReleasesFiles.sh
+        id: build
+        run: ./gradlew shadowJar javadocJar --no-daemon --parallel
+      - name: Get artifact hash and copy files
+        run:  bash .github/workflows/scripts/getHashAndCopy.sh
+      - name: 上传测试报告
+        if: always() && steps.build.outcome == 'failure'
+        uses: ./.github/actions/uploadTestReportFiles
       - name: Upload artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ needs.Initialize.outputs.repoName }}-Release-${{ needs.Initialize.outputs.version }}
           path: ./staging

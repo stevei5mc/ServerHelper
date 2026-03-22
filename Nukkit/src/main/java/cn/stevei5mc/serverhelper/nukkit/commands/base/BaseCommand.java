@@ -27,6 +27,14 @@ public abstract class BaseCommand extends Command {
     }
 
     /**
+     * 设置命令别名
+     */
+    @Override
+    public void setAliases(String... aliases) {
+        super.setAliases(aliases);
+    }
+
+    /**
      * 判断权限
      * @param sender 玩家
      * @return 是否拥有权限

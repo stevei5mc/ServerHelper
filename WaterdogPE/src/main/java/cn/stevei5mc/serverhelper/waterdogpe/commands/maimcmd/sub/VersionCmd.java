@@ -1,6 +1,6 @@
 package cn.stevei5mc.serverhelper.waterdogpe.commands.maimcmd.sub;
 
-import cn.stevei5mc.serverhelper.common.BaseInfo;
+import cn.stevei5mc.serverhelper.common.baseinfo.PermissionsInfo;
 import cn.stevei5mc.serverhelper.common.utils.CommonUtils;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.base.SubCommandBase;
 import dev.waterdog.waterdogpe.command.CommandSender;
@@ -18,7 +18,7 @@ public class VersionCmd extends SubCommandBase {
 
     @Override
     public boolean getPermission(CommandSender sender) {
-        return sender.hasPermission(BaseInfo.adminMainPermission);
+        return sender.hasPermission(PermissionsInfo.ADMIN_MAIN.getPermission());
     }
 
     @Override

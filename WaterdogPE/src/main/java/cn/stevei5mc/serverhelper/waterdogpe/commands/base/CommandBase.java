@@ -40,7 +40,7 @@ public abstract class CommandBase extends Command {
      * @param permission Command permission
      * @param aliases Command aliases
      */
-    public CommandBase(String name, String description, String permission, String[] aliases) {
+    public CommandBase(String name, String description, String permission, String... aliases) {
         super(name.toLowerCase(), CommandSettings.builder().setDescription(description).setPermission(permission).setAliases(aliases).build());
     }
 
