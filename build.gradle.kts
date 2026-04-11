@@ -29,6 +29,7 @@ subprojects {
         compileOnly("org.jetbrains:annotations:24.0.1")
         compileOnly(rootProject.libs.lombok)
         annotationProcessor(rootProject.libs.lombok)
+        testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
     }
 
     tasks {
