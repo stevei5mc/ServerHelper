@@ -26,6 +26,7 @@ commands:
     mute: mute
     unmute: unmute
     warn: warn
+    staffChat: staffchat
   # 命令使用记录
   usageLog:
     enable: true
