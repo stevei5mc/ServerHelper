@@ -5,20 +5,15 @@ inputs:
   artifactName:
     description: "Artifact name"
     required: true
-    default: ${{ needs.Initialize.outputs.repoName }}-Test_report_logs
+    default: ServerHelper-Test_report_logs
 
 runs:
   using: "composite"
   steps:
-    - name: 压缩文件
-      shell: bash
-      run: |
-        pwd
-        mkdir test-repot-logs
-        zip -r ./test-repot-logs/ServerHelper-Common-Test_report.zip ./Common/build/reports/tests/
-        ls -lah ./test-repot-logs
-    - name: Upload artifact
+    - name: 上传报告文件
       uses: actions/upload-artifact@v7
       with:
-        name: ServerHelper-Test_report_logs
-        path: ./test-repot-logs/*.zip
+        name: ${{ inputs.artifactName }}
+        path: |
+          ./Common/build/reports/tests
+          ./Nukkit/build/reports/tests
