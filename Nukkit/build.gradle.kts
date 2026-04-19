@@ -11,6 +11,11 @@ dependencies {
 }
 
 tasks{
+    processResources {
+        from("src/main/resources") { expand(
+            "version" to project.version
+        )}
+    }
     shadowJar {
         dependsOn("test")
         archiveClassifier.set("")
