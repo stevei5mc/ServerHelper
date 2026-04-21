@@ -67,12 +67,12 @@ public class ServerHelperMain extends PluginBase {
             saveResource(BaseInfo.customLanguagesFilesPath + language+".yml");
         }*/
         for (String setting : BaseInfo.getSettings()) {
-            saveResource(ResourcesPathInfo.SETTINGS_FILES.getResourcesPath() + setting + ".yml");
+            saveResource(ResourcesPathInfo.SETTINGS.getResourcesPath() + setting + ".yml");
         }
     }
 
     public void loadConfig() {
-        String settingPath = this.getDataFolder() + ResourcesPathInfo.SETTINGS_FILES.getDataPath();
+        String settingPath = this.getDataFolder() + ResourcesPathInfo.SETTINGS.getDataPath();
         this.config = new Config(this.getDataFolder() + "/config.yml", Config.YAML);
         this.privateConfig = new Config(this.getDataFolder() + "/nukkit-private.yml", Config.YAML);
         this.banCommands = new Config(settingPath + "banCommands.yml", Config.YAML);

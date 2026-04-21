@@ -3,10 +3,12 @@ package cn.stevei5mc.serverhelper.common.baseinfo;
 import lombok.Getter;
 
 public enum ResourcesPathInfo {
-    SETTINGS_FILES("Settings/"),
+    DEFAULT(""),
 
-    LANGUAGES_BASE_FILES("languages/base/"),
-    LANGUAGES_PRIVATE_FILES("languages/private/");
+    SETTINGS("Settings/"),
+
+    LANGUAGES_BASE("languages/base/"),
+    LANGUAGES_PRIVATE("languages/private/");
 
     @Getter
     private final String resourcesPath;
