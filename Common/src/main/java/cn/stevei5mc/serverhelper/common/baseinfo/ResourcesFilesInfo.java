@@ -13,7 +13,9 @@ public enum ResourcesFilesInfo {
     private final int version;
     @Getter
     private final ResourcesPathInfo pathInfo;
+    @Getter
     private final String jarPath;
+    @Getter
     private final String dataPath;
 
     ResourcesFilesInfo(String name, ResourcesPathInfo pathInfo) {
