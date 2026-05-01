@@ -2,11 +2,12 @@ package cn.stevei5mc.serverhelper.nukkit;
 
 import cn.lanink.gamecore.utils.NukkitTypeUtils;
 import cn.nukkit.Server;
+import cn.nukkit.command.Command;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.stevei5mc.serverhelper.common.BaseInfo;
 import cn.stevei5mc.serverhelper.common.baseinfo.ResourcesFilesInfo;
-import cn.stevei5mc.serverhelper.common.baseinfo.ResourcesPathInfo;
+import cn.stevei5mc.serverhelper.nukkit.commands.StaffChatCmd;
 import cn.stevei5mc.serverhelper.nukkit.commands.admin.AdminCmd;
 import cn.stevei5mc.serverhelper.nukkit.commands.maincmd.ServerHelperMainCmd;
 import cn.stevei5mc.serverhelper.nukkit.listener.PlayerListener;
@@ -16,6 +17,7 @@ public class ServerHelperMain extends PluginBase {
 //这里被注释掉的代码都是暂时用不上的
     @Getter
     private static ServerHelperMain instance;
+    @Getter
     private Config config;
     @Getter
     private Config privateConfig;
@@ -39,8 +41,11 @@ public class ServerHelperMain extends PluginBase {
     public void onEnable() {
         if (this.getServer().getPluginManager().getPlugin("MemoriesOfTime-GameCore") != null) {
             this.getLogger().info(getPluginInfo().replace("\n", " §f| "));
-            this.getServer().getCommandMap().register("",new ServerHelperMainCmd());
-            this.getServer().getCommandMap().register("",new AdminCmd(config.getString("commands.name.admin", "admin")));
+            this.regCmd(new ServerHelperMainCmd());
+            this.regCmd(new AdminCmd(config.getString("commands.name.admin", "admin")));
+            if (this.privateConfig.getBoolean("waterdogPE-mode", false)) {
+                this.regCmd(new StaffChatCmd(config.getString("commands.name.staffChat", "staffchat"), "ServerHelper Staff chat command"));
+            }
             this.getServer().getPluginManager().registerEvents(new PlayerListener(),this);
             Server.getInstance().getScheduler().scheduleDelayedTask(this, () -> {
                 this.getLogger().warning("§c警告! §c本插件为免费且开源的，如果您付费获取获取的，则有可能被误导了");
@@ -77,16 +82,15 @@ public class ServerHelperMain extends PluginBase {
 //        this.muteSetting = new Config(this.getDataFolder()+"/Settings/mute.yml",Config.YAML);
     }
 
-    @Override
-    public Config getConfig() {
-        return config;
-    }
-
     public String getMessagePrefix() {
         return config.getString("message_prefix","§b§lServerHelper §r§7>> ");
     }
 
     public String getPluginInfo() {
         return BaseInfo.getVersionInfo() + "\n§bNukkit type: §a" + NukkitTypeUtils.getNukkitType().name();
+    }
+    
+    public void regCmd(Command command) {
+        this.getServer().getCommandMap().register("", command);
     }
 }
