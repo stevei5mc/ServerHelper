@@ -6,12 +6,14 @@ import cn.stevei5mc.serverhelper.waterdogpe.commands.StaffChatCmd;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.maimcmd.ServerHelperMainCmd;
 import cn.stevei5mc.serverhelper.waterdogpe.listener.PlayerListener;
 import dev.waterdog.waterdogpe.command.Command;
+import dev.waterdog.waterdogpe.event.Event;
 import dev.waterdog.waterdogpe.event.defaults.DispatchCommandEvent;
-import dev.waterdog.waterdogpe.event.defaults.PlayerChatEvent;
 import dev.waterdog.waterdogpe.plugin.Plugin;
 import dev.waterdog.waterdogpe.utils.config.Configuration;
 import dev.waterdog.waterdogpe.utils.config.YamlConfig;
 import lombok.Getter;
+
+import java.util.function.Consumer;
 
 public class ServerHelperMain extends Plugin {
     @Getter
@@ -28,7 +30,7 @@ public class ServerHelperMain extends Plugin {
         this.getLogger().info(BaseInfo.GH_URL);
         this.regCmd(new ServerHelperMainCmd("serverhelper-wdpe", "ServerHelper plugin command", PermissionsInfo.ADMIN_MAIN.getPermission(), "shr-wdpe"));
         this.regCmd(new StaffChatCmd(config.getString("commands.name.staffChat", "staffchat"), "ServerHelper Staff chat command", PermissionsInfo.STAFF_CHAT.getPermission()));
-        this.getProxy().getEventManager().subscribe(DispatchCommandEvent.class, PlayerListener::onDispatchCommand);
+        this.regEventListener(DispatchCommandEvent.class, PlayerListener::onDispatchCommand);
     }
 
     public void saveConfigResources() {
@@ -67,5 +69,9 @@ public class ServerHelperMain extends Plugin {
 
     public void regCmd(Command command) {
         this.getProxy().getCommandMap().registerCommand(command);
+    }
+
+    public <T extends Event> void regEventListener(Class<T> event, Consumer<T> handler) {
+        this.getProxy().getEventManager().subscribe(event, handler);
     }
 }

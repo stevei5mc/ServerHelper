@@ -1,10 +1,7 @@
 package cn.stevei5mc.serverhelper.waterdogpe.listener;
 
-import cn.stevei5mc.serverhelper.common.baseinfo.PermissionsInfo;
 import cn.stevei5mc.serverhelper.waterdogpe.ServerHelperMain;
 import dev.waterdog.waterdogpe.event.defaults.DispatchCommandEvent;
-import dev.waterdog.waterdogpe.event.defaults.PlayerChatEvent;
-import dev.waterdog.waterdogpe.player.ProxiedPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
