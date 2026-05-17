@@ -2,14 +2,18 @@ package cn.stevei5mc.serverhelper.waterdogpe;
 
 import cn.stevei5mc.serverhelper.common.BaseInfo;
 import cn.stevei5mc.serverhelper.common.baseinfo.PermissionsInfo;
+import cn.stevei5mc.serverhelper.waterdogpe.commands.StaffChatCmd;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.maimcmd.ServerHelperMainCmd;
 import cn.stevei5mc.serverhelper.waterdogpe.listener.PlayerListener;
+import dev.waterdog.waterdogpe.command.Command;
+import dev.waterdog.waterdogpe.event.Event;
 import dev.waterdog.waterdogpe.event.defaults.DispatchCommandEvent;
-import dev.waterdog.waterdogpe.event.defaults.PlayerChatEvent;
 import dev.waterdog.waterdogpe.plugin.Plugin;
 import dev.waterdog.waterdogpe.utils.config.Configuration;
 import dev.waterdog.waterdogpe.utils.config.YamlConfig;
 import lombok.Getter;
+
+import java.util.function.Consumer;
 
 public class ServerHelperMain extends Plugin {
     @Getter
@@ -24,9 +28,9 @@ public class ServerHelperMain extends Plugin {
         this.getLogger().info(getPluginInfo().replace("\n", " §f| "));
         this.getLogger().warn("§c警告! §c本插件为免费且开源的，如果您付费获取获取的，则有可能被误导了");
         this.getLogger().info(BaseInfo.GH_URL);
-        this.getProxy().getCommandMap().registerCommand(new ServerHelperMainCmd("serverhelper-wdpe", "ServerHelper plugin command", PermissionsInfo.ADMIN_MAIN.getPermission(), "shr-wdpe"));
-        this.getProxy().getEventManager().subscribe(PlayerChatEvent.class, PlayerListener::onPlayerChat);
-        this.getProxy().getEventManager().subscribe(DispatchCommandEvent.class, PlayerListener::onDispatchCommand);
+        this.regCmd(new ServerHelperMainCmd("serverhelper-wdpe", "ServerHelper plugin command", PermissionsInfo.ADMIN_MAIN.getPermission(), "shr-wdpe"));
+        this.regCmd(new StaffChatCmd(config.getString("commands.name.staffChat", "staffchat"), "ServerHelper Staff chat command", PermissionsInfo.STAFF_CHAT.getPermission()));
+        this.regEventListener(DispatchCommandEvent.class, PlayerListener::onDispatchCommand);
     }
 
     public void saveConfigResources() {
@@ -61,5 +65,13 @@ public class ServerHelperMain extends Plugin {
 
     public String getPluginInfo() {
         return BaseInfo.getVersionInfo() + "\n§bPlugin running WaterdogPE";
+    }
+
+    public void regCmd(Command command) {
+        this.getProxy().getCommandMap().registerCommand(command);
+    }
+
+    public <T extends Event> void regEventListener(Class<T> event, Consumer<T> handler) {
+        this.getProxy().getEventManager().subscribe(event, handler);
     }
 }

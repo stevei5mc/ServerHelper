@@ -2,10 +2,12 @@ package cn.stevei5mc.serverhelper.nukkit;
 
 import cn.lanink.gamecore.utils.NukkitTypeUtils;
 import cn.nukkit.Server;
+import cn.nukkit.command.Command;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.stevei5mc.serverhelper.common.BaseInfo;
-import cn.stevei5mc.serverhelper.common.baseinfo.ResourcesPathInfo;
+import cn.stevei5mc.serverhelper.common.baseinfo.ResourcesFilesInfo;
+import cn.stevei5mc.serverhelper.nukkit.commands.StaffChatCmd;
 import cn.stevei5mc.serverhelper.nukkit.commands.admin.AdminCmd;
 import cn.stevei5mc.serverhelper.nukkit.commands.maincmd.ServerHelperMainCmd;
 import cn.stevei5mc.serverhelper.nukkit.listener.PlayerListener;
@@ -15,10 +17,11 @@ public class ServerHelperMain extends PluginBase {
 //这里被注释掉的代码都是暂时用不上的
     @Getter
     private static ServerHelperMain instance;
+    @Getter
     private Config config;
     @Getter
     private Config privateConfig;
-    public final int privateConfigVersion = 1;
+    public static final int privateConfigVersion = 1;
 //    private Config banSetting;
 //    private Config kickSetting;
     @Getter
@@ -38,8 +41,11 @@ public class ServerHelperMain extends PluginBase {
     public void onEnable() {
         if (this.getServer().getPluginManager().getPlugin("MemoriesOfTime-GameCore") != null) {
             this.getLogger().info(getPluginInfo().replace("\n", " §f| "));
-            this.getServer().getCommandMap().register("",new ServerHelperMainCmd());
-            this.getServer().getCommandMap().register("",new AdminCmd(config.getString("commands.name.admin", "admin")));
+            this.regCmd(new ServerHelperMainCmd());
+            this.regCmd(new AdminCmd(config.getString("commands.name.admin", "admin")));
+            if (this.privateConfig.getBoolean("waterdogPE-mode", false)) {
+                this.regCmd(new StaffChatCmd(config.getString("commands.name.staffChat", "staffchat"), "ServerHelper Staff chat command"));
+            }
             this.getServer().getPluginManager().registerEvents(new PlayerListener(),this);
             Server.getInstance().getScheduler().scheduleDelayedTask(this, () -> {
                 this.getLogger().warning("§c警告! §c本插件为免费且开源的，如果您付费获取获取的，则有可能被误导了");
@@ -60,31 +66,20 @@ public class ServerHelperMain extends PluginBase {
     }
 
     public void saveConfigResources() {
-        saveDefaultConfig();
-        saveResource("nukkit-private.yml");
-        /*for (String language : BaseInfo.getLanguages()) {
-            saveResource(BaseInfo.baseLanguagesFilesPath + language+".yml");
-            saveResource(BaseInfo.customLanguagesFilesPath + language+".yml");
-        }*/
-        for (String setting : BaseInfo.getSettings()) {
-            saveResource(ResourcesPathInfo.SETTINGS_FILES.getResourcesPath() + setting + ".yml");
+        for (ResourcesFilesInfo fileInfo: ResourcesFilesInfo.values()) {
+            saveResource(fileInfo.getJarPath());
         }
+        saveResource("nukkit-private.yml");
     }
 
     public void loadConfig() {
-        String settingPath = this.getDataFolder() + ResourcesPathInfo.SETTINGS_FILES.getDataPath();
-        this.config = new Config(this.getDataFolder() + "/config.yml", Config.YAML);
+        this.config = new Config(this.getDataFolder() + ResourcesFilesInfo.DEFAULT_CONFIG.getDataPath(), Config.YAML);
         this.privateConfig = new Config(this.getDataFolder() + "/nukkit-private.yml", Config.YAML);
-        this.banCommands = new Config(settingPath + "banCommands.yml", Config.YAML);
+        this.banCommands = new Config(this.getDataFolder() + ResourcesFilesInfo.BAN_COMMANDS_CONFIG.getDataPath(), Config.YAML);
 //        this.banSetting = new Config(this.getDataFolder()+"/Settings/ban.yml",Config.YAML);
 //        this.kickSetting = new Config(this.getDataFolder()+"/Settings/kick.yml",Config.YAML);
 //        this.warnSetting = new Config(this.getDataFolder()+ "/Settings/warn.yml",Config.YAML);
 //        this.muteSetting = new Config(this.getDataFolder()+"/Settings/mute.yml",Config.YAML);
-    }
-
-    @Override
-    public Config getConfig() {
-        return config;
     }
 
     public String getMessagePrefix() {
@@ -93,5 +88,9 @@ public class ServerHelperMain extends PluginBase {
 
     public String getPluginInfo() {
         return BaseInfo.getVersionInfo() + "\n§bNukkit type: §a" + NukkitTypeUtils.getNukkitType().name();
+    }
+    
+    public void regCmd(Command command) {
+        this.getServer().getCommandMap().register("", command);
     }
 }

@@ -4,9 +4,10 @@ plugins {
 
 dependencies {
     api(project(":ServerHelper-Common"))
-    compileOnly("cn.nukkit:nukkit:1.0-SNAPSHOT")
+    compileOnly(libs.nukkit)
     compileOnly("com.github.stevei5mc:AutoRestart:1.0.1")
     compileOnly("cn.lanink:MemoriesOfTime-GameCore:1.6.13")
+    testImplementation(libs.nukkit)
 }
 
 tasks{
@@ -14,9 +15,11 @@ tasks{
         from("src/main/resources") { expand(
             "version" to project.version
         )}
-        from("${rootDir}/resources")
     }
-    shadowJar { archiveClassifier.set("") }
-    testClasses  { enabled = false }
-    test { enabled = false }
+    shadowJar {
+        dependsOn("test")
+        archiveClassifier.set("")
+    }
+    processTestResources { enabled = false }
+    test { useJUnitPlatform() }
 }
