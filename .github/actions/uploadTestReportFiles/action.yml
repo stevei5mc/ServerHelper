@@ -5,7 +5,6 @@ inputs:
   artifactName:
     description: "Artifact name"
     required: true
-    default: ServerHelper-Test_report_logs
 
 runs:
   using: "composite"

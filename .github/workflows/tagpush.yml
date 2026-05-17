@@ -69,10 +69,12 @@ jobs:
       - name: 上传测试报告
         if: always() && steps.build.outcome == 'failure'
         uses: ./.github/actions/uploadTestReportFiles
+        with:
+          artifactName: ${{ needs.Initialize.outputs.repoName }}-Release_${{ needs.Initialize.outputs.version }}-Test_report
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: ${{ needs.Initialize.outputs.repoName }}-Release-${{ needs.Initialize.outputs.version }}
+          name: ${{ needs.Initialize.outputs.repoName }}-Release_${{ needs.Initialize.outputs.version }}
           path: ./staging
       - name: Release to github
         uses: ncipollo/release-action@v1

@@ -14,7 +14,6 @@ public class BaseInfo {
     }
 
     // 配置文件信息
-    public static final int configFileVersion = 1;
     public static final int languageFilesVersion = 1;
 
     @Getter

@@ -131,6 +131,8 @@ jobs:
       - name: 上传测试报告
         if: always() && (steps.build.outcome == 'failure' || inputs.uploadTestReport)
         uses: ./.github/actions/uploadTestReportFiles
+        with:
+          artifactName: ${{ needs.Initialize.outputs.repoName }}-Dispatch_Build_${{ github.run_number }}_Test_report
       - name: Get artifact hash and copy files
         if: inputs.artifactSaveDays >= 1
         run:  bash .github/workflows/scripts/getHashAndCopy.sh
@@ -138,7 +140,7 @@ jobs:
         if: inputs.artifactSaveDays >= 1
         uses: actions/upload-artifact@v7
         with:
-          name: ${{ needs.Initialize.outputs.repoName }}-Dispatch-Build_${{ github.run_number }}
+          name: ${{ needs.Initialize.outputs.repoName }}-Dispatch_Build_${{ github.run_number }}
           retention-days: ${{ inputs.artifactSaveDays }}
           path: ./staging
 
