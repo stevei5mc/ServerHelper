@@ -1,11 +1,4 @@
-dependencies {
-    testImplementation(libs.junit.jupiter.api)
-    testImplementation(libs.junit.jupiter.params)
-    testRuntimeOnly(libs.junit.jupiter.engine)
-}
-
 tasks {
-    processResources { enabled = false }
     processTestResources { enabled = false }
     test { useJUnitPlatform() }
     jar { dependsOn("test") }
