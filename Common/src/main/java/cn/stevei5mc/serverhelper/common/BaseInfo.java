@@ -14,9 +14,6 @@ public class BaseInfo {
         return "§bVersion§7:§a {project.version}\n§bBranch§7:§a {git.branch} §b[§a {git.commit.id} §b]";
     }
 
-    // 配置文件信息
-    public static final int languageFilesVersion = 1;
-
     @Getter
     private static final List<String> languages = Arrays.asList(
             "zh_CN"

@@ -72,10 +72,10 @@ public class ServerHelperMain extends PluginBase {
             saveResource(fileInfo.getJarPath());
         }
         saveResource("nukkit-private.yml");
-        /*for (String language : BaseInfo.getLanguages()) {
-            saveResource(BaseInfo.baseLanguagesFilesPath + language+".yml");
-            saveResource(BaseInfo.customLanguagesFilesPath + language+".yml");
-        }*/
+        for (String language : BaseInfo.getLanguages()) {
+            saveResource(ResourcesFilesInfo.PathsInfo.LANGUAGES_BASE.getJarPath());
+//            saveResource(ResourcesFilesInfo.PathsInfo.LANGUAGES_PRIVATE.getJarPath() + language+".yml");
+        }
     }
 
     public void loadConfig() {

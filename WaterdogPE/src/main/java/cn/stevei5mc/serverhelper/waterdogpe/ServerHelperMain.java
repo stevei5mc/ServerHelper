@@ -2,6 +2,7 @@ package cn.stevei5mc.serverhelper.waterdogpe;
 
 import cn.stevei5mc.serverhelper.common.BaseInfo;
 import cn.stevei5mc.serverhelper.common.baseinfo.PermissionsInfo;
+import cn.stevei5mc.serverhelper.common.baseinfo.ResourcesFilesInfo;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.StaffChatCmd;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.maimcmd.ServerHelperMainCmd;
 import cn.stevei5mc.serverhelper.waterdogpe.listener.PlayerListener;
@@ -36,10 +37,10 @@ public class ServerHelperMain extends Plugin {
 
     public void saveConfigResources() {
         saveResource("config.yml");
-        /*for (String language : BaseInfo.getLanguages()) {
-            saveResource(BaseInfo.baseLanguagesFilesPath + language+".yml");
-            saveResource(BaseInfo.privateLanguagesFilesPath + language+".yml");
-        }*/
+        for (String language : BaseInfo.getLanguages()) {
+            saveResource(ResourcesFilesInfo.PathsInfo.LANGUAGES_BASE.getJarPath() + language+".yml");
+//            saveResource(ResourcesFilesInfo.PathsInfo.LANGUAGES_PRIVATE.getJarPath() + language+".yml");
+        }
         /*for (String setting : BaseInfo.getSettings()) {
             saveResource("Settings/"+setting+".yml");
         }*/
