@@ -1,7 +1,7 @@
 package cn.stevei5mc.serverhelper.waterdogpe.utils;
 
 import cn.stevei5mc.serverhelper.common.BaseInfo;
-import cn.stevei5mc.serverhelper.common.baseinfo.ResourcesPathInfo;
+import cn.stevei5mc.serverhelper.common.baseinfo.ResourcesFilesInfo;
 import cn.stevei5mc.serverhelper.waterdogpe.ServerHelperMain;
 import dev.waterdog.waterdogpe.command.CommandSender;
 import dev.waterdog.waterdogpe.player.ProxiedPlayer;
@@ -24,11 +24,11 @@ public class PluginI18n {
         }
         main.getLogger().info("Default language " + defaultLanguage);
         for (String languageName : BaseInfo.getLanguages()) {
-            Configuration baseLangFile = new YamlConfig(main.getDataFolder() + ResourcesPathInfo.LANGUAGES_BASE_FILES.getDataPath() + languageName + ".yml");
-            baseLangFile.load(main.getResourceFile(ResourcesPathInfo.LANGUAGES_BASE_FILES.getResourcesPath() + languageName + ".yml"));
+            Configuration baseLangFile = new YamlConfig(main.getDataFolder() + ResourcesFilesInfo.PathsInfo.LANGUAGES_BASE.getDataPath() + languageName + ".yml");
+            baseLangFile.load(main.getResourceFile(ResourcesFilesInfo.PathsInfo.LANGUAGES_BASE.getJarPath() + languageName + ".yml"));
             baseLanguagesMap.put(languageName, new LanguageApi(baseLangFile));
-            Configuration privateLangFile = new YamlConfig(main.getDataFolder() + ResourcesPathInfo.LANGUAGES_PRIVATE_FILES.getDataPath() + languageName + ".yml");
-            privateLangFile.load(main.getResourceFile(ResourcesPathInfo.LANGUAGES_PRIVATE_FILES.getResourcesPath() + languageName + ".yml"));
+            Configuration privateLangFile = new YamlConfig(main.getDataFolder() + ResourcesFilesInfo.PathsInfo.LANGUAGES_PRIVATE.getDataPath() + languageName + ".yml");
+            privateLangFile.load(main.getResourceFile(ResourcesFilesInfo.PathsInfo.LANGUAGES_PRIVATE.getJarPath() + languageName + ".yml"));
             privateLanguagesMap.put(languageName, new LanguageApi(privateLangFile));
         }
     }

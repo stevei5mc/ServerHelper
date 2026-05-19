@@ -76,9 +76,6 @@ public class ServerHelperMain extends PluginBase {
             saveResource(BaseInfo.baseLanguagesFilesPath + language+".yml");
             saveResource(BaseInfo.customLanguagesFilesPath + language+".yml");
         }*/
-        for (String setting : BaseInfo.getSettings()) {
-            saveResource(ResourcesPathInfo.SETTINGS_FILES.getResourcesPath() + setting + ".yml");
-        }
     }
 
     public void loadConfig() {
