@@ -2,14 +2,14 @@ package cn.stevei5mc.serverhelper.nukkit.commands.admin;
 
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
-import cn.stevei5mc.serverhelper.common.utils.BaseInfo;
+import cn.stevei5mc.serverhelper.common.baseinfo.PermissionsInfo;
 import cn.stevei5mc.serverhelper.nukkit.commands.base.BaseCommand;
 import cn.stevei5mc.serverhelper.nukkit.form.MainForm;
 
-public class AdminCommand extends BaseCommand {
-    public AdminCommand(String name) {
+public class AdminCmd extends BaseCommand {
+    public AdminCmd(String name) {
         super(name,"ServerHelper admin command");
-        this.setPermission(BaseInfo.adminMainPermission);
+        this.setPermission(PermissionsInfo.ADMIN_MAIN.getPermission());
     }
 
     @Override

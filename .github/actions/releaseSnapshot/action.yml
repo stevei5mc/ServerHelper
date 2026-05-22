@@ -1,0 +1,37 @@
+name: "Release snapshot"
+description: "Release snapshot"
+
+inputs:
+  artifactName:
+    description: "Artifact name"
+    required: true
+  branchName:
+    description: "Branch name"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: 下载发布需要的文件
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs.artifactName }}
+        path: staging
+    - name: 整理和校验需要发布的文件
+      shell: bash
+      run: |
+        echo "branch=$(echo ${{ inputs.branchName }})" >> $GITHUB_ENV
+        ls -lah ./staging
+        version=$(grep "project.version=" "./gradle.properties" | sed 's/project.version=//')
+        bash .github/workflows/scripts/verifyHash.sh "./staging" "ServerHelper-$version-all_files.sha256"
+        rm -f ./staging/ServerHelper-$version-all_files.sha256
+    - name: 发布
+      shell: bash
+      run: |
+        cat > ./release_notes.md << 'EOF'
+        > [!NOTE]
+        该版本为快照版本，仅供体验测试使用，若在生产环境中使用需谨慎考虑！！！
+        快照版本对应分支为 `${{ env.branch }}`
+        EOF
+        gh release create snapshot-version ./staging/*.* --prerelease --target "${{ env.branch }}" --title "Snapshot version" --notes-file ./release_notes.md
+        gh release view snapshot-version

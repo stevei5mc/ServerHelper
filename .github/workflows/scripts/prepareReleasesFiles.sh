@@ -2,7 +2,7 @@
 pwd
 mkdir staging
 mkdir -vp bbs
-version=$(grep "version =" "./build.gradle.kts" | sed 's/.*version = "\(.*\)".*/\1/')
+version=$(grep "project.version=" "./gradle.properties" | sed 's/project.version=//')
 echo "--------------------"
 for edition in Common Nukkit WaterdogPE
 do

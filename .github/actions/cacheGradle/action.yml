@@ -5,15 +5,20 @@ runs:
   using: "composite"
   steps:
   - name: Get cache key
-    id: get
+    id: getCacheKey
     shell: bash
     run: |
-      echo "cacheKey=$(sha256sum *.kts ./Common/*.kts ./Nukkit/*.kts ./WaterdogPE/*.kts  ./gradle/*.* ./gradle/wrapper/* | sha256sum | awk '{print $1}')" >> $GITHUB_OUTPUT
-  - name: Cache Gradle
+      echo "wrapperKey=$(sha256sum ./gradle/wrapper/gradle-wrapper.* | sha256sum | awk '{print $1}')" >> $GITHUB_OUTPUT
+      echo "repoKey=$(sha256sum *gradle.* ./Common/*.kts ./Nukkit/*.kts ./WaterdogPE/*.kts  ./gradle/libs.versions.toml | sha256sum | awk '{print $1}')" >> $GITHUB_OUTPUT
+  - name: Cache gradle wrapper
     uses: actions/cache@v4
     with:
-      path: |
-        ~/.gradle/caches
-        ~/.gradle/wrapper
-      key: ${{ runner.os }}-GRADLE-${{ steps.get.outputs.cacheKey }}
-      restore-keys: ${{ runner.os }}-GRADLE-
+      path: ~/.gradle/wrapper
+      key: ${{ runner.os }}-Gradle-Wrapper-${{ steps.getCacheKey.outputs.wrapperKey }}
+      restore-keys: ${{ runner.os }}-Gradle-Wrapper-
+  - name: Cache gradle repository
+    uses: actions/cache@v4
+    with:
+      path: ~/.gradle/caches
+      key: ${{ runner.os }}-Gradle-Repo-${{ steps.getCacheKey.outputs.repoKey }}
+      restore-keys: ${{ runner.os }}-Gradle-Repo-

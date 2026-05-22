@@ -6,7 +6,7 @@ plugins {
 
 subprojects {
     group = "cn.stevei5mc.serverhelper"
-    version = "1.0.0-beta1-SNAPSHOT"
+    version = property("project.version").toString()
 
     apply(plugin = "java")
     apply(plugin = "java-library")
@@ -27,8 +27,9 @@ subprojects {
 
     dependencies {
         compileOnly("org.jetbrains:annotations:24.0.1")
-        compileOnly("org.projectlombok:lombok:1.18.30")
-        annotationProcessor("org.projectlombok:lombok:1.18.30")
+        compileOnly(rootProject.libs.lombok)
+        annotationProcessor(rootProject.libs.lombok)
+        testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
     }
 
     tasks {
