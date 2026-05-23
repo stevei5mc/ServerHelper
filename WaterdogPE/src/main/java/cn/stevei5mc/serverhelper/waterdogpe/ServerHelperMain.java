@@ -4,6 +4,8 @@ import cn.stevei5mc.serverhelper.common.BaseInfo;
 import cn.stevei5mc.serverhelper.common.baseinfo.PermissionsInfo;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.StaffChatCmd;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.maimcmd.ServerHelperMainCmd;
+import cn.stevei5mc.serverhelper.waterdogpe.handler.JoinHandler;
+import cn.stevei5mc.serverhelper.waterdogpe.handler.ReconnectHandler;
 import cn.stevei5mc.serverhelper.waterdogpe.listener.PlayerListener;
 import dev.waterdog.waterdogpe.command.Command;
 import dev.waterdog.waterdogpe.event.Event;
@@ -18,7 +20,9 @@ import java.util.function.Consumer;
 public class ServerHelperMain extends Plugin {
     @Getter
     private static ServerHelperMain instance;
+    @Getter
     private YamlConfig config;
+    private YamlConfig privateConfig;
 
     @Override
     public void onEnable() {
@@ -31,6 +35,11 @@ public class ServerHelperMain extends Plugin {
         this.regCmd(new ServerHelperMainCmd("serverhelper-wdpe", "ServerHelper plugin command", PermissionsInfo.ADMIN_MAIN.getPermission(), "shr-wdpe"));
         this.regCmd(new StaffChatCmd(config.getString("commands.name.staffChat", "staffchat"), "ServerHelper Staff chat command", PermissionsInfo.STAFF_CHAT.getPermission()));
         this.regEventListener(DispatchCommandEvent.class, PlayerListener::onDispatchCommand);
+    }
+
+    @Override
+    public void onDisable() {
+        this.getLogger().info("已停止运行，感谢你的使用");
     }
 
     public void saveConfigResources() {
@@ -47,16 +56,7 @@ public class ServerHelperMain extends Plugin {
     @Override
     public void loadConfig() {
         config = new YamlConfig(this.getDataFolder()+"/config.yml");
-    }
-
-    @Override
-    public void onDisable() {
-        this.getLogger().info("已停止运行，感谢你的使用");
-    }
-
-    @Override
-    public Configuration getConfig() {
-        return config;
+        privateConfig = new YamlConfig(this.getDataFolder()+"/wdpe-private.yml");
     }
 
     public String getMessagePrefix() {
@@ -67,11 +67,20 @@ public class ServerHelperMain extends Plugin {
         return BaseInfo.getVersionInfo() + "\n§bPlugin running WaterdogPE";
     }
 
-    public void regCmd(Command command) {
+    private void regCmd(Command command) {
         this.getProxy().getCommandMap().registerCommand(command);
     }
 
-    public <T extends Event> void regEventListener(Class<T> event, Consumer<T> handler) {
+    private <T extends Event> void regEventListener(Class<T> event, Consumer<T> handler) {
         this.getProxy().getEventManager().subscribe(event, handler);
+    }
+
+    private void setHandler() {
+        if (privateConfig.getBoolean("handler.enable.join", true)) {
+            this.getProxy().setJoinHandler(new JoinHandler());
+        }
+        if (privateConfig.getBoolean("handler.enable.reconnect", true)) {
+            this.getProxy().setReconnectHandler(new ReconnectHandler());
+        }
     }
 }

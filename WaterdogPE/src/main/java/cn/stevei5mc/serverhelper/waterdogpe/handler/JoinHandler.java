@@ -13,6 +13,9 @@ public class JoinHandler implements IJoinHandler {
     public ServerInfo determineServer(ProxiedPlayer proxiedPlayer) {
         ServerHelperMain main = ServerHelperMain.getInstance();
         List<String> servers = main.getProxy().getConfiguration().getPriorities();
+        if (servers.isEmpty()) {
+            return null;
+        }
         return main.getProxy().getServerInfo(servers.get(new Random().nextInt(servers.size())));
     }
 }

@@ -90,7 +90,7 @@ public class ServerHelperMain extends PluginBase {
         return BaseInfo.getVersionInfo() + "\n§bNukkit type: §a" + NukkitTypeUtils.getNukkitType().name();
     }
     
-    public void regCmd(Command command) {
+    private void regCmd(Command command) {
         this.getServer().getCommandMap().register("", command);
     }
 }
