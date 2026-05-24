@@ -5,6 +5,7 @@ import cn.stevei5mc.serverhelper.common.baseinfo.PermissionsInfo;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.StaffChatCmd;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.maimcmd.ServerHelperMainCmd;
 import cn.stevei5mc.serverhelper.waterdogpe.listener.PlayerListener;
+import cn.stevei5mc.serverhelper.waterdogpe.serverinfo.LobbyServersInfo;
 import dev.waterdog.waterdogpe.command.Command;
 import dev.waterdog.waterdogpe.event.Event;
 import dev.waterdog.waterdogpe.event.defaults.DispatchCommandEvent;
@@ -31,6 +32,7 @@ public class ServerHelperMain extends Plugin {
         this.regCmd(new ServerHelperMainCmd("serverhelper-wdpe", "ServerHelper plugin command", PermissionsInfo.ADMIN_MAIN.getPermission(), "shr-wdpe"));
         this.regCmd(new StaffChatCmd(config.getString("commands.name.staffChat", "staffchat"), "ServerHelper Staff chat command", PermissionsInfo.STAFF_CHAT.getPermission()));
         this.regEventListener(DispatchCommandEvent.class, PlayerListener::onDispatchCommand);
+        LobbyServersInfo.loadLobbyServers();
     }
 
     public void saveConfigResources() {
@@ -67,11 +69,11 @@ public class ServerHelperMain extends Plugin {
         return BaseInfo.getVersionInfo() + "\n§bPlugin running WaterdogPE";
     }
 
-    public void regCmd(Command command) {
+    private void regCmd(Command command) {
         this.getProxy().getCommandMap().registerCommand(command);
     }
 
-    public <T extends Event> void regEventListener(Class<T> event, Consumer<T> handler) {
+    private  <T extends Event> void regEventListener(Class<T> event, Consumer<T> handler) {
         this.getProxy().getEventManager().subscribe(event, handler);
     }
 }
