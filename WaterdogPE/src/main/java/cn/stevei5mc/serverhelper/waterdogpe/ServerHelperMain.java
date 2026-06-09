@@ -7,11 +7,11 @@ import cn.stevei5mc.serverhelper.waterdogpe.commands.maimcmd.ServerHelperMainCmd
 import cn.stevei5mc.serverhelper.waterdogpe.handler.JoinHandler;
 import cn.stevei5mc.serverhelper.waterdogpe.handler.ReconnectHandler;
 import cn.stevei5mc.serverhelper.waterdogpe.listener.PlayerListener;
+import cn.stevei5mc.serverhelper.waterdogpe.serverinfo.LobbyServersInfo;
 import dev.waterdog.waterdogpe.command.Command;
 import dev.waterdog.waterdogpe.event.Event;
 import dev.waterdog.waterdogpe.event.defaults.DispatchCommandEvent;
 import dev.waterdog.waterdogpe.plugin.Plugin;
-import dev.waterdog.waterdogpe.utils.config.Configuration;
 import dev.waterdog.waterdogpe.utils.config.YamlConfig;
 import lombok.Getter;
 
