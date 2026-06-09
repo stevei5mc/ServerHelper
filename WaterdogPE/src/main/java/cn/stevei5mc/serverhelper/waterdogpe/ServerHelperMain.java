@@ -22,6 +22,7 @@ public class ServerHelperMain extends Plugin {
     private static ServerHelperMain instance;
     @Getter
     private YamlConfig config;
+    @Getter
     private YamlConfig privateConfig;
 
     @Override
@@ -35,6 +36,7 @@ public class ServerHelperMain extends Plugin {
         this.regCmd(new ServerHelperMainCmd("serverhelper-wdpe", "ServerHelper plugin command", PermissionsInfo.ADMIN_MAIN.getPermission(), "shr-wdpe"));
         this.regCmd(new StaffChatCmd(config.getString("commands.name.staffChat", "staffchat"), "ServerHelper Staff chat command", PermissionsInfo.STAFF_CHAT.getPermission()));
         this.regEventListener(DispatchCommandEvent.class, PlayerListener::onDispatchCommand);
+        LobbyServersInfo.loadLobbyServers();
     }
 
     @Override

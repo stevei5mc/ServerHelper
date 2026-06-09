@@ -57,7 +57,6 @@ public class ServerHelperMain extends PluginBase {
             this.getLogger().warning("§b下载地址: §ehttps://motci.cn/job/GameCore/");
             this.onDisable();
         }
-
     }
 
     @Override

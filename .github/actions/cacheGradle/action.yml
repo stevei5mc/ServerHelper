@@ -9,7 +9,19 @@ runs:
     shell: bash
     run: |
       echo "wrapperKey=$(sha256sum ./gradle/wrapper/gradle-wrapper.* | sha256sum | awk '{print $1}')" >> $GITHUB_OUTPUT
-      echo "repoKey=$(sha256sum *gradle.* ./Common/*.kts ./Nukkit/*.kts ./WaterdogPE/*.kts  ./gradle/libs.versions.toml | sha256sum | awk '{print $1}')" >> $GITHUB_OUTPUT
+
+      modules=$(grep -oP 'project\s*\(\s*":\K[^"]+' settings.gradle.kts)
+      repoKey=$(
+        {
+          ls *gradle.* 2>/dev/null || true
+          [ -f "./gradle/libs.versions.toml" ] && echo "./gradle/libs.versions.toml"
+          for module in $modules; do
+            find "./$module" -maxdepth 1 -name "*gradle.*" -type f 2>/dev/null
+          done
+        } | sort -u | xargs sha256sum 2>/dev/null | sha256sum | awk '{print $1}'
+      )
+
+      echo "repoKey=$repoKey" >> $GITHUB_OUTPUT
   - name: Cache gradle wrapper
     uses: actions/cache@v4
     with:
