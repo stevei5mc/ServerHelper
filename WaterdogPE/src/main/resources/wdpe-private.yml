@@ -4,3 +4,7 @@ handler:
   enable:
     join: true
     reconnect: true
+
+lobby-server:
+  query-interval: 30
+  reserve-count: 10
