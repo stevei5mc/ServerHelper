@@ -7,7 +7,7 @@ import dev.waterdog.waterdogpe.player.ProxiedPlayer;
 
 import java.util.Random;
 
-public class JoinHandler implements IJoinHandler {
+public class PlayerJoinHandler implements IJoinHandler {
     @Override
     public ServerInfo determineServer(ProxiedPlayer proxiedPlayer) {
         return LobbyServersInfo.getLobbyServerList().get(new Random().nextInt(LobbyServersInfo.getLobbyServerList().size()));

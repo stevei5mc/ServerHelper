@@ -4,8 +4,8 @@ import cn.stevei5mc.serverhelper.common.BaseInfo;
 import cn.stevei5mc.serverhelper.common.baseinfo.PermissionsInfo;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.StaffChatCmd;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.maimcmd.ServerHelperMainCmd;
-import cn.stevei5mc.serverhelper.waterdogpe.handler.JoinHandler;
-import cn.stevei5mc.serverhelper.waterdogpe.handler.ReconnectHandler;
+import cn.stevei5mc.serverhelper.waterdogpe.handler.PlayerJoinHandler;
+import cn.stevei5mc.serverhelper.waterdogpe.handler.PlayerReconnectHandler;
 import cn.stevei5mc.serverhelper.waterdogpe.listener.PlayerListener;
 import cn.stevei5mc.serverhelper.waterdogpe.serverinfo.LobbyServersInfo;
 import dev.waterdog.waterdogpe.command.Command;
@@ -79,10 +79,10 @@ public class ServerHelperMain extends Plugin {
 
     private void setHandler() {
         if (privateConfig.getBoolean("handler.enable.join", true)) {
-            this.getProxy().setJoinHandler(new JoinHandler());
+            this.getProxy().setJoinHandler(new PlayerJoinHandler());
         }
         if (privateConfig.getBoolean("handler.enable.reconnect", true)) {
-            this.getProxy().setReconnectHandler(new ReconnectHandler());
+            this.getProxy().setReconnectHandler(new PlayerReconnectHandler());
         }
     }
 }

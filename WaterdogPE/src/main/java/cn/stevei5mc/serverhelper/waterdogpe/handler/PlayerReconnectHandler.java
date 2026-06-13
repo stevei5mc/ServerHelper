@@ -6,7 +6,7 @@ import dev.waterdog.waterdogpe.network.connection.handler.ReconnectReason;
 import dev.waterdog.waterdogpe.network.serverinfo.ServerInfo;
 import dev.waterdog.waterdogpe.player.ProxiedPlayer;
 
-public class ReconnectHandler implements IReconnectHandler {
+public class PlayerReconnectHandler implements IReconnectHandler {
     @Override
     public ServerInfo getFallbackServer(ProxiedPlayer player, ServerInfo oldServer, ReconnectReason reason, String kickMessage) {
         ServerHelperMain.getInstance().getLogger().debug("player=[ " + player.getName() + " ] oldServer=[ " + oldServer.getServerName() + " ] reason=[ " + reason.getName() + " ] kickMessage=[ " + kickMessage + " ]");
