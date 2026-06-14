@@ -37,6 +37,7 @@ public class ServerHelperMain extends Plugin {
         this.regCmd(new StaffChatCmd(config.getString("commands.name.staffChat", "staffchat"), "ServerHelper Staff chat command", PermissionsInfo.STAFF_CHAT.getPermission()));
         this.regEventListener(DispatchCommandEvent.class, PlayerListener::onDispatchCommand);
         LobbyServersInfo.loadLobbyServers();
+        setHandler();
     }
 
     @Override
