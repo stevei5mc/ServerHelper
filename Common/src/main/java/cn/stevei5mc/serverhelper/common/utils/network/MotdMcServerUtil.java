@@ -1,4 +1,4 @@
-package cn.stevei5mc.serverhelper.common.serverinfo.motd;
+package cn.stevei5mc.serverhelper.common.utils.network;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -7,7 +7,7 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-public class MotdMcServer {
+public class MotdMcServerUtil {
 
     public static String[] motdBeServer(InetSocketAddress address) {
         return motdBeServer(address.getHostName(), address.getPort());
