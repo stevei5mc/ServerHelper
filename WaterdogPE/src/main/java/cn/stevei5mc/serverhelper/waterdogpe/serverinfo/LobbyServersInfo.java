@@ -7,8 +7,8 @@ import dev.waterdog.waterdogpe.player.ProxiedPlayer;
 import lombok.Getter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 public class LobbyServersInfo {
 
@@ -45,13 +45,14 @@ public class LobbyServersInfo {
     public static ServerInfo findServer(ProxiedPlayer player, ServerInfo oldServer) {
         ArrayList<ServerInfo> lobbyServersInfo = new ArrayList<>();
         lobbyServerList.forEach(wServerInfo -> {
-            if (wServerInfo.isOnline() && !wServerInfo.isFull() ) {
+            if (!wServerInfo.getServerInfo().equals(oldServer) && wServerInfo.isOnline() && !wServerInfo.isFull() &&
+                    wServerInfo.getCurrentOnline() < wServerInfo.getMaxOnline() - main.getPrivateConfig().getInt("lobby-server.reserve-count", 10)) {
                 lobbyServersInfo.add(wServerInfo.getServerInfo());
             }
         });
         if (lobbyServersInfo.isEmpty()) {
             return null;
         }
-        return lobbyServersInfo.get(0);
+        return lobbyServersInfo.get((new Random().nextInt(lobbyServersInfo.size())));
     }
 }

@@ -1,6 +1,5 @@
 package cn.stevei5mc.serverhelper.waterdogpe.handler;
 
-import cn.stevei5mc.serverhelper.waterdogpe.ServerHelperMain;
 import cn.stevei5mc.serverhelper.waterdogpe.serverinfo.LobbyServersInfo;
 import dev.waterdog.waterdogpe.network.connection.handler.IJoinHandler;
 import dev.waterdog.waterdogpe.network.serverinfo.ServerInfo;
