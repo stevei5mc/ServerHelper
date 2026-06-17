@@ -15,16 +15,12 @@ public class LobbyServersInfo {
     private static final ServerHelperMain main = ServerHelperMain.getInstance();
     @Getter
     private static final List<WServerInfo> lobbyServerList = new ArrayList<>();
-//    @Getter
-//    private static final HashMap<String, ServerInfo> lobbyServersMap = new HashMap<>();
 
     public static void loadLobbyServers() {
         lobbyServerList.clear();
-//        lobbyServersMap.clear();
         main.getProxy().getServers().forEach(serverInfo -> {
             if (main.getProxy().getConfiguration().getPriorities().contains(serverInfo.getServerName())) {
                 lobbyServerList.add(new WServerInfo(serverInfo));
-//                lobbyServersMap.put(serverInfo.getServerName(), serverInfo);
             }
         });
         updateLobbyServersInfo();

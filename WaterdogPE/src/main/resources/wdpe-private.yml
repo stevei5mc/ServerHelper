@@ -8,3 +8,4 @@ handler:
 lobby-server:
   query-interval: 30
   reserve-count: 10
+  enable-lobby-cmd: true

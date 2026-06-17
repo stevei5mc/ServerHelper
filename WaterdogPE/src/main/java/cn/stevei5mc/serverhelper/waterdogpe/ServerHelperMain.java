@@ -2,6 +2,7 @@ package cn.stevei5mc.serverhelper.waterdogpe;
 
 import cn.stevei5mc.serverhelper.common.BaseInfo;
 import cn.stevei5mc.serverhelper.common.baseinfo.PermissionsInfo;
+import cn.stevei5mc.serverhelper.waterdogpe.commands.LobbyCmd;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.StaffChatCmd;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.maimcmd.ServerHelperMainCmd;
 import cn.stevei5mc.serverhelper.waterdogpe.handler.PlayerJoinHandler;
@@ -35,6 +36,9 @@ public class ServerHelperMain extends Plugin {
         this.getLogger().info(BaseInfo.GH_URL);
         this.regCmd(new ServerHelperMainCmd("serverhelper-wdpe", "ServerHelper plugin command", PermissionsInfo.ADMIN_MAIN.getPermission(), "shr-wdpe"));
         this.regCmd(new StaffChatCmd(config.getString("commands.name.staffChat", "staffchat"), "ServerHelper Staff chat command", PermissionsInfo.STAFF_CHAT.getPermission()));
+        if (this.privateConfig.getBoolean("lobby-server.enable-lobby-cmd", true)) {
+            this.regCmd(new LobbyCmd("lobby", "lobby cmd", "lobby.cmd"));
+        }
         this.regEventListener(DispatchCommandEvent.class, PlayerListener::onDispatchCommand);
         LobbyServersInfo.loadLobbyServers();
         setHandler();
