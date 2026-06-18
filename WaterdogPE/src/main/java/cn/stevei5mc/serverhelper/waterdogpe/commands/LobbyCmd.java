@@ -20,22 +20,26 @@ public class LobbyCmd extends CommandBase {
         if (sender.isPlayer()) {
             ProxiedPlayer player = (ProxiedPlayer) sender;
             if (args.length >= 1) {
-                int targetLobby = Integer.parseInt(args[0]);
-                int lobbyCount = LobbyServersInfo.getLobbyServerList().size();
-                if (targetLobby < 0 || targetLobby > lobbyCount) {
-                    player.sendMessage("§c大厅不存在！");
-                    return true;
-                }
-                WServerInfo wServerInfo = LobbyServersInfo.getLobbyServerList().get(targetLobby - 1);
-                if (wServerInfo.isOnline()) {
-                    if (wServerInfo.isFull()) {
-                        player.sendMessage("§c目标大厅已满员，请选择其他大厅");
+                try {
+                    int targetLobby = Integer.parseInt(args[0]);
+                    int lobbyCount = LobbyServersInfo.getLobbyServerList().size();
+                    if (targetLobby < 0 || targetLobby > lobbyCount) {
+                        player.sendMessage("§c大厅不存在！");
                         return true;
                     }
-                    player.connect(wServerInfo.getServerInfo());
-                    return true;
+                    WServerInfo wServerInfo = LobbyServersInfo.getLobbyServerList().get(targetLobby - 1);
+                    if (wServerInfo.isOnline()) {
+                        if (wServerInfo.isFull()) {
+                            player.sendMessage("§c目标大厅已满员，请选择其他大厅");
+                            return true;
+                        }
+                        player.connect(wServerInfo.getServerInfo());
+                        return true;
+                    }
+                    player.sendMessage("§c目标大厅处于离线状态，请选择其他大厅");
+                }catch (NumberFormatException ignore) {
+                    player.sendMessage("§c请输入数字!");
                 }
-                player.sendMessage("§c目标大厅处于离线状态，请选择其他大厅");
             }else {
                 if (LobbyServersInfo.getLobbyServerList().isEmpty()) {
                     sender.sendMessage("§c暂无可用的大厅服务器，请稍后再试！");
