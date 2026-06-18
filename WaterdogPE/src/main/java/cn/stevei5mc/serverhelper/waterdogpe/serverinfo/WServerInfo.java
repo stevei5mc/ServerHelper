@@ -62,7 +62,7 @@ public class WServerInfo implements IServerInfo {
 
     @Override
     public boolean isOnline() {
-        return maxOnline != 0;
+        return maxOnline >= 0;
     }
 
     @Override

@@ -35,7 +35,7 @@ public class LobbyServersInfo {
     }
 
     public static ServerInfo findServer(ProxiedPlayer player) {
-        return findServer(player, null);
+        return findServer(player, player.getServerInfo());
     }
 
     public static ServerInfo findServer(ProxiedPlayer player, ServerInfo oldServer) {
