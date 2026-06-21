@@ -12,7 +12,6 @@ public class WServerInfo implements IServerInfo {
     private int protocol;
     private String version;
 
-
     @Getter
     private final ServerInfo serverInfo;
 
@@ -22,17 +21,17 @@ public class WServerInfo implements IServerInfo {
 
     @Override
     public String getName() {
-        return serverInfo.getServerName();
+        return this.serverInfo.getServerName();
     }
 
     @Override
     public String getIP() {
-        return serverInfo.getAddress().getHostString();
+        return this.serverInfo.getAddress().getHostString();
     }
 
     @Override
     public int getPort() {
-        return serverInfo.getAddress().getPort();
+        return this.serverInfo.getAddress().getPort();
     }
 
     @Override
@@ -42,7 +41,7 @@ public class WServerInfo implements IServerInfo {
 
     @Override
     public InetSocketAddress getAddress() {
-        return serverInfo.getAddress();
+        return this.serverInfo.getAddress();
     }
 
     @Override
@@ -52,7 +51,7 @@ public class WServerInfo implements IServerInfo {
 
     @Override
     public int getCurrentOnline() {
-        return serverInfo.getPlayers().size();
+        return this.serverInfo.getPlayers().size();
     }
 
     @Override
@@ -62,12 +61,12 @@ public class WServerInfo implements IServerInfo {
 
     @Override
     public boolean isOnline() {
-        return maxOnline >= 0;
+        return this.maxOnline >= 0;
     }
 
     @Override
     public boolean isFull() {
-        return serverInfo.getPlayers().size() >= this.maxOnline;
+        return this.serverInfo.getPlayers().size() >= this.maxOnline;
     }
 
     @Override
