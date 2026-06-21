@@ -11,8 +11,9 @@ import org.cloudburstmc.protocol.bedrock.data.command.CommandParam;
 import org.cloudburstmc.protocol.bedrock.data.command.CommandParamData;
 
 public class LobbyCmd extends CommandBase {
-    public LobbyCmd(String name, String description, String permission) {
-        super(name, description, permission);
+
+    public LobbyCmd(String name, String description, String permission, String... aliases) {
+        super(name, description, permission, aliases);
     }
 
     @Override
