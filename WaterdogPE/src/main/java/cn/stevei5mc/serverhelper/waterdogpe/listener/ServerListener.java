@@ -11,6 +11,6 @@ public class ServerListener {
         String sourceServer = event.getSourceServer().getServerName();
         String targetServer = event.getTargetServer().getServerName();
         event.getPlayer().sendMessage("§a" + sourceServer + "  ==>>  " + targetServer);
-        main.getLogger().info("§aPlayer: " + event.getPlayer().getName() + " Server: " + sourceServer + "  ==>>  " + targetServer);
+        main.getLogger().info(String.format("§aPlayer=[%s] Server=[%s]--->>[%s]", event.getPlayer().getName(), sourceServer, targetServer));
     }
 }
