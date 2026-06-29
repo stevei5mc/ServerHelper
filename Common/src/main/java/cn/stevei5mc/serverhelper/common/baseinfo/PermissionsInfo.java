@@ -9,6 +9,8 @@ public enum PermissionsInfo {
 
     STAFF_CHAT(Type.STAFF, "chat"),
 
+    PLAYER_LOBBY(Type.USER, "lobby"),
+
     BAN_CMD_BYPASS(Type.OTHER, "banCommands.bypass");
 
 
@@ -32,6 +34,7 @@ public enum PermissionsInfo {
 
         ADMIN("admin"),
         STAFF("staff"),
+        USER("user"),
         OTHER("other"),
         NONE("none", "");
 

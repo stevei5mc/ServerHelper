@@ -39,7 +39,7 @@ public class ServerHelperMain extends Plugin {
         this.regCmd(new ServerHelperMainCmd("serverhelper-wdpe", "ServerHelper plugin command", PermissionsInfo.ADMIN_MAIN.getPermission(), "shr-wdpe"));
         this.regCmd(new StaffChatCmd(config.getString("commands.name.staffChat", "staffchat"), "ServerHelper Staff chat command", PermissionsInfo.STAFF_CHAT.getPermission()));
         if (this.privateConfig.getBoolean("lobby-server.enable-lobby-cmd", true)) {
-            this.regCmd(new LobbyCmd("lobby", "lobby cmd", "lobby.cmd", "hub"));
+            this.regCmd(new LobbyCmd("lobby", "lobby cmd", PermissionsInfo.PLAYER_LOBBY.getPermission(), "hub"));
         }
         this.regEventListener(DispatchCommandEvent.class, PlayerListener::onDispatchCommand);
         this.regEventListener(ServerTransferEvent.class, ServerListener::onServerTransfer);
