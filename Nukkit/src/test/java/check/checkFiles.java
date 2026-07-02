@@ -22,11 +22,11 @@ public class checkFiles {
             if (permissionInfo.equals(PermissionsInfo.PLAYER_LOBBY)) {
                 continue;
             }
-            Map<String, Object> permissionMap = configSection.getSection(permissionInfo.getPermission()).getAllMap();
-            assertTrue(configSection.exists(permissionInfo.getPermission()), "无法寻找到指定权限节点=[" + permissionInfo.getPermission() + "]");
-            System.out.printf("权限节点=[%s]，归属=[%s]%n", permissionInfo.getPermission(), permissionMap.get("default"));
+            String permissionNode = permissionInfo.getPermission();
+            Map<String, Object> permissionMap = configSection.getSection(permissionNode).getAllMap();
+            assertTrue(configSection.exists(permissionNode), "无法寻找到指定权限节点=[" + permissionNode + "]");
+            System.out.printf("权限节点=[%s]，归属=[%s]%n", permissionNode, permissionMap.get("default"));
             assertEquals("op", String.valueOf(permissionMap.get("default")), "权限节点的归属权出现错误");
-
         }
     }
 

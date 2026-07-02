@@ -54,6 +54,7 @@ public class ServerHelperMain extends Plugin {
 
     public void saveConfigResources() {
         saveResource("config.yml");
+        saveResource("wdpe-private.yml");
         /*for (String language : BaseInfo.getLanguages()) {
             saveResource(BaseInfo.baseLanguagesFilesPath + language+".yml");
             saveResource(BaseInfo.customLanguagesFilesPath + language+".yml");
