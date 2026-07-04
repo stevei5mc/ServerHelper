@@ -6,9 +6,13 @@ public interface IServerInfo {
 
     String getName();
 
-    String getIP();
+    default String getIP() {
+        return this.getAddress().getHostName();
+    }
 
-    int getPort();
+    default int getPort() {
+        return this.getAddress().getPort();
+    }
 
     String getVersion();
 
@@ -22,7 +26,9 @@ public interface IServerInfo {
 
     boolean isOnline();
 
-    boolean isFull();
+    default boolean isFull() {
+        return getCurrentOnline() >= getMaxOnline();
+    }
 
     void update(String[] data);
 }

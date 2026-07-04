@@ -25,16 +25,6 @@ public class WServerInfo implements IServerInfo {
     }
 
     @Override
-    public String getIP() {
-        return this.serverInfo.getAddress().getHostString();
-    }
-
-    @Override
-    public int getPort() {
-        return this.serverInfo.getAddress().getPort();
-    }
-
-    @Override
     public String getVersion() {
         return this.version;
     }
@@ -62,11 +52,6 @@ public class WServerInfo implements IServerInfo {
     @Override
     public boolean isOnline() {
         return this.maxOnline >= 0;
-    }
-
-    @Override
-    public boolean isFull() {
-        return this.serverInfo.getPlayers().size() >= this.maxOnline;
     }
 
     @Override
