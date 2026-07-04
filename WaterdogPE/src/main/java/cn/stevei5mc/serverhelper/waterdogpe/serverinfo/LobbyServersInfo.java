@@ -1,6 +1,6 @@
 package cn.stevei5mc.serverhelper.waterdogpe.serverinfo;
 
-import cn.stevei5mc.serverhelper.common.utils.network.MotdMcServerUtil;
+import cn.stevei5mc.serverhelper.common.serverinfo.IServerInfo;
 import cn.stevei5mc.serverhelper.waterdogpe.ServerHelperMain;
 import dev.waterdog.waterdogpe.network.serverinfo.ServerInfo;
 import dev.waterdog.waterdogpe.player.ProxiedPlayer;
@@ -27,11 +27,9 @@ public class LobbyServersInfo {
     }
 
     public static void updateLobbyServersInfo() {
-        main.getProxy().getScheduler().scheduleRepeating(() -> {
-            lobbyServerList.forEach(wServerInfo -> {
-                wServerInfo.update(MotdMcServerUtil.motdBeServer(wServerInfo.getAddress()));
-            });
-        }, main.getPrivateConfig().getInt("lobby-server.query-interval", 30) * 20, true);
+        main.getProxy().getScheduler().scheduleRepeating(() ->
+            lobbyServerList.forEach(IServerInfo::motd)
+        , main.getPrivateConfig().getInt("lobby-server.query-interval", 30) * 20, true);
     }
 
     public static ServerInfo findServer(ProxiedPlayer player) {

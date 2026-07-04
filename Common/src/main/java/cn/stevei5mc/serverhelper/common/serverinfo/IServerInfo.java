@@ -1,5 +1,7 @@
 package cn.stevei5mc.serverhelper.common.serverinfo;
 
+import cn.stevei5mc.serverhelper.common.utils.network.MotdMcServerUtil;
+
 import java.net.InetSocketAddress;
 
 public interface IServerInfo {
@@ -31,4 +33,10 @@ public interface IServerInfo {
     }
 
     void update(String[] data);
+
+    default String[] motd() {
+        String[] info = MotdMcServerUtil.motdBeServer(this.getAddress());
+        this.update(info);
+        return info;
+    }
 }
