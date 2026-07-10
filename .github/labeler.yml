@@ -1,0 +1,7 @@
+Nukkit:
+  - changed-files:
+    - any-glob-to-any-file: Nukkit/src/main/**
+
+WDPE:
+  - changed-files:
+    - any-glob-to-any-file: WaterdogPE/src/main/**
