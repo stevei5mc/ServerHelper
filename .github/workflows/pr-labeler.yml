@@ -1,7 +1,7 @@
 name: PR lebeler
 
 concurrency:
-  group: PR-${{ github.event.pull_request.number }}
+  group: ${{ github.workflow }}-PR-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 on:
@@ -24,8 +24,6 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - name: 拉取代码
-        uses: actions/checkout@v6
       - name: 分配标签
         id: labeler
         uses: actions/labeler@v6
