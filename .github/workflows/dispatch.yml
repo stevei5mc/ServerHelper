@@ -70,7 +70,7 @@ jobs:
 
             const buildMode = "${{ inputs.additionalFunctions }}";
             const isRunBuildJob = (
-              ((buildMode === 'Plugin' || buildMode === 'All') && inputs.additionalFunctions !== 'Delete snapshot') ||inputs.additionalFunctions === 'Build PR' || inputs.additionalFunctions === 'Release snapshot'
+              ((buildMode === 'Plugin' || buildMode === 'All') && inputs.additionalFunctions !== 'Delete snapshot') || additionalFunctions === 'Build PR' || additionalFunctions === 'Release snapshot'
             );
             core.info(`Is run build job: ${isRunBuildJob}`);
             core.setOutput('isRunBuildJob', isRunBuildJob);
