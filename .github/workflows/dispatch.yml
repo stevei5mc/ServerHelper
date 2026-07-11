@@ -46,11 +46,13 @@ jobs:
       targetBranch: ${{ env.targetBranch }}
       prState: ${{ steps.prInfo.outputs.prState }}
       repoName: ${{ steps.getProjectInfo.outputs.repoNmae }}
+      isRunBuildJob: ${{ steps.check.outputs.isRunBuildJob }}
     steps:
       - name: 拉取代码
         uses: actions/checkout@v6
       - name: 处理和检查输入的参数
         if: inputs.additionalFunctions != 'Delete snapshot'
+        id: check
         uses: actions/github-script@v8
         with:
           script: |
@@ -65,6 +67,13 @@ jobs:
             if (additionalFunctions == 'Release snapshot' && ${{ inputs.artifactSaveDays }} < 1) {
               core.setFailed(`构建后的 artifact 保存天数为 ${{ inputs.artifactSaveDays }}，必须 >= 1，否则无法正常发布快照版本`);
             }
+
+            const buildMode = "${{ inputs.additionalFunctions }}";
+            const isRunBuildJob = (
+              ((buildMode === 'Plugin' || buildMode === 'All') && inputs.additionalFunctions !== 'Delete snapshot') ||inputs.additionalFunctions === 'Build PR' || inputs.additionalFunctions === 'Release snapshot'
+            );
+            core.info(`Is run build job: ${isRunBuildJob}`);
+            core.setOutput('isRunBuildJob', isRunBuildJob);
       - name: 获取信息
         if: inputs.additionalFunctions != 'Delete snapshot'
         id: getProjectInfo
@@ -98,7 +107,7 @@ jobs:
           fi
 
   build-plugin:
-    if: ((inputs.buildMode == 'Plugin' || inputs.buildMode == 'All') && inputs.additionalFunctions != 'Delete snapshot') || inputs.additionalFunctions == 'Build PR' || inputs.additionalFunctions == 'Release snapshot'
+    if: ${{ needs.Initialize.outputs.repoName }}
     name: Build plugin
     needs: Initialize
     runs-on: ubuntu-latest
