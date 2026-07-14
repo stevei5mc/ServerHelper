@@ -35,8 +35,6 @@ public interface IServerInfo {
     void update(String[] data);
 
     default String[] motd() {
-        String[] info = MotdMcServerUtil.motdBeServer(this.getAddress());
-        this.update(info);
-        return info;
+        return MotdMcServerUtil.motdBeServer(this.getAddress());
     }
 }

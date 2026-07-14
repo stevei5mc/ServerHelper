@@ -28,7 +28,7 @@ public class LobbyServersInfo {
 
     public static void updateLobbyServersInfo() {
         main.getProxy().getScheduler().scheduleRepeating(() ->
-            lobbyServerList.forEach(IServerInfo::motd)
+            lobbyServerList.forEach(wServerInfo -> wServerInfo.update(wServerInfo.motd()))
         , main.getPrivateConfig().getInt("lobby-server.query-interval", 30) * 20, true);
     }
 
