@@ -25,7 +25,7 @@ jobs:
       targetBranch: ${{ env.targetBranch }}
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: 获取信息
         id: getProjectInfo
         uses: ./.github/actions/getInfo/projectInfo
@@ -41,7 +41,7 @@ jobs:
       java-version: "17"
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Setup java ${{ env.java-version }}
         uses: actions/setup-java@v5
         with:

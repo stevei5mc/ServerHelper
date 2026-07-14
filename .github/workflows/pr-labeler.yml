@@ -1,7 +1,7 @@
-name: PR lebeler
+name: PR labeler
 
 concurrency:
-  group: ${{ github.workflow }}-PR-${{ github.event.pull_request.number }}
+  group: ${{ github.workflow }}-PR-${{ github.event.pull_request.number || inputs.prNumber }}
   cancel-in-progress: true
 
 on:
@@ -11,7 +11,11 @@ on:
       - ".github/actions/releaseSnapshot/action.yml"
       - ".github/workflows/dispatch.yml"
       - ".github/workflows/tagpush.yml"
-
+  workflow_dispatch:
+    inputs:
+      prNumber:
+        description: 'PR number'
+        required: false
 env:
   GH_TOKEN: ${{ github.token }}
 
@@ -30,3 +34,4 @@ jobs:
         with:
           sync-labels: true
           configuration-path: .github/labeler.yml
+          pr-number: ${{ github.event.pull_request.number || inputs.prNumber }}

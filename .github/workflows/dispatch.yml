@@ -48,10 +48,10 @@ jobs:
       repoName: ${{ steps.getProjectInfo.outputs.repoNmae }}
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: 处理和检查输入的参数
         if: inputs.additionalFunctions != 'Delete snapshot'
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const additionalFunctions = "${{ inputs.additionalFunctions }}";
@@ -114,7 +114,7 @@ jobs:
       java-version: "17"
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: 拉取 PR 代码
         if: inputs.additionalFunctions == 'Build PR'
         run: gh pr checkout ${{ inputs.PR_ID }} && ls -la
@@ -160,7 +160,7 @@ jobs:
       contents: write
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: 发布快照版本
         if: inputs.additionalFunctions == 'Release snapshot'
         uses: ./.github/actions/releaseSnapshot
