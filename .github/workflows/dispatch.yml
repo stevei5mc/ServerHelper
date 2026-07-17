@@ -96,13 +96,6 @@ jobs:
             echo "正在删除快照版本"
             gh release delete snapshot-version --yes --cleanup-tag
           fi
-      - name: 对 PR 分配对应 label
-        if: inputs.additionalFunctions == 'Build PR'
-        uses: actions/labeler@v6
-        with:
-          sync-labels: true
-          configuration-path: .github/labeler.yml
-          pr-number: ${{ inputs.PR_ID }}
 
   build-plugin:
     if: ((inputs.buildMode == 'Plugin' || inputs.buildMode == 'All') && inputs.additionalFunctions != 'Delete snapshot') || inputs.additionalFunctions == 'Bu' || inputs.additionalFunctions == 'Release snapshot'
