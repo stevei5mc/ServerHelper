@@ -6,6 +6,9 @@ handler:
     reconnect: true
 
 lobby-server:
+  enable: true
   query-interval: 30
   reserve-count: 10
-  enable-lobby-cmd: true
+  cmd:
+    enable: true
+    aliases: [ "hub" ]

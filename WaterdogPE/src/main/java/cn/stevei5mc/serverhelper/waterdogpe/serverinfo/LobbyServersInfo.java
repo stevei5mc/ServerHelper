@@ -17,19 +17,22 @@ public class LobbyServersInfo {
     private static final List<WServerInfo> lobbyServerList = new ArrayList<>();
 
     public static void loadLobbyServers() {
-        lobbyServerList.clear();
-        main.getProxy().getServers().forEach(serverInfo -> {
-            if (main.getProxy().getConfiguration().getPriorities().contains(serverInfo.getServerName())) {
-                lobbyServerList.add(new WServerInfo(serverInfo));
-            }
-        });
-        updateLobbyServersInfo();
+        if (main.getPrivateConfig().getBoolean("lobby-server.enable", true)) {
+            lobbyServerList.clear();
+            main.getProxy().getServers().forEach(serverInfo -> {
+                if (main.getProxy().getConfiguration().getPriorities().contains(serverInfo.getServerName())) {
+                    lobbyServerList.add(new WServerInfo(serverInfo));
+                }
+            });
+            updateLobbyServersInfo();
+        }
     }
 
     public static void updateLobbyServersInfo() {
-        main.getProxy().getScheduler().scheduleRepeating(() ->
-            lobbyServerList.forEach(wServerInfo -> wServerInfo.update(wServerInfo.motd()))
-        , main.getPrivateConfig().getInt("lobby-server.query-interval", 30) * 20, true);
+        if (main.getPrivateConfig().getBoolean("lobby-server.enable", true)) {
+            main.getProxy().getScheduler().scheduleRepeating(() -> lobbyServerList.forEach(wServerInfo -> wServerInfo.update(wServerInfo.motd()))
+                    , main.getPrivateConfig().getInt("lobby-server.query-interval", 30) * 20, true);
+        }
     }
 
     public static ServerInfo findServer(ProxiedPlayer player) {

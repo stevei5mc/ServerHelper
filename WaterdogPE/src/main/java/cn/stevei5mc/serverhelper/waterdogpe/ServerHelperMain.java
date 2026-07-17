@@ -37,9 +37,10 @@ public class ServerHelperMain extends Plugin {
         this.getLogger().warn("§c警告! §c本插件为免费且开源的，如果您付费获取获取的，则有可能被误导了");
         this.getLogger().info(BaseInfo.GH_URL);
         this.regCmd(new ServerHelperMainCmd("serverhelper-wdpe", "ServerHelper plugin command", PermissionsInfo.ADMIN_MAIN.getPermission(), "shr-wdpe"));
-        this.regCmd(new StaffChatCmd(config.getString("commands.name.staffChat", "staffchat"), "ServerHelper Staff chat command", PermissionsInfo.STAFF_CHAT.getPermission()));
-        if (this.privateConfig.getBoolean("lobby-server.enable-lobby-cmd", true)) {
-            this.regCmd(new LobbyCmd("lobby", "lobby cmd", PermissionsInfo.PLAYER_LOBBY.getPermission(), "hub"));
+        this.regCmd(new StaffChatCmd(this.config.getString("commands.name.staffChat", "staffchat"), "ServerHelper Staff chat command", PermissionsInfo.STAFF_CHAT.getPermission()));
+        if (this.privateConfig.getBoolean("lobby-server.cmd.enable", true)) {
+            String[] aliases = this.privateConfig.getStringList("lobby-server.cmd.aliases").toArray(new String[0]);
+            this.regCmd(new LobbyCmd("lobby", "lobby cmd", PermissionsInfo.PLAYER_LOBBY.getPermission(), aliases));
         }
         this.regEventListener(DispatchCommandEvent.class, PlayerListener::onDispatchCommand);
         this.regEventListener(ServerTransferEvent.class, ServerListener::onServerTransfer);
