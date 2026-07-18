@@ -28,7 +28,7 @@ public class LobbyServersInfo {
         }
     }
 
-    public static void updateLobbyServersInfo() {
+    private static void updateLobbyServersInfo() {
         if (main.getPrivateConfig().getBoolean("lobby-server.enable", true)) {
             main.getProxy().getScheduler().scheduleRepeating(() -> lobbyServerList.forEach(wServerInfo -> wServerInfo.update(wServerInfo.motd()))
                     , main.getPrivateConfig().getInt("lobby-server.query-interval", 30) * 20, true);

@@ -27,7 +27,6 @@ runs:
       with:
         path: ~/.gradle/wrapper
         key: ${{ runner.os }}-Gradle-Wrapper-${{ steps.getCacheKey.outputs.wrapperKey }}
-        restore-keys: ${{ runner.os }}-Gradle-Wrapper-
     - name: Cache gradle repository
       uses: actions/cache@v5
       with:

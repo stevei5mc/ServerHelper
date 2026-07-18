@@ -11,4 +11,4 @@ lobby-server:
   reserve-count: 10
   cmd:
     enable: true
-    aliases: [ "hub" ]
+    aliases: ["hub"]
