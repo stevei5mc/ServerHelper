@@ -5,3 +5,9 @@ platform/Nukkit:
 platform/WDPE:
   - changed-files:
     - any-glob-to-any-file: WaterdogPE/src/main/**
+
+type/feature:
+  - head-branch: ['^feat', '^feature']
+
+type/fix:
+  - head-branch: ['^fix']
