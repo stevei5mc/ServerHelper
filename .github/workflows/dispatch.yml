@@ -105,7 +105,7 @@ jobs:
           pr-number: ${{ inputs.PR_ID }}
 
   build-plugin:
-    if: ((inputs.buildMode == 'Plugin' || inputs.buildMode == 'All') && inputs.additionalFunctions != 'Not used')) || inputs.additionalFunctions == 'Bu' || inputs.additionalFunctions == 'Release snapshot'
+    if: ((inputs.buildMode == 'Plugin' || inputs.buildMode == 'All') && inputs.additionalFunctions == 'Not used')) || inputs.additionalFunctions == 'Bu' || inputs.additionalFunctions == 'Release snapshot'
     name: Build plugin
     needs: Initialize
     runs-on: ubuntu-latest
