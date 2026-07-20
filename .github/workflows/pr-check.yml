@@ -11,6 +11,7 @@ on:
       - ".github/actions/releaseSnapshot/action.yml"
       - ".github/workflows/dispatch.yml"
       - ".github/workflows/tagpush.yml"
+      - ".github/labeler.yml"
 
 env:
   GH_TOKEN: ${{ github.token }}
