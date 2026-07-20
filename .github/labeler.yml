@@ -7,7 +7,7 @@ platform/WDPE:
     - any-glob-to-any-file: WaterdogPE/src/main/**
 
 type/feature:
-  - head-branch: ['^feat', '^feature']
+  - head-branch: ['^feat', 'feat']
 
 type/fix:
   - head-branch: ['^fix']
