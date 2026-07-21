@@ -1,0 +1,37 @@
+name: PR labeler
+
+concurrency:
+  group: ${{ github.workflow }}-PR-${{ github.event.pull_request.number || inputs.prNumber }}
+  cancel-in-progress: true
+
+on:
+  pull_request_target:
+    paths-ignore:
+      - ".github/actions/getReleaseInfo/action.yml"
+      - ".github/actions/releaseSnapshot/action.yml"
+      - ".github/workflows/dispatch.yml"
+      - ".github/workflows/tagpush.yml"
+  workflow_dispatch:
+    inputs:
+      prNumber:
+        description: 'PR number'
+        required: false
+env:
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  pr-labeler:
+    runs-on: ubuntu-slim
+    name: PR labeler
+    timeout-minutes: 1
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: 分配标签
+        id: labeler
+        uses: actions/labeler@v6
+        with:
+          sync-labels: true
+          configuration-path: .github/labeler.yml
+          pr-number: ${{ github.event.pull_request.number || inputs.prNumber }}

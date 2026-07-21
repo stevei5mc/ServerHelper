@@ -48,7 +48,7 @@ runs:
         cat $templateFile >> $GITHUB_STEP_SUMMARY
     - name: Pull request status check
       if: inputs.prApprove == 'true'
-      uses: actions/github-script@v8
+      uses: actions/github-script@v9
       with:
         script: |
           const prState = "${{ steps.getPrInfo.outputs.prState }}";

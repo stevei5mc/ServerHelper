@@ -28,7 +28,7 @@ on:
         required: false
         default: 'Not used'
         type: choice
-        options: ['Not used','Build PR','Release snapshot','Delete snapshot']
+        options: ['Not used','Build PR','Release snapshot','Delete snapshot',"PR labeler"]
       PR_ID:
         description: 'PR number'
         required: false
@@ -48,10 +48,10 @@ jobs:
       repoName: ${{ steps.getProjectInfo.outputs.repoNmae }}
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: 处理和检查输入的参数
         if: inputs.additionalFunctions != 'Delete snapshot'
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const additionalFunctions = "${{ inputs.additionalFunctions }}";
@@ -96,9 +96,19 @@ jobs:
             echo "正在删除快照版本"
             gh release delete snapshot-version --yes --cleanup-tag
           fi
+      - name: 对 PR 分配对应 label
+        if: inputs.additionalFunctions == 'PR labeler'
+        uses: actions/labeler@v6
+        with:
+          sync-labels: true
+          configuration-path: .github/labeler.yml
+          pr-number: |
+            7
+            13
+            14
 
   build-plugin:
-    if: ((inputs.buildMode == 'Plugin' || inputs.buildMode == 'All') && inputs.additionalFunctions != 'Delete snapshot') || inputs.additionalFunctions == 'Build PR' || inputs.additionalFunctions == 'Release snapshot'
+    if: ((inputs.buildMode == 'Plugin' || inputs.buildMode == 'All') && inputs.additionalFunctions == 'Not used') || inputs.additionalFunctions == 'Bu' || inputs.additionalFunctions == 'Release snapshot'
     name: Build plugin
     needs: Initialize
     runs-on: ubuntu-latest
@@ -107,7 +117,7 @@ jobs:
       java-version: "17"
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: 拉取 PR 代码
         if: inputs.additionalFunctions == 'Build PR'
         run: gh pr checkout ${{ inputs.PR_ID }} && ls -la
@@ -153,7 +163,7 @@ jobs:
       contents: write
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: 发布快照版本
         if: inputs.additionalFunctions == 'Release snapshot'
         uses: ./.github/actions/releaseSnapshot
