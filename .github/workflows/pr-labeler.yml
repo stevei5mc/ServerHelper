@@ -23,7 +23,7 @@ jobs:
   pr-labeler:
     runs-on: ubuntu-slim
     name: PR labeler
-    timeout-minutes: 2
+    timeout-minutes: 1
     permissions:
       contents: read
       pull-requests: write

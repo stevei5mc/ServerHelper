@@ -1,4 +1,4 @@
-name: PR CI
+name: PR check
 
 concurrency:
   group: ${{ github.workflow }}-PR-${{ github.event.pull_request.number }}
