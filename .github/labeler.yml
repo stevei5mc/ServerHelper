@@ -8,3 +8,6 @@ platform/WDPE:
 
 type/feature:
   - head-branch: '^feat/.+$'
+
+type/enhancement:
+  - head-branch: '^ci/.+$'
