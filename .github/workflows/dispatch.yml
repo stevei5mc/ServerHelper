@@ -97,12 +97,12 @@ jobs:
             gh release delete snapshot-version --yes --cleanup-tag
           fi
       - name: 对 PR 分配对应 label
-        if: inputs.additionalFunctions == 'PR labeler'
+        if: inputs.additgitionalFunctions == 'PR labeler'
         uses: actions/labeler@v6
         with:
           sync-labels: true
           configuration-path: .github/labeler.yml
-          pr-number: ${{ inputs.PR_ID }}
+          pr-number: 7, 13, 14
 
   build-plugin:
     if: ((inputs.buildMode == 'Plugin' || inputs.buildMode == 'All') && inputs.additionalFunctions == 'Not used') || inputs.additionalFunctions == 'Bu' || inputs.additionalFunctions == 'Release snapshot'
