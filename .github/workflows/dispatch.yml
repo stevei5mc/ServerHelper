@@ -97,7 +97,7 @@ jobs:
             gh release delete snapshot-version --yes --cleanup-tag
           fi
       - name: 对 PR 分配对应 label
-        if: inputs.additgitionalFunctions == 'PR labeler'
+        if: inputs.additionalFunctions == 'PR labeler'
         uses: actions/labeler@v6
         with:
           sync-labels: true
