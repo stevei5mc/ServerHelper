@@ -102,7 +102,10 @@ jobs:
         with:
           sync-labels: true
           configuration-path: .github/labeler.yml
-          pr-number: 7, 13, 14
+          pr-number: |
+            7
+            13
+            14
 
   build-plugin:
     if: ((inputs.buildMode == 'Plugin' || inputs.buildMode == 'All') && inputs.additionalFunctions == 'Not used') || inputs.additionalFunctions == 'Bu' || inputs.additionalFunctions == 'Release snapshot'
