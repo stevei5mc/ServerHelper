@@ -50,11 +50,6 @@ public class WServerInfo implements IServerInfo {
     }
 
     @Override
-    public boolean isOnline() {
-        return this.maxOnline >= 0;
-    }
-
-    @Override
     public void update(String[] data){
         if (data.length == 0) {
             maxOnline = -1;

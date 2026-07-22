@@ -26,7 +26,9 @@ public interface IServerInfo {
 
     int getMaxOnline();
 
-    boolean isOnline();
+    default boolean isOnline() {
+        return this.getMaxOnline() >= 0;
+    };
 
     default boolean isFull() {
         return getCurrentOnline() >= getMaxOnline();

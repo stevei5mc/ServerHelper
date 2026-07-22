@@ -1,6 +1,5 @@
 package cn.stevei5mc.serverhelper.waterdogpe.serverinfo;
 
-import cn.stevei5mc.serverhelper.common.serverinfo.IServerInfo;
 import cn.stevei5mc.serverhelper.waterdogpe.ServerHelperMain;
 import dev.waterdog.waterdogpe.network.serverinfo.ServerInfo;
 import dev.waterdog.waterdogpe.player.ProxiedPlayer;
@@ -24,12 +23,7 @@ public class LobbyServersInfo {
                     lobbyServerList.add(new WServerInfo(serverInfo));
                 }
             });
-            updateLobbyServersInfo();
-        }
-    }
 
-    private static void updateLobbyServersInfo() {
-        if (main.getPrivateConfig().getBoolean("lobby-server.enable", true)) {
             main.getProxy().getScheduler().scheduleRepeating(() -> lobbyServerList.forEach(wServerInfo -> wServerInfo.update(wServerInfo.motd()))
                     , main.getPrivateConfig().getInt("lobby-server.query-interval", 30) * 20, true);
         }

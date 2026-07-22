@@ -2,8 +2,9 @@ version: 1
 
 handler:
   enable:
-    join: true
-    reconnect: true
+    player:
+      join: true
+      reconnect: true
 
 lobby-server:
   enable: true
