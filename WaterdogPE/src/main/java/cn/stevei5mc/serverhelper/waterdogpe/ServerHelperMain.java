@@ -3,6 +3,7 @@ package cn.stevei5mc.serverhelper.waterdogpe;
 import cn.stevei5mc.serverhelper.common.BaseInfo;
 import cn.stevei5mc.serverhelper.common.baseinfo.PermissionsInfo;
 import cn.stevei5mc.serverhelper.common.baseinfo.ResourcesFilesInfo;
+import cn.stevei5mc.serverhelper.waterdogpe.commands.LobbyCmd;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.StaffChatCmd;
 import cn.stevei5mc.serverhelper.waterdogpe.commands.maimcmd.ServerHelperMainCmd;
 import cn.stevei5mc.serverhelper.waterdogpe.handler.PlayerJoinHandler;
