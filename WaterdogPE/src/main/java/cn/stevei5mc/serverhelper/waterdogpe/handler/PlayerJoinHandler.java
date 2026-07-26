@@ -1,6 +1,7 @@
 package cn.stevei5mc.serverhelper.waterdogpe.handler;
 
 import cn.stevei5mc.serverhelper.waterdogpe.serverinfo.LobbyServersInfo;
+import cn.stevei5mc.serverhelper.waterdogpe.utils.PluginI18n;
 import dev.waterdog.waterdogpe.network.connection.handler.IJoinHandler;
 import dev.waterdog.waterdogpe.network.serverinfo.ServerInfo;
 import dev.waterdog.waterdogpe.player.ProxiedPlayer;
@@ -12,7 +13,7 @@ public class PlayerJoinHandler implements IJoinHandler {
     public ServerInfo determineServer(ProxiedPlayer player) {
         ServerInfo serverInfo = LobbyServersInfo.findServer(player);
         if (serverInfo == null) {
-            player.disconnect(new TextContainer("§c无法找到可用服务器，请稍后尝试重进！"));
+            player.disconnect(new TextContainer(PluginI18n.getBaseLang(player).translateString("serverTransfer-lobbyServer-message-noAvailable")));
         }
         return serverInfo;
     }
