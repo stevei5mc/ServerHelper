@@ -48,9 +48,8 @@ public enum ResourcesFilesInfo {
         private final String dataPath;
 
         PathsInfo(String path) {
-            String jarPath = path.endsWith("/") ? path : path + "/";
-            this.jarPath = jarPath;
-            this.dataPath = "/" + jarPath;
+            this.jarPath = path.endsWith("/") ? path : path + "/";
+            this.dataPath = "/" + this.jarPath;
         }
     }
 }

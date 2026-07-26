@@ -27,9 +27,9 @@ public class PluginI18n {
             Configuration baseLangFile = new YamlConfig(main.getDataFolder() + ResourcesFilesInfo.PathsInfo.LANGUAGES_BASE.getDataPath() + languageName + ".yml");
             baseLangFile.load(main.getResourceFile(ResourcesFilesInfo.PathsInfo.LANGUAGES_BASE.getJarPath() + languageName + ".yml"));
             baseLanguagesMap.put(languageName, new LanguageApi(baseLangFile));
-            Configuration privateLangFile = new YamlConfig(main.getDataFolder() + ResourcesFilesInfo.PathsInfo.LANGUAGES_PRIVATE.getDataPath() + languageName + ".yml");
-            privateLangFile.load(main.getResourceFile(ResourcesFilesInfo.PathsInfo.LANGUAGES_PRIVATE.getJarPath() + languageName + ".yml"));
-            privateLanguagesMap.put(languageName, new LanguageApi(privateLangFile));
+//            Configuration privateLangFile = new YamlConfig(main.getDataFolder() + ResourcesFilesInfo.PathsInfo.LANGUAGES_PRIVATE.getDataPath() + languageName + ".yml");
+//            privateLangFile.load(main.getResourceFile(ResourcesFilesInfo.PathsInfo.LANGUAGES_PRIVATE.getJarPath() + languageName + ".yml"));
+//            privateLanguagesMap.put(languageName, new LanguageApi(privateLangFile));
         }
     }
 

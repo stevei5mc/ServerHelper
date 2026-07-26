@@ -72,6 +72,7 @@ public class ServerHelperMain extends Plugin {
     public void loadConfig() {
         this.config = new YamlConfig(this.getDataFolder()+"/config.yml");
         this.privateConfig = new YamlConfig(this.getDataFolder()+"/wdpe-private.yml");
+        PluginI18n.loadLanguages();
     }
 
     public String getMessagePrefix() {

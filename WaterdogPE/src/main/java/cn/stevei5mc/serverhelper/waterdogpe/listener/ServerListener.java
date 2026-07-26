@@ -1,6 +1,8 @@
 package cn.stevei5mc.serverhelper.waterdogpe.listener;
 
 import cn.stevei5mc.serverhelper.waterdogpe.ServerHelperMain;
+import cn.stevei5mc.serverhelper.waterdogpe.utils.LanguageApi;
+import cn.stevei5mc.serverhelper.waterdogpe.utils.PluginI18n;
 import dev.waterdog.waterdogpe.event.defaults.ServerTransferEvent;
 import dev.waterdog.waterdogpe.event.defaults.TransferCompleteEvent;
 
@@ -11,7 +13,7 @@ public class ServerListener {
     public static void onServerTransfer(ServerTransferEvent event) {
         String sourceServer = event.getSourceServer().getServerName();
         String targetServer = event.getTargetServer().getServerName();
-        event.getPlayer().sendMessage("§a" + sourceServer + "  --->>  " + targetServer);
+        event.getPlayer().sendMessage(PluginI18n.getBaseLang(event.getPlayer()).translateString("player-message-serverTransfer-success", sourceServer, targetServer));
         main.getLogger().info(String.format("§aPlayer=[%s] Server=[%s]--->>[%s]", event.getPlayer().getName(), sourceServer, targetServer));
     }
 }
