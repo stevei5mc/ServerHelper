@@ -1,5 +1,6 @@
 package cn.stevei5mc.serverhelper.nukkit;
 
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gamecore.utils.NukkitTypeUtils;
 import cn.nukkit.Server;
 import cn.nukkit.command.Command;
@@ -42,11 +43,13 @@ public class ServerHelperMain extends PluginBase {
     public void onEnable() {
         if (this.getServer().getPluginManager().getPlugin("MemoriesOfTime-GameCore") != null) {
             PluginI18n.loadLanguages();
+            Language lang = PluginI18n.getBaseLang();
+
             this.getLogger().info(getPluginInfo().replace("\n", " §f| "));
-            this.regCmd(new ServerHelperMainCmd());
-            this.regCmd(new AdminCmd(config.getString("commands.name.admin", "admin")));
+            this.regCmd(new ServerHelperMainCmd("serverhelper", lang.translateString("command-description-main")));
+            this.regCmd(new AdminCmd(config.getString("commands.name.admin", "admin"), lang.translateString("command-description-admin")));
             if (this.privateConfig.getBoolean("waterdogPE-mode", false)) {
-                this.regCmd(new StaffChatCmd(config.getString("commands.name.staffChat", "staffchat"), "ServerHelper Staff chat command"));
+                this.regCmd(new StaffChatCmd(config.getString("commands.name.staffChat", "staffchat"), lang.translateString("command-description-staffChat")));
             }
             this.getServer().getPluginManager().registerEvents(new PlayerListener(),this);
             Server.getInstance().getScheduler().scheduleDelayedTask(this, () -> {

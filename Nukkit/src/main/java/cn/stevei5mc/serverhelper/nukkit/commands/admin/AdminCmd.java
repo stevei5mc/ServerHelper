@@ -7,8 +7,8 @@ import cn.stevei5mc.serverhelper.nukkit.commands.base.BaseCommand;
 import cn.stevei5mc.serverhelper.nukkit.form.MainForm;
 
 public class AdminCmd extends BaseCommand {
-    public AdminCmd(String name) {
-        super(name,"ServerHelper admin command");
+    public AdminCmd(String name, String description) {
+        super(name, description);
         this.setPermission(PermissionsInfo.ADMIN_MAIN.getPermission());
     }
 

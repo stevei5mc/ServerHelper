@@ -56,7 +56,7 @@ public abstract class BaseCommand extends Command {
                     }else if (sender.isPlayer()) {
                         sender.sendMessage(main.getMessagePrefix() +lang.translateString("command-tipMessage-notPermission"));
                     }else {
-                        sender.sendMessage(main.getMessagePrefix() +lang.translateString("command-tipMessage-inGameRun"));
+                        sender.sendMessage(main.getMessagePrefix() +lang.translateString("command-tipMessage-isGameUse"));
                     }
                 }else {
                     this.sendHelp(sender);

@@ -25,7 +25,7 @@ public class PluginI18n {
         main.getLogger().info("Default language " + defaultLanguage);
         for (String languageName : BaseInfo.getLanguages()) {
             Config baseLangFile = new Config(Config.YAML);
-            baseLangFile.load(main.getResource(ResourcesFilesInfo.PathsInfo.LANGUAGES_BASE.getJarPath()) + languageName + ".yml");
+            baseLangFile.load(main.getResource(ResourcesFilesInfo.PathsInfo.LANGUAGES_BASE.getJarPath() + languageName + ".yml"));
             baseLanguagesMap.put(languageName, new Language(baseLangFile));
 //            Config privateLangFile = new Config(Config.YAML);
 //            privateLangFile.load(main.getResource(ResourcesFilesInfo.PathsInfo.LANGUAGES_PRIVATE.getJarPath()) + languageName + ".yml");

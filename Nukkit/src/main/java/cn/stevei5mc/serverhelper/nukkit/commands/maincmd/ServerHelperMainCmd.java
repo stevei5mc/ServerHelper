@@ -12,8 +12,8 @@ import cn.stevei5mc.serverhelper.nukkit.utils.PluginI18n;
 
 public class ServerHelperMainCmd extends BaseCommand {
 
-    public ServerHelperMainCmd() {
-        super("serverhelper", "ServerHelper plugin command");
+    public ServerHelperMainCmd(String name, String description) {
+        super(name, description);
         this.setPermission(PermissionsInfo.ADMIN_MAIN.getPermission());
         this.setAliases("shr");
         this.addSubCommand(new VersionCmd("version"));

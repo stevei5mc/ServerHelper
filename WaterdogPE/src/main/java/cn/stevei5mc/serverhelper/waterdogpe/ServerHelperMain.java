@@ -11,6 +11,7 @@ import cn.stevei5mc.serverhelper.waterdogpe.handler.PlayerReconnectHandler;
 import cn.stevei5mc.serverhelper.waterdogpe.listener.PlayerListener;
 import cn.stevei5mc.serverhelper.waterdogpe.listener.ServerListener;
 import cn.stevei5mc.serverhelper.waterdogpe.serverinfo.LobbyServersInfo;
+import cn.stevei5mc.serverhelper.waterdogpe.utils.LanguageApi;
 import dev.waterdog.waterdogpe.command.Command;
 import dev.waterdog.waterdogpe.event.Event;
 import cn.stevei5mc.serverhelper.waterdogpe.utils.PluginI18n;
@@ -35,16 +36,18 @@ public class ServerHelperMain extends Plugin {
         instance = this;
         saveConfigResources();
         loadConfig();
+        LanguageApi lang = PluginI18n.getBaseLang();
+
         this.getLogger().info(getPluginInfo().replace("\n", " §f| "));
         this.getLogger().warn("§c警告! §c本插件为免费且开源的，如果您付费获取获取的，则有可能被误导了");
         this.getLogger().info(BaseInfo.GH_URL);
-        this.regCmd(new ServerHelperMainCmd("serverhelper-wdpe", "ServerHelper plugin command", PermissionsInfo.ADMIN_MAIN.getPermission(), "shr-wdpe"));
-        this.regCmd(new StaffChatCmd(this.config.getString("commands.name.staffChat", "staffchat"), "ServerHelper Staff chat command", PermissionsInfo.STAFF_CHAT.getPermission()));
+        this.regCmd(new ServerHelperMainCmd("serverhelper-wdpe", lang.translateString("command-description-main"), PermissionsInfo.ADMIN_MAIN.getPermission(), "shr-wdpe"));
+        this.regCmd(new StaffChatCmd(this.config.getString("commands.name.staffChat", "staffchat"), lang.translateString("command-description-staffChat"), PermissionsInfo.STAFF_CHAT.getPermission()));
         if (this.privateConfig.getBoolean("lobby-server.enable", true)) {
             LobbyServersInfo.loadLobbyServers();
             if (this.privateConfig.getBoolean("lobby-server.cmd.enable", true)) {
                 String[] aliases = this.privateConfig.getStringList("lobby-server.cmd.aliases").toArray(new String[0]);
-                this.regCmd(new LobbyCmd("lobby", "lobby cmd", PermissionsInfo.PLAYER_LOBBY.getPermission(), aliases));
+                this.regCmd(new LobbyCmd("lobby", lang.translateString("command-description-lobby"), PermissionsInfo.PLAYER_LOBBY.getPermission(), aliases));
             }
         }
         this.regEventListener(DispatchCommandEvent.class, PlayerListener::onDispatchCommand);
