@@ -40,7 +40,7 @@ public enum ResourcesFilesInfo {
         SETTINGS("Settings/"),
 
         LANGUAGES_BASE("languages/base/"),
-        LANGUAGES_PRIVATE("languages/private/");
+        LANGUAGES_CUSTOM("languages/custom/");
 
         @Getter
         private final String jarPath;

@@ -12,7 +12,7 @@ import java.util.HashMap;
 
 public class PluginI18n {
     private static final HashMap<String, LanguageApi> baseLanguagesMap = new HashMap<>();
-    private static final HashMap<String, LanguageApi> privateLanguagesMap = new HashMap<>();
+    private static final HashMap<String, LanguageApi> customLanguagesMap = new HashMap<>();
     private static final ServerHelperMain main = ServerHelperMain.getInstance();
     private static String defaultLanguage;
 
@@ -27,9 +27,9 @@ public class PluginI18n {
             Configuration baseLangFile = new YamlConfig(main.getDataFolder() + ResourcesFilesInfo.PathsInfo.LANGUAGES_BASE.getDataPath() + languageName + ".yml");
             baseLangFile.load(main.getResourceFile(ResourcesFilesInfo.PathsInfo.LANGUAGES_BASE.getJarPath() + languageName + ".yml"));
             baseLanguagesMap.put(languageName, new LanguageApi(baseLangFile));
-//            Configuration privateLangFile = new YamlConfig(main.getDataFolder() + ResourcesFilesInfo.PathsInfo.LANGUAGES_PRIVATE.getDataPath() + languageName + ".yml");
-//            privateLangFile.load(main.getResourceFile(ResourcesFilesInfo.PathsInfo.LANGUAGES_PRIVATE.getJarPath() + languageName + ".yml"));
-//            privateLanguagesMap.put(languageName, new LanguageApi(privateLangFile));
+            Configuration privateLangFile = new YamlConfig(main.getDataFolder() + ResourcesFilesInfo.PathsInfo.LANGUAGES_CUSTOM.getDataPath() + languageName + ".yml");
+            privateLangFile.load(main.getResourceFile(ResourcesFilesInfo.PathsInfo.LANGUAGES_CUSTOM.getJarPath() + languageName + ".yml"));
+            customLanguagesMap.put(languageName, new LanguageApi(privateLangFile));
         }
     }
 
@@ -56,10 +56,10 @@ public class PluginI18n {
         if (sender instanceof ProxiedPlayer) {
             ProxiedPlayer player = (ProxiedPlayer) sender;
             String playerLanguage = String.valueOf(player.getLoginData().getClientData().get("LanguageCode")).replace("\"","");
-            if (privateLanguagesMap.containsKey(playerLanguage)) {
-                return privateLanguagesMap.get(playerLanguage);
+            if (customLanguagesMap.containsKey(playerLanguage)) {
+                return customLanguagesMap.get(playerLanguage);
             }
         }
-        return privateLanguagesMap.get(defaultLanguage);
+        return customLanguagesMap.get(defaultLanguage);
     }
 }

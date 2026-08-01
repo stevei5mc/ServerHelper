@@ -12,7 +12,7 @@ import java.util.HashMap;
 
 public class PluginI18n {
     private static final HashMap<String, Language> baseLanguagesMap = new HashMap<>();
-    private static final HashMap<String, Language> privateLanguagesMap = new HashMap<>();
+    private static final HashMap<String, Language> customLanguagesMap = new HashMap<>();
     private static final ServerHelperMain main = ServerHelperMain.getInstance();
     private static String defaultLanguage;
 
@@ -27,9 +27,9 @@ public class PluginI18n {
             Config baseLangFile = new Config(Config.YAML);
             baseLangFile.load(main.getResource(ResourcesFilesInfo.PathsInfo.LANGUAGES_BASE.getJarPath() + languageName + ".yml"));
             baseLanguagesMap.put(languageName, new Language(baseLangFile));
-//            Config privateLangFile = new Config(Config.YAML);
-//            privateLangFile.load(main.getResource(ResourcesFilesInfo.PathsInfo.LANGUAGES_PRIVATE.getJarPath()) + languageName + ".yml");
-//            privateLanguagesMap.put(languageName,new Language(privateLangFile));
+            Config customLangFile = new Config(Config.YAML);
+            customLangFile.load(main.getResource(ResourcesFilesInfo.PathsInfo.LANGUAGES_CUSTOM.getJarPath()) + languageName + ".yml");
+            customLanguagesMap.put(languageName,new Language(customLangFile));
         }
     }
 
@@ -56,10 +56,10 @@ public class PluginI18n {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             String playerLanguage = player.getLoginChainData().getLanguageCode();
-            if (privateLanguagesMap.containsKey(playerLanguage)) {
-                return privateLanguagesMap.get(playerLanguage);
+            if (customLanguagesMap.containsKey(playerLanguage)) {
+                return customLanguagesMap.get(playerLanguage);
             }
         }
-        return privateLanguagesMap.get(defaultLanguage);
+        return customLanguagesMap.get(defaultLanguage);
     }
 }
