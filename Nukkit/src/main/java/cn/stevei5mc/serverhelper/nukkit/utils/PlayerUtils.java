@@ -87,17 +87,16 @@ public class PlayerUtils {
      * @param removeRequestPlayer 是否排除查询的玩家
      * @return 在线玩家列表
      */
-    public static List<String> getOnlinePlayers(Player player,boolean removeRequestPlayer) {
+    public static List<String> getOnlinePlayers(Player player, boolean removeRequestPlayer) {
         ArrayList<String> players = new ArrayList<>();
+
         for (Player p : Server.getInstance().getOnlinePlayers().values()) {
             if (removeRequestPlayer && p == player) { //跳过自己
                 continue;
             }
             players.add(p.getName());
         }
-        if (players.isEmpty()) {
-            players.add("§c§lPlayer not found");
-        }
+
         return players;
     }
 }
