@@ -16,7 +16,7 @@ public class PlayerPatrolSystemForm {
     private static final ServerHelperMain main = ServerHelperMain.getInstance();
 
     // 选择需要巡查的玩家 （快捷菜单使用）
-    public static void sendSelectPatrolPlayerUi(@NotNull Player admin) {
+    public static void selectPatrolPlayerUi(@NotNull Player admin) {
         // 获取全部加载的世界名
         ArrayList<String> mapName = new ArrayList<>();
         for (Level level : main.getServer().getLevels().values()) {
@@ -56,13 +56,13 @@ public class PlayerPatrolSystemForm {
         admin.showFormWindow(custom);
     }
 
-    // 确认目标玩家菜单
-    public static void confirmTargetPlayerMenu(@NotNull Player admin, Player target) {
+    // 选择巡查方式 (在玩家管理菜单使用)
+    public static void selectPatrolMode(@NotNull Player admin, Player target) {
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("巡查系统");
         custom.addElement(new ElementLabel("目标玩家: "+target.getName()));
         custom.addElement(new ElementToggle("旁观者模式 / 隐身模式"));
-        custom.onClosed(player -> ManagePlayersForm.manageFeatureList(admin,target));
-        custom.onResponded((form, player) -> PlayerUtils.teleportToPatrolTarget(admin,target,form.getToggleResponse(1)));
+        custom.onClosed(player -> ManagePlayersForm.manageFeatureList(admin, target));
+        custom.onResponded((form, player) -> PlayerUtils.teleportToPatrolTarget(admin, target, form.getToggleResponse(1)));
         admin.showFormWindow(custom);
     }
 }

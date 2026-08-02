@@ -46,7 +46,7 @@ public class ManagePlayersForm {
     // 快捷功能菜单
     public static void shortcutManageFeatureList(@NotNull Player admin) {
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple("管理功能");
-        simple.addButton(new ResponseElementButton("巡查系统").onClicked(PlayerPatrolSystemForm::sendSelectPatrolPlayerUi));
+        simple.addButton(new ResponseElementButton("巡查系统").onClicked(PlayerPatrolSystemForm::selectPatrolPlayerUi));
         // TODO: 到时候这里放置查询玩家背包的快捷入口
         simple.addButton(new ResponseElementButton("返回").onClicked(MainForm::mainMenu));
         admin.showFormWindow(simple);
@@ -60,7 +60,7 @@ public class ManagePlayersForm {
         if (target.isOnline()) {
             simple.addButton(new ResponseElementButton("踢出"));
             simple.addButton(new ResponseElementButton("警告"));
-            simple.addButton(new ResponseElementButton("巡查").onClicked(p -> PlayerPatrolSystemForm.confirmTargetPlayerMenu(admin,target)));
+            simple.addButton(new ResponseElementButton("巡查").onClicked(p -> PlayerPatrolSystemForm.selectPatrolMode(admin,target)));
             simple.addButton(new ResponseElementButton("查询该玩家信息").onClicked(p -> queryPlayerInfoUi(admin,target)));
         }
         simple.addButton(new ResponseElementButton("返回").onClicked(ManagePlayersForm::sendSelectPlayerUi));
