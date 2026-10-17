@@ -18,7 +18,7 @@ env:
 jobs:
   Initialize:
     runs-on: ubuntu-slim
-    timeout-minutes: 5
+    timeout-minutes: 2
     outputs:
       repoName: ${{ steps.getProjectInfo.outputs.repoNmae }}
       targetCommitId: ${{ env.targetCommitId }}

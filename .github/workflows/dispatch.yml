@@ -39,7 +39,7 @@ env:
 jobs:
   Initialize:
     runs-on: ubuntu-slim
-    timeout-minutes: 5
+    timeout-minutes: 2
     outputs:
       actionUrl: ${{ steps.getProjectInfo.outputs.actionUrl }}
       targetCommitId: ${{ env.targetCommitId }}
