@@ -28,10 +28,7 @@ on:
         required: false
         default: 'Not used'
         type: choice
-        options: ['Not used','Build PR','Release snapshot','Delete snapshot']
-      PR_ID:
-        description: 'PR number'
-        required: false
+        options: ['Not used','Release snapshot','Delete snapshot']
 
 env:
   GH_TOKEN: ${{ github.token }}
@@ -57,20 +54,13 @@ jobs:
         with:
           script: |
             const additionalFunctions = "${{ inputs.additionalFunctions }}";
-            if (additionalFunctions == 'Build PR') {
-              const PR_ID = "${{ inputs.PR_ID }}";
-              const prNumber = Number(PR_ID.trim());
-              if (!Number.isInteger(prNumber) || prNumber <= 0) {
-                core.setFailed(`输入的PR编号格式不正确。输入值为: ${PR_ID}`);
-              }
-            }
             if (additionalFunctions == 'Release snapshot' && ${{ inputs.artifactSaveDays }} < 1) {
               core.setFailed(`构建后的 artifact 保存天数为 ${{ inputs.artifactSaveDays }}，必须 >= 1，否则无法正常发布快照版本`);
             }
 
             const buildMode = "${{ inputs.additionalFunctions }}";
             const isRunBuildJob = (
-              ((buildMode === 'Plugin' || buildMode === 'All') && inputs.additionalFunctions !== 'Delete snapshot') || additionalFunctions === 'Build PR' || additionalFunctions === 'Release snapshot'
+              ((buildMode === 'Plugin' || buildMode === 'All') && inputs.additionalFunctions !== 'Delete snapshot') || additionalFunctions === 'Release snapshot'
             );
             core.info(`Is run build job: ${isRunBuildJob}`);
             core.setOutput('isRunBuildJob', isRunBuildJob);
@@ -91,13 +81,6 @@ jobs:
           else
             echo "|${{ env.targetBranch }}|${{ env.targetCommitId }}|${{ inputs.artifactSaveDays }}|" >> $GITHUB_STEP_SUMMARY
           fi
-      - name: Get and summary PR info
-        if: inputs.additionalFunctions == 'Build PR'
-        id: prInfo
-        uses: ./.github/actions/getInfo/prInfo
-        with:
-          prId: ${{ inputs.PR_ID }}
-          prApprove: true
       - name: 删除快照
         if: inputs.additionalFunctions == 'Release snapshot' || inputs.additionalFunctions == 'Delete snapshot'
         run: |
@@ -107,7 +90,7 @@ jobs:
           fi
 
   build-plugin:
-    if: ${{ needs.Initialize.outputs.repoName }}
+    if: ${{ needs.Initialize.outputs.isRunBuildJob }}
     name: Build plugin
     needs: Initialize
     runs-on: ubuntu-latest
@@ -117,9 +100,6 @@ jobs:
     steps:
       - name: 拉取代码
         uses: actions/checkout@v7
-      - name: 拉取 PR 代码
-        if: inputs.additionalFunctions == 'Build PR'
-        run: gh pr checkout ${{ inputs.PR_ID }} && ls -la
       - name: Setup java ${{ env.java-version }}
         uses: actions/setup-java@v6
         with:

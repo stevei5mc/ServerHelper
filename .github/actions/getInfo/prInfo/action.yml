@@ -6,10 +6,6 @@ inputs:
     description: "Pr id"
     required: true
     default: '${{ github.event.pull_request.number }}'
-  prApprove:
-    description: "PR approve"
-    required: true
-    default: 'false'
 
 outputs:
   prState:
@@ -46,15 +42,3 @@ runs:
         sed -i 's|{8A}|${{ env.headlabel }}|g; s|{8B}|${{ env.headUrl }}|g; s|{8C}|${{ env.targetCommitId }}|g' $templateFile
         sed -i 's|{9A}|${{ env.baselabel }}|g; s|{9B}|${{ env.baseUrl }}|g; s|{9C}|${{ env.baseSha }}|g' $templateFile
         cat $templateFile >> $GITHUB_STEP_SUMMARY
-    - name: Pull request status check
-      if: inputs.prApprove == 'true'
-      uses: actions/github-script@v9
-      with:
-        script: |
-          const prState = "${{ steps.getPrInfo.outputs.prState }}";
-          core.info('Check current pull request state');
-          if (`${prState}` != 'open') {
-            core.setFailed(`Pull request state is ${prState}`);
-          }else {
-            core.info(`Pull request state is ${prState}`);
-          }
