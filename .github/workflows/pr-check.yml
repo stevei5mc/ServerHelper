@@ -1,7 +1,7 @@
-name: PR CI
+name: PR check
 
 concurrency:
-  group: PR-${{ github.event.pull_request.number }}
+  group: pr-check-${{ github.event.pull_request.number || inputs.prNumber }}
   cancel-in-progress: true
 
 on:
@@ -10,7 +10,12 @@ on:
       - ".github/actions/getReleaseInfo/action.yml"
       - ".github/actions/releaseSnapshot/action.yml"
       - ".github/workflows/dispatch.yml"
-      - ".github/workflows/tagpush.yml"
+      - ".github/workflows/release.yml"
+  workflow_dispatch:
+    inputs:
+      prNumber:
+        description: 'PR number'
+        required: true
 
 env:
   GH_TOKEN: ${{ github.token }}
@@ -26,6 +31,17 @@ jobs:
     steps:
       - name: 拉取代码
         uses: actions/checkout@v6
+      - name: 检查输入参数
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const prID = "${{ github.event.pull_request.number || inputs.prNumber }}";
+            const prNumber = Number(prID.trim());
+
+            if (!Number.isInteger(prNumber) || prNumber <= 0) {
+              core.setFailed(`输入的PR编号格式不正确。输入值为: ${prID}`);
+            }
       - name: 获取信息
         id: getProjectInfo
         uses: ./.github/actions/getInfo/projectInfo
@@ -42,6 +58,8 @@ jobs:
     steps:
       - name: 拉取代码
         uses: actions/checkout@v6
+        with:
+          ref: refs/pull/${{ github.event.pull_request.number || inputs.prNumber }}/merge
       - name: Setup java ${{ env.java-version }}
         uses: actions/setup-java@v5
         with:
