@@ -14,7 +14,7 @@ runs:
   steps:
     - name: Get release info
       id: getReleaseInfo
-      uses: actions/github-script@v8
+      uses: actions/github-script@v9
       with:
         script: |
           let refName = "${{ github.ref }}";
