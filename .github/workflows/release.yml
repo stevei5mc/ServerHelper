@@ -62,8 +62,7 @@ jobs:
       - name: Set gradlew 777 permission
         run: chmod 777 gradlew && ls -lah
       - name:  Build project
-        id: build
-        run: ./gradlew shadowJar javadocJar --no-daemon --parallel --continue
+        run: ./gradlew build --no-daemon --parallel --continue
       - name: Get artifact hash and copy files
         run:  bash .github/workflows/scripts/getHashAndCopy.sh
       - name: 上传测试报告

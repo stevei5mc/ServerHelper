@@ -77,8 +77,7 @@ jobs:
       - name: Set gradlew 777 permission
         run: chmod 777 gradlew && ls -lah
       - name:  Build project
-        id: build
-        run: ./gradlew shadowJar javadocJar --no-daemon --parallel --continue
+        run: ./gradlew build --no-daemon --parallel --continue
       - name: 上传测试报告
         if: always() && ( steps.build.outcome == 'success' || steps.build.outcome == 'failure' )
         uses: ./.github/actions/uploadTestReportFiles
