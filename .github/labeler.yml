@@ -7,7 +7,7 @@ platform/WDPE:
     - any-glob-to-any-file: WaterdogPE/src/main/**
 
 type/feature:
-  - head-branch: ["^feat/.*", "feature"]
+  - head-branch: "(^|.*/)(feat|feature)[/_-]"
 
 type/refactor:
   - head-branch: '^refactor/.+$'
