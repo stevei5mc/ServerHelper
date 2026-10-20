@@ -97,7 +97,6 @@ jobs:
 #            gh release delete snapshot-version --yes --cleanup-tag
 #          fi
       - name: 对 PR 分配对应 label
-        if: inputs.additionalFunctions == 'PR labeler'
         uses: actions/labeler@v6
         with:
           sync-labels: true
@@ -108,7 +107,7 @@ jobs:
             14
 
   build-plugin:
-    if: inputs.additionalFunctions == 'Release snapshot'
+    if: inputs.additionalFunctions == 'vzsexrftbvrv3ef'
     name: Build plugin
     needs: Initialize
     runs-on: ubuntu-latest
