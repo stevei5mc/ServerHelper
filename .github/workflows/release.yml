@@ -8,6 +8,7 @@ on:
 
 env:
   GH_TOKEN: ${{ github.token }}
+  java-version: "17"
 
 jobs:
   Initialize:
@@ -42,8 +43,6 @@ jobs:
     needs: Initialize
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    env:
-      java-version: "17"
     steps:
       - name: 拉取代码
         uses: actions/checkout@v7
