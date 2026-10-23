@@ -1,13 +1,34 @@
 platform/Nukkit:
   - changed-files:
-    - any-glob-to-any-file: Nukkit/src/main/**
+    - any-glob-to-any-file: Nukkit/**
 
 platform/WDPE:
   - changed-files:
-    - any-glob-to-any-file: WaterdogPE/src/main/**
+    - any-glob-to-any-file: WaterdogPE/**
+
+type/ci:
+  - changed-files:
+      - any-glob-to-any-file: |
+          - ".github/actions/**"
+          - ".github/workflows/**"
+  - head-branch: "(^|.*/)ci[/_-]"
+
+type/chore:
+  - head-branch: "(^|.*/)chore[/_-]"
 
 type/feature:
   - head-branch: "(^|.*/)(feat|feature)[/_-]"
 
+type/fix:
+  - head-branch: "(^|.*/)fix[/_-]"
+
 type/refactor:
-  - head-branch: '^refactor/.+$'
+  - head-branch: "(^|.*/)refactor[/_-]"
+
+type/revert:
+  - head-branch: "(^|.*/)revert[/_-]"
+
+type/test:
+  - changed-files:
+      - any-glob-to-any-file: "**/src/test/**"
+  - head-branch: "(^|.*/)test[/_-]"
