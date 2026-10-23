@@ -7,10 +7,10 @@ platform/WDPE:
     - any-glob-to-any-file: WaterdogPE/**
 
 type/ci:
-  - changed-files:
-      - any-glob-to-any-file: |
-          - ".github/actions/**"
-          - ".github/workflows/**"
+#  - changed-files:
+#      - any-glob-to-any-file: |
+#          - ".github/actions/**"
+#          - ".github/workflows/**"
   - head-branch: "(^|.*/)ci[/_-]"
 
 type/chore:

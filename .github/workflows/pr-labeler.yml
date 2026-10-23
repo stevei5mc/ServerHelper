@@ -6,11 +6,6 @@ concurrency:
 
 on:
   pull_request_target:
-    paths-ignore:
-      - ".github/actions/getReleaseInfo/action.yml"
-      - ".github/actions/releaseSnapshot/action.yml"
-      - ".github/workflows/dispatch.yml"
-      - ".github/workflows/tagpush.yml"
   workflow_dispatch:
     inputs:
       prNumber:
@@ -35,3 +30,6 @@ jobs:
           sync-labels: true
           configuration-path: .github/labeler.yml
           pr-number: ${{ github.event.pull_request.number || inputs.prNumber }}
+      - name: 输出标签信息
+        run: |
+          echo "新标签： ${{ steps.labeler.outputs.new-labels }}"
