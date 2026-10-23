@@ -1,0 +1,15 @@
+version: 1
+
+handler:
+  enable:
+    player:
+      join: true
+      reconnect: true
+
+lobby-server:
+  enable: true
+  query-interval: 30
+  reserve-count: 10
+  cmd:
+    enable: true
+    aliases: ["hub"]

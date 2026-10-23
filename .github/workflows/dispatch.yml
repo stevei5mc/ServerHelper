@@ -46,6 +46,7 @@ jobs:
       targetBranch: ${{ env.targetBranch }}
       prState: ${{ steps.prInfo.outputs.prState }}
       repoName: ${{ steps.getProjectInfo.outputs.repoNmae }}
+      isRunBuildJob: ${{ steps.check.outputs.isRunBuildJob }}
     steps:
       - name: 拉取代码
         uses: actions/checkout@v7

@@ -57,7 +57,6 @@ public class ServerHelperMain extends PluginBase {
             this.getLogger().warning("§b下载地址: §ehttps://motci.cn/job/GameCore/");
             this.onDisable();
         }
-
     }
 
     @Override
@@ -90,7 +89,7 @@ public class ServerHelperMain extends PluginBase {
         return BaseInfo.getVersionInfo() + "\n§bNukkit type: §a" + NukkitTypeUtils.getNukkitType().name();
     }
     
-    public void regCmd(Command command) {
+    private void regCmd(Command command) {
         this.getServer().getCommandMap().register("", command);
     }
 }
