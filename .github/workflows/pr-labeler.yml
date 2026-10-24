@@ -10,7 +10,8 @@ on:
     inputs:
       prNumber:
         description: 'PR number'
-        required: false
+        required: true
+
 env:
   GH_TOKEN: ${{ github.token }}
 

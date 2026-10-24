@@ -1,3 +1,7 @@
+platform/Common:
+  - changed-files:
+    - any-glob-to-any-file: Common/**
+
 platform/Nukkit:
   - changed-files:
     - any-glob-to-any-file: Nukkit/**

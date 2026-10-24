@@ -28,7 +28,7 @@ on:
         required: false
         default: 'Not used'
         type: choice
-        options: ['Not used','Build PR','Release snapshot','Delete snapshot',"PR labeler"]
+        options: ['Not used','Build PR','Release snapshot','Delete snapshot']
       PR_ID:
         description: 'PR number'
         required: false
@@ -49,63 +49,65 @@ jobs:
       isRunBuildJob: ${{ steps.check.outputs.isRunBuildJob }}
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v7
-#      - name: 处理和检查输入的参数
-#        if: inputs.additionalFunctions != 'Delete snapshot'
-#        uses: actions/github-script@v9
-#        with:
-#          script: |
-#            const additionalFunctions = "${{ inputs.additionalFunctions }}";
-#            if (additionalFunctions == 'Build PR') {
-#              const PR_ID = "${{ inputs.PR_ID }}";
-#              const prNumber = Number(PR_ID.trim());
-#              if (!Number.isInteger(prNumber) || prNumber <= 0) {
-#                core.setFailed(`输入的PR编号格式不正确。输入值为: ${PR_ID}`);
-#              }
-#            }
-#            if (additionalFunctions == 'Release snapshot' && ${{ inputs.artifactSaveDays }} < 1) {
-#              core.setFailed(`构建后的 artifact 保存天数为 ${{ inputs.artifactSaveDays }}，必须 >= 1，否则无法正常发布快照版本`);
-#            }
-#      - name: 获取信息
-#        if: inputs.additionalFunctions != 'Delete snapshot'
-#        id: getProjectInfo
-#        uses: ./.github/actions/getInfo/projectInfo
-#      - name: Summary base info
-#        if: inputs.additionalFunctions != 'Delete snapshot'
-#        run: |
-#          cat << EOF >> $GITHUB_STEP_SUMMARY
-#          # BUILD INFO
-#          |Tatget ref|Target sha|Artifact save days|
-#          |:-:|:-:|:-:|
-#          EOF
-#          if [ '${{ inputs.additionalFunctions }}' == 'Build PR' ]; then
-#            echo "|===|===|${{ inputs.artifactSaveDays }}|" >> $GITHUB_STEP_SUMMARY
-#          else
-#            echo "|${{ env.targetBranch }}|${{ env.targetCommitId }}|${{ inputs.artifactSaveDays }}|" >> $GITHUB_STEP_SUMMARY
-#          fi
-#      - name: Get and summary PR info
-#        if: inputs.additionalFunctions == 'Build PR'
-#        id: prInfo
-#        uses: ./.github/actions/getInfo/prInfo
-#        with:
-#          prId: ${{ inputs.PR_ID }}
-#          prApprove: true
-#      - name: 删除快照
-#        if: inputs.additionalFunctions == 'Release snapshot' || inputs.additionalFunctions == 'Delete snapshot'
-#        run: |
-#          if gh release view snapshot-version >/dev/null 2>&1; then
-#            echo "正在删除快照版本"
-#            gh release delete snapshot-version --yes --cleanup-tag
-#          fi
-      - name: 对 PR 分配对应 label
-        uses: actions/labeler@v6
+        uses: actions/checkout@v6
+      - name: 处理和检查输入的参数
+        if: inputs.additionalFunctions != 'Delete snapshot'
+        id: check
+        uses: actions/github-script@v8
         with:
-          sync-labels: true
-          configuration-path: .github/labeler.yml
-          pr-number: ${{ inputs.PR_ID }}
+          script: |
+            const additionalFunctions = "${{ inputs.additionalFunctions }}";
+            if (additionalFunctions == 'Build PR') {
+              const PR_ID = "${{ inputs.PR_ID }}";
+              const prNumber = Number(PR_ID.trim());
+              if (!Number.isInteger(prNumber) || prNumber <= 0) {
+                core.setFailed(`输入的PR编号格式不正确。输入值为: ${PR_ID}`);
+              }
+            }
+            if (additionalFunctions == 'Release snapshot' && ${{ inputs.artifactSaveDays }} < 1) {
+              core.setFailed(`构建后的 artifact 保存天数为 ${{ inputs.artifactSaveDays }}，必须 >= 1，否则无法正常发布快照版本`);
+            }
+
+            const buildMode = "${{ inputs.additionalFunctions }}";
+            const isRunBuildJob = (
+              ((buildMode === 'Plugin' || buildMode === 'All') && inputs.additionalFunctions !== 'Delete snapshot') || additionalFunctions === 'Build PR' || additionalFunctions === 'Release snapshot'
+            );
+            core.info(`Is run build job: ${isRunBuildJob}`);
+            core.setOutput('isRunBuildJob', isRunBuildJob);
+      - name: 获取信息
+        if: inputs.additionalFunctions != 'Delete snapshot'
+        id: getProjectInfo
+        uses: ./.github/actions/getInfo/projectInfo
+      - name: Summary base info
+        if: inputs.additionalFunctions != 'Delete snapshot'
+        run: |
+          cat << EOF >> $GITHUB_STEP_SUMMARY
+          # BUILD INFO
+          |Tatget ref|Target sha|Artifact save days|
+          |:-:|:-:|:-:|
+          EOF
+          if [ '${{ inputs.additionalFunctions }}' == 'Build PR' ]; then
+            echo "|===|===|${{ inputs.artifactSaveDays }}|" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "|${{ env.targetBranch }}|${{ env.targetCommitId }}|${{ inputs.artifactSaveDays }}|" >> $GITHUB_STEP_SUMMARY
+          fi
+      - name: Get and summary PR info
+        if: inputs.additionalFunctions == 'Build PR'
+        id: prInfo
+        uses: ./.github/actions/getInfo/prInfo
+        with:
+          prId: ${{ inputs.PR_ID }}
+          prApprove: true
+      - name: 删除快照
+        if: inputs.additionalFunctions == 'Release snapshot' || inputs.additionalFunctions == 'Delete snapshot'
+        run: |
+          if gh release view snapshot-version >/dev/null 2>&1; then
+            echo "正在删除快照版本"
+            gh release delete snapshot-version --yes --cleanup-tag
+          fi
 
   build-plugin:
-    if: inputs.additionalFunctions == 'vzsexrftbvrv3ef'
+    if: ${{ needs.Initialize.outputs.repoName }}
     name: Build plugin
     needs: Initialize
     runs-on: ubuntu-latest
@@ -114,7 +116,7 @@ jobs:
       java-version: "17"
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v7
+        uses: actions/checkout@v6
       - name: 拉取 PR 代码
         if: inputs.additionalFunctions == 'Build PR'
         run: gh pr checkout ${{ inputs.PR_ID }} && ls -la
@@ -160,7 +162,7 @@ jobs:
       contents: write
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v7
+        uses: actions/checkout@v6
       - name: 发布快照版本
         if: inputs.additionalFunctions == 'Release snapshot'
         uses: ./.github/actions/releaseSnapshot
