@@ -32,21 +32,10 @@ jobs:
         uses: ./.github/actions/getInfo/projectInfo
       - name: Get and summary PR info
         uses: ./.github/actions/getInfo/prInfo
-      - name: 分配标签
-        id: labeler
-        uses: actions/labeler@v6
-        with:
-          sync-labels: true
-          configuration-path: .github/labeler.yml
-          pr-number: ${{ github.event.pull_request.number }}
-      - name: 输出标签信息
-        run: |
-          echo "新标签： ${{ steps.labeler.outputs.new-labels }}"
 
   build-plugin:
     name: Build plugin
     needs: Initialize
-    if: inputs.additionalFunctions == 'vzsexrftbvrv3ef'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:

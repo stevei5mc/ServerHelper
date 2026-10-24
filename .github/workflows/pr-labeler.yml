@@ -26,7 +26,7 @@ jobs:
     steps:
       - name: 分配标签
         id: labeler
-        uses: actions/labeler@v6
+        uses: actions/labeler@v7
         with:
           sync-labels: true
           configuration-path: .github/labeler.yml
