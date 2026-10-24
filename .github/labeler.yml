@@ -7,10 +7,10 @@ platform/WDPE:
     - any-glob-to-any-file: WaterdogPE/**
 
 type/ci:
-#  - changed-files:
-#      - any-glob-to-any-file: |
-#          - ".github/actions/**"
-#          - ".github/workflows/**"
+  - changed-files:
+      - any-glob-to-any-file: |
+          - ".github/actions/**"
+          - ".github/workflows/**"
   - head-branch: "(^|.*/)ci[/_-]"
 
 type/chore:
@@ -28,7 +28,7 @@ type/refactor:
 type/revert:
   - head-branch: "(^|.*/)revert[/_-]"
 
-type/test:
+unit-test:
   - changed-files:
       - any-glob-to-any-file: "**/src/test/**"
   - head-branch: "(^|.*/)test[/_-]"
