@@ -1,7 +1,7 @@
-name: PR CI
+name: PR check
 
 concurrency:
-  group: PR-${{ github.event.pull_request.number }}
+  group: ${{ github.workflow }}-PR-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 on:
@@ -11,6 +11,7 @@ on:
       - ".github/actions/releaseSnapshot/action.yml"
       - ".github/workflows/dispatch.yml"
       - ".github/workflows/tagpush.yml"
+      - ".github/labeler.yml"
 
 env:
   GH_TOKEN: ${{ github.token }}
@@ -25,7 +26,7 @@ jobs:
       targetBranch: ${{ env.targetBranch }}
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: 获取信息
         id: getProjectInfo
         uses: ./.github/actions/getInfo/projectInfo
@@ -41,7 +42,7 @@ jobs:
       java-version: "17"
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Setup java ${{ env.java-version }}
         uses: actions/setup-java@v5
         with:
