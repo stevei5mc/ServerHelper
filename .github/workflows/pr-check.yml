@@ -1,7 +1,7 @@
 name: PR check
 
 concurrency:
-  group: pr-check-${{ github.event.pull_request.number || inputs.prNumber }}
+  group: ${{ github.workflow }}-PR-${{ github.event.pull_request.number || inputs.prNumber }}
   cancel-in-progress: true
 
 on:
@@ -11,6 +11,7 @@ on:
       - ".github/actions/releaseSnapshot/action.yml"
       - ".github/workflows/dispatch.yml"
       - ".github/workflows/release.yml"
+      - ".github/labeler.yml"
   workflow_dispatch:
     inputs:
       prNumber:
