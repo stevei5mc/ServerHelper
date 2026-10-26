@@ -12,7 +12,7 @@ platform/WDPE:
 
 type/ci:
   - changed-files:
-      - any-glob-to-any-file: |
+      - any-glob-to-any-file:
           - ".github/actions/**"
           - ".github/workflows/**"
   - head-branch: "(^|.*/)ci[/_-]"
