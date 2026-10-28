@@ -119,12 +119,13 @@ jobs:
         run: ./gradlew shadowJar javadocJar --no-daemon --parallel --continue
       - name: 上传测试报告
         if: always() && (steps.build.outcome == 'failure' || inputs.uploadTestReport)
+        background: ${{ steps.build.outcome == 'success' }}
         uses: ./.github/actions/uploadTestReportFiles
         with:
           artifactName: ${{ needs.Initialize.outputs.repoName }}-Dispatch_Build_${{ github.run_number }}_Test_report
       - name: Get artifact hash and copy files
         if: inputs.artifactSaveDays >= 1
-        run:  bash .github/workflows/scripts/getHashAndCopy.sh
+        run: bash .github/workflows/scripts/getHashAndCopy.sh
       - name: Upload artifact
         if: inputs.artifactSaveDays >= 1
         uses: actions/upload-artifact@v7
@@ -137,7 +138,7 @@ jobs:
     if: needs.build-plugin.result == 'success' && inputs.additionalFunctions == 'Release snapshot'
     needs: [Initialize, build-plugin]
     runs-on: ubuntu-slim
-    timeout-minutes: 5
+    timeout-minutes: 1
     permissions:
       contents: write
     steps:

@@ -82,13 +82,14 @@ jobs:
         run: ./gradlew shadowJar javadocJar --no-daemon --parallel --continue
       - name: 上传测试报告
         if: always() && ( steps.build.outcome == 'success' || steps.build.outcome == 'failure' )
+        background: true
         uses: ./.github/actions/uploadTestReportFiles
         with:
-          artifactName: ${{ needs.Initialize.outputs.repoName }}-PR_${{ github.event.pull_request.number }}_check_Build-${{ github.run_number }}_Test_report
+          artifactName: ${{ needs.Initialize.outputs.repoName }}-PR_${{ github.event.pull_request.number }}-Build_check_${{ github.run_number }}-Test_report
       - name: Get artifact hash and copy files
         run:  bash .github/workflows/scripts/getHashAndCopy.sh
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: ${{ needs.Initialize.outputs.repoName }}-PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
+          name: ${{ needs.Initialize.outputs.repoName }}-PR_${{ github.event.pull_request.number }}-Build_check_${{ github.run_number }}
           path: ./staging
