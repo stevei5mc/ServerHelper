@@ -76,12 +76,8 @@ jobs:
           # BUILD INFO
           |Tatget ref|Target sha|Artifact save days|
           |:-:|:-:|:-:|
+          echo "|${{ env.targetBranch }}|${{ env.targetCommitId }}|${{ inputs.artifactSaveDays }}|" >> $GITHUB_STEP_SUMMARY
           EOF
-          if [ '${{ inputs.additionalFunctions }}' == 'Build PR' ]; then
-            echo "|===|===|${{ inputs.artifactSaveDays }}|" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "|${{ env.targetBranch }}|${{ env.targetCommitId }}|${{ inputs.artifactSaveDays }}|" >> $GITHUB_STEP_SUMMARY
-          fi
       - name: 删除快照
         if: inputs.additionalFunctions == 'Release snapshot' || inputs.additionalFunctions == 'Delete snapshot'
         run: |
@@ -119,7 +115,7 @@ jobs:
         run: ./gradlew shadowJar javadocJar --no-daemon --parallel --continue
       - name: 上传测试报告
         if: always() && (steps.build.outcome == 'failure' || inputs.uploadTestReport)
-        background: ${{ steps.build.outcome == 'success' }}
+        background: steps.build.outcome == 'success'
         uses: ./.github/actions/uploadTestReportFiles
         with:
           artifactName: ${{ needs.Initialize.outputs.repoName }}-Dispatch_Build_${{ github.run_number }}_Test_report
