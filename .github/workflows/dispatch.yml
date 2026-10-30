@@ -96,21 +96,21 @@ jobs:
       - name: 拉取代码
         uses: actions/checkout@v7
       - parallel:
-          - name: Setup java ${{ env.java-version }}
+          - name: 安装 java ${{ env.java-nversion }}
             uses: actions/setup-java@v6
             with:
               java-version: ${{ env.java-version }}
               distribution: 'temurin'
-          - name: Cache local Gradle wrapper and repository
+          - name: 缓存本地 Gradle wrapper 和 项目依赖
             uses: ./.github/actions/cacheGradle
           - name: Replace info
             run: |
               classPath=Common/src/main/java/cn/stevei5mc/serverhelper/common/BaseInfo.java
               version=$(grep "project.version=" "./gradle.properties" | sed 's/project.version=//')
               sed -i 's|{git.commit.id}|${{ needs.Initialize.outputs.targetCommitId }}|g; s|{git.branch}|${{ needs.Initialize.outputs.targetBranch }}|g; s|{project.version}|'"$version"'|g' $classPath
-          - name: Set gradlew 777 permission
+          - name: 设置 gradlew 777 权限
             run: chmod 777 gradlew && ls -lah
-      - name:  Build project
+      - name: 构建项目
         id: build
         run: ./gradlew shadowJar javadocJar --no-daemon --parallel --continue
       - name: 上传测试报告
@@ -119,10 +119,10 @@ jobs:
         uses: ./.github/actions/uploadTestReportFiles
         with:
           artifactName: ${{ needs.Initialize.outputs.repoName }}-Dispatch_Build_${{ github.run_number }}_Test_report
-      - name: Get artifact hash and copy files
+      - name: 获取构建文件的 hash 并复制到对应目录
         if: inputs.artifactSaveDays >= 1
         run: bash .github/workflows/scripts/getHashAndCopy.sh
-      - name: Upload artifact
+      - name: 上传构建文件
         if: inputs.artifactSaveDays >= 1
         uses: actions/upload-artifact@v7
         with:
