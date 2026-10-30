@@ -28,18 +28,16 @@ on:
         required: false
         default: 'Not used'
         type: choice
-        options: ['Not used','Build PR','Release snapshot','Delete snapshot']
-      PR_ID:
-        description: 'PR number'
-        required: false
+        options: ['Not used','Release snapshot','Delete snapshot']
 
 env:
   GH_TOKEN: ${{ github.token }}
+  java-version: "17"
 
 jobs:
   Initialize:
     runs-on: ubuntu-slim
-    timeout-minutes: 5
+    timeout-minutes: 2
     outputs:
       actionUrl: ${{ steps.getProjectInfo.outputs.actionUrl }}
       targetCommitId: ${{ env.targetCommitId }}
@@ -49,28 +47,21 @@ jobs:
       isRunBuildJob: ${{ steps.check.outputs.isRunBuildJob }}
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: 处理和检查输入的参数
         if: inputs.additionalFunctions != 'Delete snapshot'
         id: check
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const additionalFunctions = "${{ inputs.additionalFunctions }}";
-            if (additionalFunctions == 'Build PR') {
-              const PR_ID = "${{ inputs.PR_ID }}";
-              const prNumber = Number(PR_ID.trim());
-              if (!Number.isInteger(prNumber) || prNumber <= 0) {
-                core.setFailed(`输入的PR编号格式不正确。输入值为: ${PR_ID}`);
-              }
-            }
             if (additionalFunctions == 'Release snapshot' && ${{ inputs.artifactSaveDays }} < 1) {
               core.setFailed(`构建后的 artifact 保存天数为 ${{ inputs.artifactSaveDays }}，必须 >= 1，否则无法正常发布快照版本`);
             }
 
             const buildMode = "${{ inputs.additionalFunctions }}";
             const isRunBuildJob = (
-              ((buildMode === 'Plugin' || buildMode === 'All') && inputs.additionalFunctions !== 'Delete snapshot') || additionalFunctions === 'Build PR' || additionalFunctions === 'Release snapshot'
+              ((buildMode === 'Plugin' || buildMode === 'All') && inputs.additionalFunctions !== 'Delete snapshot') || additionalFunctions === 'Release snapshot'
             );
             core.info(`Is run build job: ${isRunBuildJob}`);
             core.setOutput('isRunBuildJob', isRunBuildJob);
@@ -86,18 +77,7 @@ jobs:
           |Tatget ref|Target sha|Artifact save days|
           |:-:|:-:|:-:|
           EOF
-          if [ '${{ inputs.additionalFunctions }}' == 'Build PR' ]; then
-            echo "|===|===|${{ inputs.artifactSaveDays }}|" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "|${{ env.targetBranch }}|${{ env.targetCommitId }}|${{ inputs.artifactSaveDays }}|" >> $GITHUB_STEP_SUMMARY
-          fi
-      - name: Get and summary PR info
-        if: inputs.additionalFunctions == 'Build PR'
-        id: prInfo
-        uses: ./.github/actions/getInfo/prInfo
-        with:
-          prId: ${{ inputs.PR_ID }}
-          prApprove: true
+          echo "|${{ env.targetBranch }}|${{ env.targetCommitId }}|${{ inputs.artifactSaveDays }}|" >> $GITHUB_STEP_SUMMARY
       - name: 删除快照
         if: inputs.additionalFunctions == 'Release snapshot' || inputs.additionalFunctions == 'Delete snapshot'
         run: |
@@ -107,45 +87,42 @@ jobs:
           fi
 
   build-plugin:
-    if: ${{ needs.Initialize.outputs.repoName }}
+    if: ${{ needs.Initialize.outputs.isRunBuildJob }}
     name: Build plugin
     needs: Initialize
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    env:
-      java-version: "17"
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v6
-      - name: 拉取 PR 代码
-        if: inputs.additionalFunctions == 'Build PR'
-        run: gh pr checkout ${{ inputs.PR_ID }} && ls -la
-      - name: Setup java ${{ env.java-version }}
-        uses: actions/setup-java@v5
-        with:
-          java-version: ${{ env.java-version }}
-          distribution: 'temurin'
-      - name:  Cache local Gradle wrapper and repository
-        uses: ./.github/actions/cacheGradle
-      - name: Replace info
-        run: |
-          classPath=Common/src/main/java/cn/stevei5mc/serverhelper/common/BaseInfo.java
-          version=$(grep "project.version=" "./gradle.properties" | sed 's/project.version=//')
-          sed -i 's|{git.commit.id}|${{ needs.Initialize.outputs.targetCommitId }}|g; s|{git.branch}|${{ needs.Initialize.outputs.targetBranch }}|g; s|{project.version}|'"$version"'|g' $classPath
-      - name: Set gradlew 777 permission
-        run: chmod 777 gradlew && ls -lah
-      - name:  Build project
+        uses: actions/checkout@v7
+      - parallel:
+          - name: 安装 java ${{ env.java-nversion }}
+            uses: actions/setup-java@v6
+            with:
+              java-version: ${{ env.java-version }}
+              distribution: 'temurin'
+          - name: 缓存本地 Gradle wrapper 和 项目依赖
+            uses: ./.github/actions/cacheGradle
+          - name: Replace info
+            run: |
+              classPath=Common/src/main/java/cn/stevei5mc/serverhelper/common/BaseInfo.java
+              version=$(grep "project.version=" "./gradle.properties" | sed 's/project.version=//')
+              sed -i 's|{git.commit.id}|${{ needs.Initialize.outputs.targetCommitId }}|g; s|{git.branch}|${{ needs.Initialize.outputs.targetBranch }}|g; s|{project.version}|'"$version"'|g' $classPath
+          - name: 设置 gradlew 777 权限
+            run: chmod 777 gradlew && ls -lah
+      - name: 构建项目
         id: build
-        run: ./gradlew shadowJar javadocJar --no-daemon --parallel --continue ${{ inputs.gradleExpandParameters }}
+        run: ./gradlew shadowJar javadocJar --no-daemon --parallel --continue
       - name: 上传测试报告
         if: always() && (steps.build.outcome == 'failure' || inputs.uploadTestReport)
+        background: true
         uses: ./.github/actions/uploadTestReportFiles
         with:
           artifactName: ${{ needs.Initialize.outputs.repoName }}-Dispatch_Build_${{ github.run_number }}_Test_report
-      - name: Get artifact hash and copy files
+      - name: 获取构建文件的 hash 并复制到对应目录
         if: inputs.artifactSaveDays >= 1
-        run:  bash .github/workflows/scripts/getHashAndCopy.sh
-      - name: Upload artifact
+        run: bash .github/workflows/scripts/getHashAndCopy.sh
+      - name: 上传构建文件
         if: inputs.artifactSaveDays >= 1
         uses: actions/upload-artifact@v7
         with:
@@ -157,12 +134,12 @@ jobs:
     if: needs.build-plugin.result == 'success' && inputs.additionalFunctions == 'Release snapshot'
     needs: [Initialize, build-plugin]
     runs-on: ubuntu-slim
-    timeout-minutes: 5
+    timeout-minutes: 1
     permissions:
       contents: write
     steps:
       - name: 拉取代码
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: 发布快照版本
         if: inputs.additionalFunctions == 'Release snapshot'
         uses: ./.github/actions/releaseSnapshot

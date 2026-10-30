@@ -10,15 +10,23 @@ platform/WDPE:
   - changed-files:
     - any-glob-to-any-file: WaterdogPE/**
 
-type/ci:
+type/build:
   - changed-files:
-      - any-glob-to-any-file: |
-          - ".github/actions/**"
-          - ".github/workflows/**"
-  - head-branch: "(^|.*/)ci[/_-]"
+      - any-glob-to-any-file:
+          - "gradle/**"
+          - "**/build.gradle.kts"
+          - "*gradle.*"
+  - head-branch: "(^|.*/)build[/_-]"
 
 type/chore:
   - head-branch: "(^|.*/)chore[/_-]"
+
+type/ci:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/actions/**"
+          - ".github/workflows/**"
+  - head-branch: "(^|.*/)ci[/_-]"
 
 type/feature:
   - head-branch: "(^|.*/)(feat|feature)[/_-]"
@@ -26,13 +34,20 @@ type/feature:
 type/fix:
   - head-branch: "(^|.*/)fix[/_-]"
 
+type/perf:
+  - head-branch:
+      - "(^|.*/)(perf|performance)[/_-]"
+
 type/refactor:
   - head-branch: "(^|.*/)refactor[/_-]"
 
 type/revert:
   - head-branch: "(^|.*/)revert[/_-]"
 
-unit-test:
+type/style:
+  - head-branch: "(^|.*/)style[/_-]"
+
+type/unit-test:
   - changed-files:
       - any-glob-to-any-file: "**/src/test/**"
   - head-branch: "(^|.*/)test[/_-]"

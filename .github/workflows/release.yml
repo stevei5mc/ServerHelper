@@ -1,18 +1,19 @@
-name: tag push
+name: Release
 
 on:
   push:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+-beta[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+-beta.[0-9]+'
 
 env:
   GH_TOKEN: ${{ github.token }}
+  java-version: "17"
 
 jobs:
   Initialize:
     runs-on: ubuntu-slim
-    timeout-minutes: 5
+    timeout-minutes: 2
     outputs:
       version: ${{ steps.getReleaseInfo.outputs.version }}
       repoName: ${{ steps.getProjectInfo.outputs.repoNmae }}
@@ -42,36 +43,35 @@ jobs:
     needs: Initialize
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    env:
-      java-version: "17"
     steps:
       - name: 拉取代码
         uses: actions/checkout@v7
-      - name: Setup java ${{ env.java-version }}
-        uses: actions/setup-java@v5
-        with:
-          java-version: ${{ env.java-version }}
-          distribution: 'temurin'
-      - name:  Cache local Gradle wrapper and repository
-        uses: ./.github/actions/cacheGradle
+      - parallel:
+          - name: 安装 java ${{ env.java-version }}
+            uses: actions/setup-java@v6
+            with:
+              java-version: ${{ env.java-version }}
+              distribution: 'temurin'
+          - name: 缓存本地 Gradle wrapper 和 项目依赖
+            uses: ./.github/actions/cacheGradle
+          - name: 设置 gradlew 777 权限
+            run: chmod 777 gradlew && ls -lah
       - name: Replace info
         run: |
           classPath=Common/src/main/java/cn/stevei5mc/serverhelper/common/BaseInfo.java
           sed -i "s|project.version=*|project.version=${{ needs.Initialize.outputs.version }}|g" ./gradle.properties
           sed -i 's|{git.commit.id}|${{ needs.Initialize.outputs.targetCommitId }}|g; s|{git.branch}|${{ needs.Initialize.outputs.targetBranch }}|g; s|{project.version}|${{ needs.Initialize.outputs.version }}|g' $classPath
-      - name: Set gradlew 777 permission
-        run: chmod 777 gradlew && ls -lah
-      - name:  Build project
+      - name: 构建项目
         id: build
-        run: ./gradlew shadowJar javadocJar --no-daemon --parallel  --continue
-      - name: Get artifact hash and copy files
-        run:  bash .github/workflows/scripts/getHashAndCopy.sh
+        run: ./gradlew shadowJar javadocJar --no-daemon --parallel --continue
       - name: 上传测试报告
         if: always() && steps.build.outcome == 'failure'
         uses: ./.github/actions/uploadTestReportFiles
         with:
           artifactName: ${{ needs.Initialize.outputs.repoName }}-Release_${{ needs.Initialize.outputs.version }}-Test_report
-      - name: Upload artifact
+      - name: 获取构建文件的 hash 并复制到对应目录
+        run: bash .github/workflows/scripts/getHashAndCopy.sh
+      - name: 上传构建文件
         uses: actions/upload-artifact@v7
         with:
           name: ${{ needs.Initialize.outputs.repoName }}-Release_${{ needs.Initialize.outputs.version }}

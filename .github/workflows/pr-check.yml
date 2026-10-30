@@ -1,25 +1,31 @@
 name: PR check
 
 concurrency:
-  group: ${{ github.workflow }}-PR-${{ github.event.pull_request.number }}
+  group: ${{ github.workflow }}-PR-${{ github.event.pull_request.number || inputs.prNumber }}
   cancel-in-progress: true
 
 on:
   pull_request:
     paths-ignore:
-      - ".github/actions/getReleaseInfo/action.yml"
+      - ".github/actions/getInfo/releaseInfo/action.yml"
       - ".github/actions/releaseSnapshot/action.yml"
       - ".github/workflows/dispatch.yml"
-      - ".github/workflows/tagpush.yml"
+      - ".github/workflows/release.yml"
       - ".github/labeler.yml"
+  workflow_dispatch:
+    inputs:
+      prNumber:
+        description: 'PR number'
+        required: true
 
 env:
   GH_TOKEN: ${{ github.token }}
+  java-version: "17"
 
 jobs:
   Initialize:
     runs-on: ubuntu-slim
-    timeout-minutes: 5
+    timeout-minutes: 2
     outputs:
       repoName: ${{ steps.getProjectInfo.outputs.repoNmae }}
       targetCommitId: ${{ env.targetCommitId }}
@@ -27,48 +33,63 @@ jobs:
     steps:
       - name: 拉取代码
         uses: actions/checkout@v7
+      - name: 检查输入参数
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const prID = "${{ github.event.pull_request.number || inputs.prNumber }}";
+            const prNumber = Number(prID.trim());
+
+            if (!Number.isInteger(prNumber) || prNumber <= 0) {
+              core.setFailed(`输入的PR编号格式不正确。输入值为: ${prID}`);
+            }
       - name: 获取信息
         id: getProjectInfo
         uses: ./.github/actions/getInfo/projectInfo
       - name: Get and summary PR info
         uses: ./.github/actions/getInfo/prInfo
+        with:
+          prId: ${{ github.event.pull_request.number || inputs.prNumber }}
 
   build-plugin:
     name: Build plugin
     needs: Initialize
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    env:
-      java-version: "17"
     steps:
       - name: 拉取代码
         uses: actions/checkout@v7
-      - name: Setup java ${{ env.java-version }}
-        uses: actions/setup-java@v5
         with:
-          java-version: ${{ env.java-version }}
-          distribution: 'temurin'
-      - name:  Cache local Gradle wrapper and repository
-        uses: ./.github/actions/cacheGradle
-      - name: Replace info
-        run: |
-          classPath=Common/src/main/java/cn/stevei5mc/serverhelper/common/BaseInfo.java
-          version=$(grep "project.version=" "./gradle.properties" | sed 's/project.version=//')
-          sed -i 's|{git.commit.id}|${{ needs.Initialize.outputs.targetCommitId }}|g; s|{git.branch}|${{ needs.Initialize.outputs.targetBranch }}|g; s|{project.version}|'"$version"'|g' $classPath
-      - name: Set gradlew 777 permission
-        run: chmod 777 gradlew && ls -lah
-      - name:  Build project
+          ref: refs/pull/${{ github.event.pull_request.number || inputs.prNumber }}/merge
+      - parallel:
+          - name: 安装 java ${{ env.java-version }}
+            uses: actions/setup-java@v6
+            with:
+              java-version: ${{ env.java-version }}
+              distribution: 'temurin'
+          - name: 缓存本地 Gradle wrapper 和 项目依赖
+            uses: ./.github/actions/cacheGradle
+          - name: Replace info
+            run: |
+              classPath=Common/src/main/java/cn/stevei5mc/serverhelper/common/BaseInfo.java
+              version=$(grep "project.version=" "./gradle.properties" | sed 's/project.version=//')
+              sed -i 's|{git.commit.id}|${{ needs.Initialize.outputs.targetCommitId }}|g; s|{git.branch}|${{ needs.Initialize.outputs.targetBranch }}|g; s|{project.version}|'"$version"'|g' $classPath
+          - name: 设置 gradlew 777 权限
+            run: chmod 777 gradlew && ls -lah
+      - name: 构建项目
         id: build
         run: ./gradlew shadowJar javadocJar --no-daemon --parallel --continue
       - name: 上传测试报告
         if: always() && ( steps.build.outcome == 'success' || steps.build.outcome == 'failure' )
+        background: true
         uses: ./.github/actions/uploadTestReportFiles
         with:
-          artifactName: ${{ needs.Initialize.outputs.repoName }}-PR_${{ github.event.pull_request.number }}_check_Build-${{ github.run_number }}_Test_report
-      - name: Get artifact hash and copy files
+          artifactName: ${{ needs.Initialize.outputs.repoName }}-PR_${{ github.event.pull_request.number }}-Build_check_${{ github.run_number }}-Test_report
+      - name: 获取构建文件的 hash 并复制到对应目录
         run:  bash .github/workflows/scripts/getHashAndCopy.sh
-      - name: Upload artifact
+      - name: 上传构建文件
         uses: actions/upload-artifact@v7
         with:
-          name: ${{ needs.Initialize.outputs.repoName }}-PR_${{ github.event.pull_request.number }}_check-Build_${{ github.run_number }}
+          name: ${{ needs.Initialize.outputs.repoName }}-PR_${{ github.event.pull_request.number }}-Build_check_${{ github.run_number }}
           path: ./staging
